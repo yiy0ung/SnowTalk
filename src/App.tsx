@@ -1,10 +1,13 @@
 import React from 'react';
+import { HashRouter as Router } from 'react-router-dom';
+
+import Pages from './pages';
 
 function App() {
   return (
-    <div className="App">
-      
-    </div>
+    <Router>
+      <Pages />
+    </Router>
   );
 }
 

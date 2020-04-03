@@ -1,0 +1,2 @@
+1. tabindex property
+2. focus-within

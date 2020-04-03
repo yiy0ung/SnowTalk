@@ -1,0 +1,35 @@
+
+$term: 1rem;
+
+.content-temp {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: auto;
+
+  &__head {
+    padding: 0 $term;
+  }
+
+  &__body {
+    flex: 1;
+    overflow: auto;
+
+    &::-webkit-scrollbar {
+      width: 0.55rem;
+    }
+    
+    &::-webkit-scrollbar-track {
+      background: #fff; 
+    }
+     
+    &::-webkit-scrollbar-thumb {
+      background: #cccccc;
+      border-radius: 28px;
+    }
+    
+    &::-webkit-scrollbar-thumb:hover {
+      background: #7f7f7f; 
+    }
+  }
+}

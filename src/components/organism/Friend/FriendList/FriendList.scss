@@ -1,0 +1,19 @@
+
+.friend-list {
+
+  &__head {
+    padding: 0 1rem;
+    color: #7f7f7f;
+  }
+
+  &__title {
+    font-weight: 700;
+    font-size: 0.75rem;
+    padding: 0.5rem 0.2rem;
+    border-top: 1px solid #f2f2f2;
+    
+    & > span + span {
+      margin-left: 0.5rem;
+    }
+  }
+}

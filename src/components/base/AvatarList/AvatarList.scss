@@ -1,0 +1,29 @@
+
+.avatar-list {
+  width: 2.8rem;
+  height: 2.8rem;
+  overflow: hidden;
+
+  &__duo {
+    height: 100%;
+    position: relative;
+
+    & > * {
+      &:nth-child(2) {
+        position: absolute;
+        top: 35%;
+        left: 34%;
+      }
+    }
+  }
+
+  &__multi {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    
+    & > * {
+      margin-top: 0.05rem;
+    }
+  }
+}

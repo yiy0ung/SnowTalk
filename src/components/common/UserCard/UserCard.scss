@@ -1,0 +1,55 @@
+@import 'style/color.scss';
+@import 'components/organism/template/ContentTemplate/ContentTemplate.scss';
+
+.user-card {
+  cursor: pointer;
+  user-select: none;
+  display: flex;
+  width: 100%;
+  padding: 0.7rem 0;
+  padding-left: $term;
+
+  &:hover {
+    background-color: #f2f2f3;
+  }
+  &:focus {
+    outline: none;
+    background-color: $navbar-color;
+  }
+
+  &__column {
+
+    & + & {
+      margin-left: 0.8rem;
+    }
+  }
+
+  &__content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    font-size: 0.75rem;
+
+    & > span + span {
+      margin-top: 0.5rem;
+    }
+  }
+
+  &__title {
+    font-size: 0.8rem;
+    font-weight: 700;
+  }
+
+  &__desc {
+    // width: 200px;
+    padding-bottom: 0.3rem;
+    overflow-y: hidden;
+    white-space: nowrap; 
+    text-overflow: ellipsis;
+  }
+
+  &__additional {
+    flex: 1;
+    word-break:break-all;
+  }
+}

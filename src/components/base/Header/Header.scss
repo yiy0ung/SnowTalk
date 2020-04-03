@@ -1,0 +1,19 @@
+@import '../../../style/font.scss';
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-family: $Malgunbd;
+  font-weight: 700;
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+
+  &__options {
+    
+    & > * + * {
+      margin-left: 0.5rem;
+    }
+  }
+}
+

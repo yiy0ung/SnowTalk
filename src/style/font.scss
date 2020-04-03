@@ -1,0 +1,17 @@
+
+@mixin font_face($name, $url) {
+  font-family: $name;
+  font-display: block;
+  src: $url;
+}
+
+$Malgun: 'malgun gothic';
+$Malgunbd: 'malgun gothic bold';
+
+@font-face {
+  @include font_face($Malgun, url('../assets/font/malgun.ttf'));
+}
+
+@font-face {
+  @include font_face($Malgunbd, url('../assets/font/malgunbd.ttf'));
+}

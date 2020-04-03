@@ -1,0 +1,45 @@
+@import 'style/color.scss';
+
+$placeholder-color: #b0b0b0;
+
+.input {
+  display: flex;
+  align-items: center;
+  padding: 0.25rem 1rem 0.25rem 0;
+  border: 1px solid #eff0f2;
+  margin: 0 0.2rem;
+  background-color: #f6f6f6;
+  border-radius: 28px;
+  transition: all 0.2s ease-in-out;
+
+  &:focus-within {
+    border: 1px solid #cccccc;
+  }
+
+  & * {
+    color: $placeholder-color;
+  }
+
+  &__area {
+    flex: 1;
+  }
+
+  &__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.1rem 0.4rem 0;
+  }
+
+  &__text {
+    color: $main-font-color;
+    width: 90%;
+    outline: none;
+    border: 0;
+    background-color: #99000000;
+    
+    &::placeholder {
+      color: $placeholder-color;
+    }
+  }
+}
