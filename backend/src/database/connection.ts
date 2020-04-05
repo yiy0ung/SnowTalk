@@ -27,13 +27,15 @@ async function connectDatabase() {
     };
 
     useContainer(Container);
-    await createConnection(options).then(_ => {
+    const connection = await createConnection(options);
+
+    if (connection) {
       console.log('DB connected');
-    }).catch((error) => {
-      console.error('DB connection failed');
-      console.error(error);
-    });
+    }
+
+    return connection;
   } catch (error) {
+    console.error('DB connection failed');
     throw error;
   }
 }
