@@ -1,8 +1,12 @@
+import 'reflect-metadata';
+
 import HTTP from 'http';
 import express, { Express } from 'express';
 import cors from 'cors';
+import { Container } from 'typedi';
 
 import connectDB from './database/connection';
+import RootRouter from './controllers';
 
 class Server {
   public app: Express;
@@ -14,7 +18,7 @@ class Server {
   }
 
   private setRouter() {
-
+    this.app.use('/api', Container.get(RootRouter).getRouter());
   }
 
   private setMiddleware() {

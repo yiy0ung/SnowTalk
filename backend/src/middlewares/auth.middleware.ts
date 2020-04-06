@@ -1,7 +1,8 @@
-import { Request, Response, NextFunction } from "express";
+import { Response, NextFunction } from "express";
 import * as tokenLib from '../lib/token.lib';
+import { AuthRequest } from "../typings";
 
-async function authMiddleware(req: Request, res: Response, next: NextFunction) {
+async function authMiddleware(req: AuthRequest, res: Response, next: NextFunction) {
   const token = req.headers['token'];
 
   if (!token || Array.isArray(token)) {
@@ -14,7 +15,7 @@ async function authMiddleware(req: Request, res: Response, next: NextFunction) {
   }
 
   try {
-    const decoded = await tokenLib.verifyToken(token);
+    const decoded = tokenLib.verifyToken(token);
 
     if (!decoded) {
       res.status(401).json({

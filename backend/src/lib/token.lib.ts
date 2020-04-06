@@ -4,9 +4,9 @@ import config from '../config';
 const { jwtSecret } = config;
 
 // expiresIn format 7 days, 10h, 7d, 3min, 100 => 100ms
-export const createToken = async (memberId: string) => { // Create Token
+export const createToken = (memberIdx: number, memberId: string) => { // Create Token
   const payload = {
-    memberId,
+    memberIdx, memberId,
   };
   const option = { expiresIn: '5 days', issuer: 'snowtalk.com', subject: 'token' };
 
@@ -17,22 +17,22 @@ export const createToken = async (memberId: string) => { // Create Token
   }
 };
 
-export const createRefreshToken = async (memberId: string) => { // Create Refresh Token
+export const createRefreshToken = (memberIdx: number, memberId: string) => { // Create Refresh Token
   const payload = {
-    memberId,
+    memberIdx, memberId,
   };
   const option = { expiresIn: '7 days', issuer: 'snowtalk.com', subject: 'refreshToken' };
 
   try {
-    return await jwt.sign(payload, jwtSecret, option);
+    return jwt.sign(payload, jwtSecret, option);
   } catch (error) {
     throw error;
   }
 };
 
-export const verifyToken = async (token: string) => { // Verify Token
+export const verifyToken = (token: string) => { // Verify Token
   try {
-    return await jwt.verify(token, jwtSecret);
+    return jwt.verify(token, jwtSecret);
   } catch (error) {
     console.log(error.message);
     throw error;

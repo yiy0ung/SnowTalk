@@ -12,12 +12,12 @@
     "strictNullChecks": false,
     "esModuleInterop": true,
     "noImplicitAny": false,
-    "typeRoots": ["./node_modules/@types", "./typings"]
+    "typeRoots": ["./node_modules/@types", "./types"]
   },
   "include": [
     "src/**/*",
-    "typings/index.d.ts",
-    "typings/**/index.d.ts",
+    "types/*.d.ts",
+    "types/**/index.d.ts",
   ],
   "exclude": ["node_modules", "build"],
 }

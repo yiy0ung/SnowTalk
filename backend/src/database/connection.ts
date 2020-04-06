@@ -20,8 +20,8 @@ async function connectDatabase() {
       database: name,
       entities: [`${__dirname}/models/*{.ts,.js}`],
       timezone: 'local',
-      synchronize: true && devEnv,
-      dropSchema: true && devEnv,
+      synchronize: false && devEnv,
+      dropSchema: false && devEnv,
       logging: false,
       cache: false,
     };
