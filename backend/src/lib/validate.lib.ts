@@ -20,3 +20,14 @@ export const signUp = (body) => {
 
   return schema.validateAsync(body);
 };
+
+export const updateMember = (body) => {
+  const schema = Joi.object().keys({
+    pw: Joi.string(),
+    name: Joi.string(),
+    intro: Joi.string(),
+    profileImg: Joi.number().integer(),
+  });
+
+  return schema.validateAsync(body);
+};

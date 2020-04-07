@@ -20,6 +20,22 @@ export class MemberService {
     return [token, refreshToken];
   }
 
+  public async getMemberByIdx(memberIdx: number) {
+    const member = await this.memberRepo.findOne({
+      where: {
+        idx: memberIdx,
+      },
+      join: {
+        alias: 'member',
+        leftJoinAndSelect: {
+          profileImg: 'member.profileImg',
+        },
+      },
+    });
+
+    return member;
+  }
+
   public async getMemberBySecurity(id: string, pw: string) {
     const member = await this.memberRepo.findOne({
       where: {
@@ -50,6 +66,19 @@ export class MemberService {
     });
 
     return member;
+  }
+
+  public async updateMember(memberId: string, data: Pick<Member, 'pw'|'name'|'intro'|'profileImg'>) {
+    const result = await this.memberRepo.update({
+      id: memberId,
+    }, {
+      pw: data.pw,
+      name: data.name,
+      intro: data.intro,
+      profileImg: data.profileImg,
+    });
+
+    return result;
   }
 
   public async removeMember(id: string, pw: string) {

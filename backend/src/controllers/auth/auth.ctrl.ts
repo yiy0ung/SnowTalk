@@ -133,6 +133,34 @@ export class AuthCtrl {
   };
 
   public updateProfile = async (req: AuthRequest, res: Response) => {
+    const { memberId } = req.decoded;
+    const { body } = req;
 
+    try {
+      await Validate.updateMember(body);
+    } catch (error) {
+      console.error(error);
+      res.status(400).json({
+        status: 400,
+        message: '잘못된 요청 형식',
+      });
+
+      return;
+    }
+
+    try {
+      await this.memberService.updateMember(memberId, body);
+
+      res.status(200).json({
+        status: 200,
+        message: '회원정보 수정 성공',
+      });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({
+        status: 500,
+        message: 'failed from server',
+      });
+    }
   };
 }

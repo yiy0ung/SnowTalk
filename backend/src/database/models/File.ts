@@ -6,7 +6,7 @@ export class File {
   idx: number;
 
   @Column({ type: 'varchar', length: 100 })
-  url: string;
+  name: string;
 
   @Column({ type: 'varchar', length: 20 })
   extend: string;
