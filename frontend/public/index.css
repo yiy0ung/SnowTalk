@@ -1,0 +1,23 @@
+
+.title-bar {
+  user-select: none;
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  display: flex;
+}
+
+.title-bar__drag {
+  flex: 1;
+  -webkit-app-region: drag;
+}
+
+.title-bar .title-bar__item {
+  cursor: pointer;
+  padding: 0.45rem;
+}
+
+.title-bar__item img {
+  width: 0.8rem;
+}

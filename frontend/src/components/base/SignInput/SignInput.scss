@@ -1,0 +1,17 @@
+
+.sign-input {
+  border: 0;
+  padding: 0.5rem 0.5rem;
+
+  &:focus {
+    outline: none;
+  }
+
+  &::placeholder {
+    color: #bfbfbf;
+  }
+
+  & + & {
+    border-top: 1px solid #f2f2f2;
+  }
+}

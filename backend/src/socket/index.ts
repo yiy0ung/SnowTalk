@@ -1,10 +1,16 @@
-import { Service } from "typedi";
+import { Container, Service } from "typedi";
 import { Server, Namespace, Socket } from 'socket.io';
+import { ChatNmsp } from "./namespace/chat/chat.nmsp";
 
 export function runSocket(io: Server) {
+  io.origins('*:*');
 
-  io.on('connection', (socket: Socket) => {
-    console.log("object");
-    console.log(socket);
-  })
+  const chat: Namespace = io.of('/chat');
+
+  ChatNmsp.instance = chat;
+
+  chat.on('connection', Container.get(ChatNmsp).handleingEvent);
 }
+
+// socket status
+// https://gist.github.com/gabrielfalcao/4216897

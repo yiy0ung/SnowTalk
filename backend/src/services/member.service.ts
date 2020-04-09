@@ -33,6 +33,8 @@ export class MemberService {
       },
     });
 
+    delete member.pw;
+
     return member;
   }
 

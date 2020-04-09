@@ -1,0 +1,20 @@
+
+.basic-btn {
+  cursor: pointer;
+  outline: none;
+  width: 100%;
+  color: white;
+  background-color: #423630;
+  border-radius: 3px;
+  border: 0;
+  padding: 0.6rem 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #423630;
+
+  &:hover {
+    background-color: #594840;
+    border: 1px solid #3b302b;
+  }
+}

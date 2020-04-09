@@ -1,0 +1,14 @@
+
+
+.sign-login-form {
+
+  &__inputs {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #e6e6e6;
+  }
+
+  &__btn {
+    margin-top: 0.5rem; 
+  }
+}

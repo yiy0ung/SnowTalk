@@ -6,9 +6,9 @@ import { Friend } from "../models/Friend";
 export class FriendRepository extends Repository<Friend> {
   public getFollowingsInfo(memberIdx: number) {
     return this.createQueryBuilder('friend')
-      .leftJoinAndSelect('friend.following_member_idx', 'member')
+      .leftJoinAndSelect('friend.followingMember', 'member')
       .leftJoinAndSelect('member.profileImg', 'file')
-      .where('friend.follower_member_idx = :memberIdx', { memberIdx })
+      .where('friend.followerMember = :memberIdx', { memberIdx })
       .getMany();
   }
 }

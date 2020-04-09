@@ -15,7 +15,7 @@ export class Member {
   @Column({ type: 'varchar', length: 40, unique: true })
   id: string;
 
-  @Column({ type: 'varchar', length: 400 })
+  @Column({ type: 'varchar', length: 400, select: false })
   pw: string;
 
   @Column({ type: 'varchar', length: 50 })

@@ -1,0 +1,47 @@
+@import 'style/color.scss';
+
+.sign-section {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 4rem 3.8rem 3rem;
+  height: 100%;
+  background-color: $main-color;
+
+  &__body {
+    & > * + * {
+      margin-top: 0.6rem;
+    }
+  }
+
+  &__logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    & > img {
+      width: 9.7rem;
+    }
+  }
+
+  &__foot {
+    display: flex;
+    justify-content: center;
+    font-size: 0.8rem;
+    color: rgba(#011418, 0.8);
+
+    & > span + span {
+      border-left: 1px solid #737373;
+    }
+
+    & > span {
+      cursor: pointer;
+      padding: 0 0.5rem;
+      
+      &:hover {
+        font-weight: 700;
+        color: #000000;
+      }
+    }
+  }
+}

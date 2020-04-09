@@ -9,13 +9,15 @@ function createWindow() {
         center: true,
         kiosk: !isDev,
         width: 460,
-        height: 760,
+        height: 590,
         minWidth: 420,
         minHeight: 450,
         resizable: true,
         webPreferences: {
             nodeIntegration: true
-        }
+        },
+        transparent: true,
+        frame: false
     });
     if (isDev) {
         mainWindow.loadURL('http://localhost:3000');
