@@ -15,7 +15,7 @@ class MemberRepo {
   public async getMyInfo() {
     const res = await axios.get(`${server.host}/member/my`, {
       headers: {
-        token: localStorage.getItem('token'),
+        token: sessionStorage.getItem('token'),
       },
     });
 
@@ -25,7 +25,7 @@ class MemberRepo {
   public async getFriends() {
     const res = await axios.get(`${server.host}/member/friend`, {
       headers: {
-        token: localStorage.getItem('token'),
+        token: sessionStorage.getItem('token'),
       },
     });
 

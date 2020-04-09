@@ -1,6 +1,6 @@
 import { all, takeLatest, call, put } from 'redux-saga/effects';
-// import {  } from 'lodash';
-import { fetchLoginAsync, fetchMembersInfoAsync } from 'store/reducers/member.reducer';
+import { map } from 'lodash';
+import { fetchLoginAsync, fetchMembersInfoAsync, doneLogin } from 'store/reducers/member.reducer';
 import memberRepo from './member.repo';
 
 function* login(action: ReturnType<typeof fetchLoginAsync.request>) {
@@ -23,14 +23,17 @@ function* login(action: ReturnType<typeof fetchLoginAsync.request>) {
 function* getMyInfo() {
   try {
     const myInfo = yield call(memberRepo.getMyInfo);
-    const friends = yield call(memberRepo.getFriends);
+    const friendData = yield call(memberRepo.getFriends);
+
+    const friends = map(friendData.friend, 'followingMember');
 
     const result = {
       member: myInfo.info,
-      friends: [],
+      friends,
     };
     
     yield put(fetchMembersInfoAsync.success(result));
+    yield put(doneLogin(true));
   } catch (error) {
     yield put(fetchMembersInfoAsync.failure(error));
   }

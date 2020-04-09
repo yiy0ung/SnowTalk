@@ -13,7 +13,7 @@ function AuthPage({ PageNode, requiredToken = true }: { PageNode: ReactNode, req
   const notAuth = existToken() === null;
 
   if (requiredToken && notAuth) {
-    return (<Redirect to={'/sign'} />);
+    return (<Redirect to={link.sign} />);
   }
 
   return (<>{PageNode}</>);

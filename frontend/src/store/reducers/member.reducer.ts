@@ -9,16 +9,19 @@ import { LoginReq, LoginRes, MembersInfoRes } from 'utils/types/form.type';
 
 // init state
 type MemberState = {
+  isLogin: boolean;
   member: Member;
   friends: Member[];
 }
 
 export const initialState: MemberState = {
+  isLogin: false,
   member: {} as Member,
   friends: [],
 };
 
 // action
+export const DONELOGIN = 'DONELOGIN';
 export const LOGOUT = 'LOGOUT';
 export const LOGIN_REQUEST = 'LOGIN_REQUEST'; // login
 export const LOGIN_SUCCESS = 'LOGIN_SUCCESS';
@@ -29,6 +32,7 @@ export const MEMBERSINFO_FAILURE = 'MEMBERSINFO_FAILURE';
 
 
 // action func
+export const doneLogin = createAction(DONELOGIN)<boolean>();
 export const logout = createAction(LOGOUT)();
 export const fetchLoginAsync = createAsyncAction(
   LOGIN_REQUEST,
@@ -45,13 +49,19 @@ const actions = {
   fetchLoginAsync,
   fetchMembersInfoAsync,
   logout,
+  doneLogin,
 };
 type MemberAction = ActionType<typeof actions> 
 
 // reducer
 export default createReducer<MemberState, MemberAction>(initialState, {
-  // [MYINFO_SUCCESS]: (state, action) => ({
-  //   ...state,
-  //   member: action.payload.data.info,
-  // }),
+  [MEMBERSINFO_SUCCESS]: (state, action) => ({
+    ...state,
+    member: action.payload.member,
+    friends: action.payload.friends,
+  }),
+  [DONELOGIN]: (state, action) => ({
+    ...state,
+    isLogin: action.payload,
+  }),
 });
