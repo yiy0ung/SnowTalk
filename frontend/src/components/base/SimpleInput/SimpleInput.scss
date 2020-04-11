@@ -1,0 +1,17 @@
+
+.simple-input {
+  width: 100%;
+  outline: none;
+  border: 0;
+  padding: 0.5rem 0.5rem;
+  border-bottom: 1px solid #e6e6e6;
+  transition: all 0.2s ease-in-out;
+
+  &:focus {
+    border-bottom: 1px solid #423630;
+  }
+
+  &::placeholder {
+    color: #bfbfbf;
+  }
+}

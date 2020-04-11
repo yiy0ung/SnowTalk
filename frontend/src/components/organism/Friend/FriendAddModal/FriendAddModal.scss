@@ -1,0 +1,42 @@
+
+
+.friend-add-modal {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  font-weight: normal;
+  font-size: 1rem;
+  padding: 0 0.5rem 0.5rem;
+  height: 23rem;
+
+  &__title {
+    padding-bottom: 1.5rem;
+    color: rgba(0, 0, 0, 0.4);
+  }
+
+  &__sec {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    color: rgba(0, 0, 0, 0.7);
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #f2f2f2;
+
+    &-my {
+      font-size: 2rem;
+      color: #282828;
+      margin-bottom: 0.4rem;
+    }
+  }
+
+  &__add {
+    margin-top: 1.5rem;
+  }
+
+  &__foot {
+    display: flex;
+    justify-content: flex-end;
+  }
+}

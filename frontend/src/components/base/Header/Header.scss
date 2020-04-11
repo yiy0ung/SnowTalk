@@ -7,9 +7,11 @@
   font-family: $Malgunbd;
   font-weight: 700;
   font-size: 1.2rem;
-  margin-bottom: 1rem;
+  padding-bottom: 1rem;
 
   &__options {
+    cursor: pointer;
+    font-size: 1.4rem;
     
     & > * + * {
       margin-left: 0.5rem;
