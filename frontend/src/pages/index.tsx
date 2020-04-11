@@ -1,39 +1,28 @@
-import React, { ReactNode } from 'react';
-import { Switch, Route, Redirect } from 'react-router-dom';
+import React from 'react';
+import { Switch, Route } from 'react-router-dom';
 
-import link from '../config/link';
-import { existToken } from 'utils/token';
+import link from 'config/link';
 
 import Home from './Home';
 import Friend from './Friend';
 import More from './More';
 import Sign from './Sign';
 
-function AuthPage({ PageNode, requiredToken = true }: { PageNode: ReactNode, requiredToken?: boolean }) {
-  const notAuth = existToken() === null;
-
-  if (requiredToken && notAuth) {
-    return (<Redirect to={link.sign} />);
-  }
-
-  return (<>{PageNode}</>);
-}
-
 function Pages() {
   return (
     <Switch>
       <Route exact
         path={link.home}
-        render={() => <AuthPage PageNode={<Home />} />} />
+        component={Home} />
       <Route exact
         path={link.friend}
-        render={() => <AuthPage PageNode={<Friend />} />} />
+        component={Friend} />
       <Route exact
         path={link.more}
-        render={() => <AuthPage PageNode={<More />} />} />
+        component={More} />
       <Route exact
         path={link.sign}
-        render={() => <AuthPage PageNode={<Sign />} requiredToken={false} />}/>
+        component={Sign} />
     </Switch>
   );
 }

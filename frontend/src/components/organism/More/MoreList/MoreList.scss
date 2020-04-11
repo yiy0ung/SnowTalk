@@ -1,0 +1,35 @@
+
+.more-list {
+  
+  & ul {
+    padding-top: 1rem;
+  }
+
+  &__line {
+    border-top: 1px solid #f2f2f2;
+    margin: 0 1rem;
+  }
+}
+
+.more-list-item {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  padding: 1rem 1rem;
+
+  &:hover {
+    background-color: #ececed;
+  }
+  
+  & > * + * {
+    color: #282828;
+    margin-left: 1rem;
+  }
+
+  &__icon {
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}

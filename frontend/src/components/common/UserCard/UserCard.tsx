@@ -1,6 +1,7 @@
 import React, { ReactNode } from 'react';
 import { AvatarList } from 'components/base/AvatarList';
 import Avatar, { Props as AvatarProps } from 'components/base/Avatar/Avatar';
+import defaultImg from 'assets/image/default-profile.jpg';
 
 import './UserCard.scss';
 
@@ -15,7 +16,7 @@ type Props = {
 
 function UserCard({ title, desc, imgUrls, type, avatar, additionalInfo }: Props) {
   const userProfile = type === 'profile' ? (
-    <Avatar url={imgUrls[0]} size={avatar?.size} />
+    <Avatar url={imgUrls[0] ? imgUrls[0] : defaultImg} size={avatar?.size} />
   ) : (
     <AvatarList imgUrls={imgUrls} />
   );
@@ -27,7 +28,7 @@ function UserCard({ title, desc, imgUrls, type, avatar, additionalInfo }: Props)
       </div>
       <div className="user-card__column user-card__content">
         <span className="user-card__title">{title}</span>
-        <span className="user-card__desc">{desc}</span>
+        {desc && <span className="user-card__desc">{desc}</span>}
       </div>
       <div className="user-card__column user-card__additional">
         {additionalInfo}

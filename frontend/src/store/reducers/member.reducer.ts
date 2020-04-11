@@ -21,7 +21,7 @@ export const initialState: MemberState = {
 };
 
 // action
-export const DONELOGIN = 'DONELOGIN';
+export const LOGIN = 'LOGIN';
 export const LOGOUT = 'LOGOUT';
 export const LOGIN_REQUEST = 'LOGIN_REQUEST'; // login
 export const LOGIN_SUCCESS = 'LOGIN_SUCCESS';
@@ -32,7 +32,7 @@ export const MEMBERSINFO_FAILURE = 'MEMBERSINFO_FAILURE';
 
 
 // action func
-export const doneLogin = createAction(DONELOGIN)<boolean>();
+export const login = createAction(LOGIN)<boolean>();
 export const logout = createAction(LOGOUT)();
 export const fetchLoginAsync = createAsyncAction(
   LOGIN_REQUEST,
@@ -49,7 +49,7 @@ const actions = {
   fetchLoginAsync,
   fetchMembersInfoAsync,
   logout,
-  doneLogin,
+  login,
 };
 type MemberAction = ActionType<typeof actions> 
 
@@ -60,8 +60,12 @@ export default createReducer<MemberState, MemberAction>(initialState, {
     member: action.payload.member,
     friends: action.payload.friends,
   }),
-  [DONELOGIN]: (state, action) => ({
+  [LOGIN]: (state, action) => ({
     ...state,
     isLogin: action.payload,
+  }),
+  [LOGOUT]: (state) => ({
+    ...state,
+    isLogin: false,
   }),
 });

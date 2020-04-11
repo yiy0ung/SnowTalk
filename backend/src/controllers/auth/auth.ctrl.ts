@@ -12,7 +12,7 @@ export class AuthCtrl {
 
   public login = async (req: Request, res: Response) => {
     const { body } = req;
-    console.log(body);
+
     try {
       await Validate.login(body);
     } catch (error) {

@@ -4,5 +4,6 @@ export type Member = {
   id: string;
   friendId: string;
   name: string;
+  intro: string;
   profileImg: object;
 };

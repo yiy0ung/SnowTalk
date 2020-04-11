@@ -1,26 +1,26 @@
 import React, { useEffect } from 'react';
-import { withRouter } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useHistory } from 'react-router';
 import { SignSection } from 'components/organism/Sign/SignSection';
-import { RootState } from 'store/reducers';
 import link from 'config/link';
+import { existToken } from 'utils/token';
+import { useSelector } from 'react-redux';
+import { RootState } from 'store/reducers';
 
-type Props = {
-  history: any;
-}
-
-function Sign({ history }: Props) {
-  const memberStore = useSelector((stores: RootState) => stores.member);
+function Sign() {
+  const { isLogin } = useSelector((store: RootState) => store.member);
+  const history = useHistory();
 
   useEffect(() => {
-    if (memberStore.isLogin === true && localStorage.getItem('refresh')) {
+    const logined = existToken() !== null;
+
+    if (isLogin && logined) {
       history.push(link.home);
     }
-  }, [history, memberStore.isLogin]);
+  }, [history, isLogin]);
 
   return (
     <SignSection />
   );
 }
 
-export default withRouter(Sign);
+export default Sign;

@@ -1,26 +1,21 @@
 import React from 'react';
 import { HashRouter as Router } from 'react-router-dom';
-import { createStore, applyMiddleware } from 'redux';
 import { Provider } from 'react-redux';
+import { PersistGate } from 'redux-persist/integration/react';
 
 import Pages from './pages';
-import rootReducer from './store/reducers';
-import rootSaga from './store/sagas';
-import sagaMiddleware from './store/sagas/middleware';
+import generateStore from './store';
 
-const store = createStore(
-  rootReducer,
-  applyMiddleware(sagaMiddleware),
-);
-
-sagaMiddleware.run(rootSaga);
+const { store, persistor } = generateStore();
 
 function App() {
   return (
     <Provider store={store}>
-      <Router>
-        <Pages />
-      </Router>
+      <PersistGate loading={null} persistor={persistor}>
+        <Router>
+          <Pages />
+        </Router>
+      </PersistGate>
     </Provider>
   );
 }

@@ -1,4 +1,7 @@
 import React from 'react';
+import { useSelector } from 'react-redux';
+
+import { RootState } from 'store/reducers';
 import { UserCard } from 'components/common/UserCard';
 import { FriendList } from '../FriendList';
 
@@ -9,8 +12,8 @@ type Props = {
 };
 
 function FriendSection({ searchWord }: Props) {
-  // 스토어에서 친구 목록 불러오기
-  const myComponent = '';
+  const memberStore = useSelector((store: RootState) => store.member);
+  const { member, friends } = memberStore;
 
   return (
     <div className="friend-section">
@@ -18,18 +21,16 @@ function FriendSection({ searchWord }: Props) {
         searchWord.length <= 0 ? (
           <>
             <UserCard
-              title="이진영"
-              desc="멋진 일이 일어났으면 좋겠다"
+              title={member.name}
+              desc={member.intro}
               type="profile"
-              imgUrls={[
-                "https://i.stack.imgur.com/34AD2.jpg",
-              ]}
+              imgUrls={[]}
               avatar={{ size: 'xlarge' }}
             />
-            <FriendList />
+            <FriendList friends={friends} />
           </>
         ) : (
-          <FriendList />
+          <FriendList friends={friends} />
         )
       }
     </div>
