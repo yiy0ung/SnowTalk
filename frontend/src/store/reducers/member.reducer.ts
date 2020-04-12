@@ -29,6 +29,12 @@ export const LOGIN_FAILURE = 'LOGIN_FAILURE';
 export const MEMBERSINFO_REQUEST = 'MEMBERSINFO_REQUEST'; // my info
 export const MEMBERSINFO_SUCCESS = 'MEMBERSINFO_SUCCESS';
 export const MEMBERSINFO_FAILURE = 'MEMBERSINFO_FAILURE';
+export const APPEND_FRIEND_REQUEST = 'APPEND_FRIEND_REQUEST'; // add member
+export const APPEND_FRIEND_SUCCESS = 'APPEND_FRIEND_SUCCESS';
+export const APPEND_FRIEND_FAILURE = 'APPEND_FRIEND_FAILURE';
+export const REMOVE_FRIEND_REQUEST = 'REMOVE_FRIEND_REQUEST'; // remove member
+export const REMOVE_FRIEND_SUCCESS = 'REMOVE_FRIEND_SUCCESS';
+export const REMOVE_FRIEND_FAILURE = 'REMOVE_FRIEND_FAILURE';
 
 
 // action func
@@ -44,10 +50,22 @@ export const fetchMembersInfoAsync = createAsyncAction(
   MEMBERSINFO_SUCCESS,
   MEMBERSINFO_FAILURE,
 )<undefined, MembersInfoRes, Error>();
+export const fetchAppendFriendAsync = createAsyncAction(
+  APPEND_FRIEND_REQUEST,
+  APPEND_FRIEND_SUCCESS,
+  APPEND_FRIEND_FAILURE,
+)<number, undefined, Error>();
+export const fetchRemoveFriendAsync = createAsyncAction(
+  REMOVE_FRIEND_REQUEST,
+  REMOVE_FRIEND_SUCCESS,
+  REMOVE_FRIEND_FAILURE,
+)<number, undefined, Error>();
 
 const actions = {
   fetchLoginAsync,
   fetchMembersInfoAsync,
+  fetchAppendFriendAsync,
+  fetchRemoveFriendAsync,
   logout,
   login,
 };

@@ -8,7 +8,7 @@ import { Member } from "../database/models/Member";
 export class FriendService {
   constructor(
     @InjectRepository() private readonly friendRepo: FriendRepository,
-    private readonly memberRepo: Repository<Member>,
+    @InjectRepository(Member) private readonly memberRepo: Repository<Member>,
   ) {}
 
   public async getFollowingsInfo(memberIdx: number) {

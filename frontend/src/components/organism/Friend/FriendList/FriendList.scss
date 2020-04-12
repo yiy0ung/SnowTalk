@@ -16,4 +16,22 @@
       margin-left: 0.5rem;
     }
   }
+
+  &__empty {
+    margin-top: 10rem;
+    display: flex;
+    flex-direction: column;
+    align-self: center;
+    justify-content: center;
+
+    & > span + span {
+      margin-top: 0.6rem;
+    }
+
+    & > span {
+      text-align: center;
+      font-size: 0.8rem;
+      color: #cccccc;
+    }
+  }
 }

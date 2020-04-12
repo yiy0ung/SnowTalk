@@ -10,7 +10,7 @@ import { Member } from "../database/models/Member";
 @Service()
 export class MemberService {
   constructor(
-    @InjectRepository(Member) private memberRepo: Repository<Member>,
+    @InjectRepository(Member) private readonly memberRepo: Repository<Member>,
   ) {}
 
   public generateAccessToken(memberIdx: number, memberId: string) {

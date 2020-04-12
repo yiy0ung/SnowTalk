@@ -1,5 +1,5 @@
-import React from 'react';
-import { useSelector } from 'react-redux';
+import React, { useCallback } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 
 import useInput from 'utils/hooks/useInput';
 import { RootState } from 'store/reducers';
@@ -7,14 +7,28 @@ import { Button } from 'components/base/Button';
 
 import './FriendAddModal.scss';
 import { SimpleInput } from 'components/base/SimpleInput';
+import { fetchAppendFriendAsync } from 'store/reducers/member.reducer';
 
 type Props = {
   onClose: Function;
 };
 
 function FriendAddModal({ onClose }: Props) {
+  const dispatch = useDispatch();
   const friendId = useInput('');
   const { member } = useSelector((state: RootState) => state.member);
+
+  const onAppendFriend = useCallback(() => {
+    const value = parseInt(friendId.value, 10);
+
+    friendId.setValue('');
+    if (!Number.isInteger(value)) {
+      return;
+    }
+
+    dispatch(fetchAppendFriendAsync.request(value));
+    onClose();
+  }, [dispatch, friendId, onClose]);
 
   return (
     <div className="friend-add-modal">
@@ -38,7 +52,7 @@ function FriendAddModal({ onClose }: Props) {
 
       <div className="friend-add-modal__foot">
         <div>
-          <Button onClick={() => {}}>친구 추가</Button>
+          <Button onClick={onAppendFriend}>친구 추가</Button>
         </div>
       </div>
     </div>

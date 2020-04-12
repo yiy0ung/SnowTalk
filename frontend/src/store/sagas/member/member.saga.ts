@@ -6,6 +6,8 @@ import {
   fetchLoginAsync,
   fetchMembersInfoAsync,
   login as loginAction,
+  fetchAppendFriendAsync,
+  fetchRemoveFriendAsync,
 } from 'store/reducers/member.reducer';
 
 function* login(action: ReturnType<typeof fetchLoginAsync.request>) {
@@ -44,9 +46,41 @@ function* getMyInfo() {
   }
 }
 
+function* appendFriend(action: ReturnType<typeof fetchAppendFriendAsync.request>) {
+  try {
+    const result = yield call(memberRepo.appendFriends, action.payload);
+
+    if (result.status === 200) {
+      yield all([
+        put(fetchAppendFriendAsync.success()),
+        put(fetchMembersInfoAsync.request()),
+      ]);
+    }
+  } catch (error) {
+    yield put(fetchAppendFriendAsync.failure(error));
+  }
+}
+
+function* removeFriend(action: ReturnType<typeof fetchRemoveFriendAsync.request>) {
+  try {
+    const result = yield call(memberRepo.removeFriends, action.payload);
+
+    if (result.status === 200) {
+      yield all([
+        put(fetchRemoveFriendAsync.success()),
+        put(fetchMembersInfoAsync.request()),
+      ]);
+    }
+  } catch (error) {
+    yield put(fetchRemoveFriendAsync.failure(error));
+  }
+}
+
 export default function* memberSaga() {
   yield all([
     takeLatest(fetchLoginAsync.request, login),
     takeLatest(fetchMembersInfoAsync.request, getMyInfo),
+    takeLatest(fetchAppendFriendAsync.request, appendFriend),
+    takeLatest(fetchRemoveFriendAsync.request, removeFriend),
   ]);
 }

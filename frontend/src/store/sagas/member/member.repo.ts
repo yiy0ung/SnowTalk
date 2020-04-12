@@ -31,6 +31,32 @@ class MemberRepo {
 
     return res.data;
   }
+
+  public async appendFriends(friendId: number) {
+    console.log(friendId, typeof friendId);
+    const res = await axios.post(`${server.host}/member/friend`, {
+      friendId,
+    }, {
+      headers: {
+        token: sessionStorage.getItem('token'),
+      },
+    });
+
+    return res.data;
+  }
+
+  public async removeFriends(friendIdx: number) {
+    const res = await axios.delete(`${server.host}/member/friend`, {
+      headers: {
+        token: sessionStorage.getItem('token'),
+      },
+      params: {
+        friend_idx: friendIdx,
+      },
+    });
+
+    return res.data;
+  }
 }
 
 export default new MemberRepo();

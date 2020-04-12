@@ -66,13 +66,30 @@ export class MemberCtrl {
 
   public appendFriend = async (req: AuthRequest, res: Response) => {
     const { memberIdx } = req.decoded;
-    const { friendId } = req.body;
-
+    let { friendId } = req.body;
+    
     try {
-      if (!Number.isInteger(friendId) || friendId <= 0) {
+      friendId = parseInt(friendId, 10);
+
+      if (
+        !Number.isInteger(friendId) 
+        || Number.isNaN(friendId)
+        || friendId <= 0
+      ) {
         res.status(400).json({
           status: 400,
           message: '잘못된 친구 ID 입니다',
+        });
+
+        return;
+      }
+
+      const myInfo = await this.memberSerive.getMemberByIdx(memberIdx);
+
+      if (myInfo.friendId === friendId) {
+        res.status(400).json({
+          status: 400,
+          message: '자기자신을 친구 추가할 수 없습니다',
         });
 
         return;
@@ -104,9 +121,24 @@ export class MemberCtrl {
 
   public removeFriend = async (req: AuthRequest, res: Response) => {
     const { memberIdx } = req.decoded;
-    const { friend_idx: friendIdx } = req.query;
+    let { friend_idx: friendIdx } = req.query;
 
     try {
+      friendIdx = parseInt(friendIdx, 10);
+
+      if (
+        !Number.isInteger(friendIdx) 
+        || Number.isNaN(friendIdx)
+        || friendIdx <= 0
+      ) {
+        res.status(400).json({
+          status: 400,
+          message: '잘못된 친구 INDEX 입니다',
+        });
+
+        return;
+      }
+
       const result = await this.friendService.removeFriend(memberIdx, friendIdx);
 
       if (!result) {
