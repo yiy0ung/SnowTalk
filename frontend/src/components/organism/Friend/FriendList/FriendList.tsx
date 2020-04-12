@@ -40,7 +40,10 @@ function FriendList({ friends }: Props) {
       type="profile"
       imgUrls={[]}
       additionalInfo={(
-        <FaRegTrashAlt onClick={() => onRemoveFriend(friend.idx)} title="친구 삭제" />
+        <FaRegTrashAlt 
+          className="friend-list__item-option remove"
+          onClick={() => onRemoveFriend(friend.idx)} 
+          title="친구 삭제" />
       )}
     />
   ));

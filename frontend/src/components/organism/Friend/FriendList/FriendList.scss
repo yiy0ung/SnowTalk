@@ -34,4 +34,12 @@
       color: #cccccc;
     }
   }
+
+  &__item-option.remove {
+    transition: 0.2s color ease-in-out;
+    
+    &:hover {
+      color: tomato;
+    }
+  }
 }
