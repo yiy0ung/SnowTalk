@@ -1,5 +1,5 @@
 
-export type Member = {
+export interface Member {
   idx: number;
   id: string;
   friendId: string;
@@ -7,3 +7,7 @@ export type Member = {
   intro: string;
   profileImg: object;
 };
+
+export interface InitMember extends Member {
+  pw: string;
+}
