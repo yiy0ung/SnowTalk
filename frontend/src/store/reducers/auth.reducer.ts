@@ -11,16 +11,15 @@ type AuthState = {
     visible: boolean;
     title: string;
     text: string;
-    status: 'normal'|'success'|'cancel'|'failure',
   },
 };
+
 
 export const initialState: AuthState = {
   popup: {
     visible: false,
     title: '',
     text: '',
-    status: 'normal',
   },
 };
 
@@ -33,7 +32,7 @@ export const UPDATE_PROFILE_REQUEST = 'UPDATE_PROFILE_REQUEST';
 export const UPDATE_PROFILE_SUCCESS = 'UPDATE_PROFILE_SUCCESS';
 export const UPDATE_PROFILE_FAILURE = 'UPDATE_PROFILE_FAILURE';
 
-export const openPopUp = createAction(OPEN_POPUP)<any>();
+export const openPopUp = createAction(OPEN_POPUP)<{title: string; text: string;}>();
 export const closePopUp = createAction(CLOSE_POPUP)();
 export const fetchSignUpAsync = createAsyncAction(
   SIGNUP_REQUEST,
@@ -58,10 +57,9 @@ export default createReducer<AuthState, AuthAction>(initialState, {
   [OPEN_POPUP]: (state, action) => ({
     ...state,
     popup: {
-      visible: action.payload.visible || true,
+      visible: true,
       title: action.payload.title,
       text: action.payload.text,
-      status: action.payload.status,
     },
   }),
   [CLOSE_POPUP]: (state) => ({
@@ -70,7 +68,6 @@ export default createReducer<AuthState, AuthAction>(initialState, {
       visible: false,
       title: '',
       text: '',
-      status: 'normal',
     },
   }),
 });
