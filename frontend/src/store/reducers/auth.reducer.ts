@@ -38,7 +38,7 @@ export const fetchSignUpAsync = createAsyncAction(
   SIGNUP_REQUEST,
   SIGNUP_SUCCESS,
   SIGNUP_FAILURE,
-)<Partial<InitMember>, undefined, Error>();
+)<Partial<InitMember>&{file: File|null}, undefined, Error>();
 export const fetchUpdateProfileAsync = createAsyncAction(
   UPDATE_PROFILE_REQUEST,
   UPDATE_PROFILE_SUCCESS,

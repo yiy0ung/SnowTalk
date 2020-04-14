@@ -5,9 +5,20 @@ export interface Member {
   friendId: string;
   name: string;
   intro: string;
-  profileImg: object;
+  profileImg: ProfileImg|null;
 };
 
 export interface InitMember extends Member {
   pw: string;
+}
+
+export type SavedImg = {
+  fileIdx: number;
+  fileName: string;
+};
+
+export type ProfileImg = {
+  idx: number;
+  name: string;
+  extend: string;
 }

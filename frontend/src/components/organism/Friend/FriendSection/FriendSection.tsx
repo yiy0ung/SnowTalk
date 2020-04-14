@@ -6,6 +6,7 @@ import { UserCard } from 'components/common/UserCard';
 import { FriendList } from '../FriendList';
 
 import './FriendSection.scss';
+import server from 'config/server';
 
 type Props = {
   searchWord: string;
@@ -24,7 +25,9 @@ function FriendSection({ searchWord }: Props) {
               title={member.name}
               desc={member.intro}
               type="profile"
-              imgUrls={[]}
+              imgUrls={member.profileImg !== null ? [
+                `${server.imgServer}/${member.profileImg.name}`,
+              ]:[]}
               avatar={{ size: 'xlarge' }}
             />
             <FriendList friends={friends} />

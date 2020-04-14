@@ -1,9 +1,10 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 
+import server from 'config/server';
+import { RootState } from 'store/reducers';
 import { ContentTemplate } from 'components/organism/template/ContentTemplate';
 import { Header } from 'components/base/Header';
-import { RootState } from 'store/reducers';
 import { UserCard } from 'components/common/UserCard';
 import { MoreList } from '../MoreList';
 
@@ -22,7 +23,9 @@ function MoreSection() {
       <UserCard
         title={member.name}
         desc={member.intro}
-        imgUrls={[]}
+        imgUrls={member.profileImg !== null ? [
+          `${server.imgServer}/${member.profileImg.name}`,
+        ]:[]}
         avatar={{ size: 'xlarge' }}
         type="profile"
       />

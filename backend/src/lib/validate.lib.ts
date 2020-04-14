@@ -15,7 +15,7 @@ export const signUp = (body) => {
     pw: Joi.string().required(),
     name: Joi.string().required(),
     intro: Joi.string(),
-    profileImg: Joi.number().integer(),
+    profileImg: Joi.number().integer().allow(null),
   });
 
   return schema.validateAsync(body);
@@ -26,7 +26,7 @@ export const updateMember = (body) => {
     pw: Joi.string(),
     name: Joi.string(),
     intro: Joi.string(),
-    profileImg: Joi.number().integer(),
+    profileImg: Joi.number().integer().allow(null),
   });
 
   return schema.validateAsync(body);

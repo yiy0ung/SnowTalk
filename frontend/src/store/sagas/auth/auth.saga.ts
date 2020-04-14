@@ -1,10 +1,32 @@
 import { all, takeLatest, put, call } from 'redux-saga/effects';
 import { fetchSignUpAsync, fetchUpdateProfileAsync, openPopUp } from 'store/reducers/auth.reducer';
 import AuthRepo from './auth.repo';
+import UploadRepo from '../upload/upload.repo';
+import { SavedImg } from 'utils/types/entity.type';
+
+function* uploadImg(files: File[]) {
+  try {
+    const { data } = yield call(UploadRepo.uploadImg, files);
+
+    return data.images;
+  } catch (error) {
+    throw error;
+  }
+}
 
 function* signUp(action: ReturnType<typeof fetchSignUpAsync.request>) {
   try {
-    const { status } = yield call(AuthRepo.signUp, action.payload);
+    let profileImgIdx = null;
+
+    if (action.payload.file) {
+      const files = [action.payload.file];
+
+      const savedFiles: SavedImg[] = yield uploadImg(files);
+
+      profileImgIdx = savedFiles[0].fileIdx;
+    }
+
+    const { status } = yield call(AuthRepo.signUp, action.payload, profileImgIdx);
 
     if (status === 200) {
       yield put(fetchSignUpAsync.success());

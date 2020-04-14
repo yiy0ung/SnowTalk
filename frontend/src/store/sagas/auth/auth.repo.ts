@@ -3,15 +3,15 @@ import server from 'config/server';
 import { InitMember } from "utils/types/entity.type";
 
 class AuthRepo {
-  public async signUp(member: Partial<InitMember>) {
-    const { id, pw, name, intro, profileImg } = member;
+  public async signUp(member: Partial<InitMember>, fileIdx: number|null) {
+    const { id, pw, name, intro } = member;
 
     const resp = await axios.post(`${server.host}/auth/signup`, {
       id,
       pw,
       name,
       intro,
-      profileImg,
+      profileImg: fileIdx,
     });
 
     return resp.data;

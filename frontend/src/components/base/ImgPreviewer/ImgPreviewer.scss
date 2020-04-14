@@ -1,0 +1,63 @@
+
+.preview {
+  display: flex;
+  align-items: center;
+  
+  &__img {
+    width: 5rem;
+    height: 5rem;
+    margin-right: 1rem;
+    border-radius: 40%;
+    border: 1px solid #cccccc;
+    overflow: hidden;
+
+    & img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+
+  &__content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    & > * + * {
+      margin-top: 0.5rem;
+    }
+  }
+
+  &__btn-label {
+    cursor: pointer; 
+    outline: none;
+    display: inline-block; 
+    padding: 0.25rem 0.7rem; 
+    color: #999; 
+    font-size: inherit; 
+    line-height: normal;
+    vertical-align: middle;
+    background-color: #fdfdfd; 
+    border: 1px solid #ebebeb; 
+    border-radius: 6px;
+    transition: 0.2s all ease-in-out;
+
+    &:hover {
+      background-color: #594840;
+      border: 1px solid #594840; 
+      color: #fff;
+    }
+  }
+
+  &__btn {
+    outline: none;
+    position: absolute; 
+    width: 1px; 
+    height: 1px; 
+    padding: 0; 
+    margin: -1px; 
+    overflow: hidden; 
+    clip: rect(0,0,0,0); 
+    border: 0;
+  }
+}

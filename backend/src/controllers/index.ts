@@ -17,7 +17,7 @@ class RootRouter {
   private setRouter() {
     this.router.use('/auth', Container.get(AuthRoute).getRouter());
     this.router.use('/member', authMiddleware, Container.get(MemberRoute).getRouter());
-    this.router.use('/upload', authMiddleware, Container.get(UploadRoute).getRouter());
+    this.router.use('/upload', Container.get(UploadRoute).getRouter());
   }
 
   public getRouter() {

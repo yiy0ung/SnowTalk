@@ -29,13 +29,13 @@ function* login(action: ReturnType<typeof fetchLoginAsync.request>) {
 
 function* getMyInfo() {
   try {
-    const myInfoRes = yield call(memberRepo.getMyInfo);
+    const { data: myInfoRes} = yield call(memberRepo.getMyInfo);
     const friendRes = yield call(memberRepo.getFriends);
 
     const friends = map(friendRes.data.friend, 'followingMember');
 
     const result = {
-      member: myInfoRes.data.info,
+      member: myInfoRes.info,
       friends,
     };
     

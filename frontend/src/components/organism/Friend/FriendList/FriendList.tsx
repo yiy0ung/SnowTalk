@@ -1,13 +1,14 @@
 import React, { useCallback } from 'react';
+import { useDispatch } from 'react-redux';
+import { FaRegTrashAlt } from 'react-icons/fa';
 import Swal from 'sweetalert2';
 
-import { UserCard } from 'components/common/UserCard';
+import server from 'config/server';
 import { Member } from 'utils/types/entity.type';
-import { FaRegTrashAlt } from 'react-icons/fa';
+import { fetchRemoveFriendAsync } from 'store/reducers/member.reducer';
+import { UserCard } from 'components/common/UserCard';
 
 import './FriendList.scss';
-import { fetchRemoveFriendAsync } from 'store/reducers/member.reducer';
-import { useDispatch } from 'react-redux';
 
 type Props = {
   friends: Member[];
@@ -38,7 +39,9 @@ function FriendList({ friends }: Props) {
       title={friend.name}
       desc={friend.intro}
       type="profile"
-      imgUrls={[]}
+      imgUrls={friend.profileImg !== null ? [
+        `${server.imgServer}/${friend.profileImg.name}`,
+      ]:[]}
       additionalInfo={(
         <FaRegTrashAlt 
           className="friend-list__item-option remove"
