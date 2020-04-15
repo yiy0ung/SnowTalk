@@ -1,16 +1,21 @@
-import React, { useCallback, useState, ChangeEvent } from 'react';
-import defaultImg from 'assets/image/default-profile.jpg';
+import React, { useCallback, ChangeEvent } from 'react';
+import unknowProfileImg from 'assets/image/default-profile.jpg';
 
 import './ImgPreviewer.scss';
 
 type Props = {
-  defaultImgUrl?: string;
-  imgFile: File|null;
+  imgFile: File|number|null;
   setImgFile: (data: File|null) => void;
+  imgBase64: string,
+  setImgBase64: (data: string) => void,
 };
 
-function ImgPreviewer({ defaultImgUrl = '', imgFile, setImgFile }: Props) {
-  const [imgBase64, setImgBase64] = useState<string>(defaultImgUrl);
+function ImgPreviewer({ 
+  imgFile, 
+  setImgFile,
+  imgBase64,
+  setImgBase64,
+}: Props) {
 
   const onChangeFile = useCallback((e: ChangeEvent<HTMLInputElement>) => {
     const render = new FileReader();
@@ -30,15 +35,15 @@ function ImgPreviewer({ defaultImgUrl = '', imgFile, setImgFile }: Props) {
   }, [setImgBase64, setImgFile]);
 
   const onRemoveImg = useCallback(() => {
-    setImgBase64(defaultImgUrl);
+    setImgBase64(unknowProfileImg);
     setImgFile(null);
-  }, [defaultImgUrl, setImgFile]);
+  }, [setImgBase64, setImgFile]);
 
   return (
     <div className="preview">
       <div className="preview__img">
         <img 
-          src={imgFile !== null ? imgBase64 : defaultImg}
+          src={imgBase64}
           alt="profile-img"
         />
       </div>

@@ -38,12 +38,12 @@ export const fetchSignUpAsync = createAsyncAction(
   SIGNUP_REQUEST,
   SIGNUP_SUCCESS,
   SIGNUP_FAILURE,
-)<Partial<InitMember>&{file: File|null}, undefined, Error>();
+)<Partial<InitMember>&{file: File|number|null}, undefined, Error>();
 export const fetchUpdateProfileAsync = createAsyncAction(
   UPDATE_PROFILE_REQUEST,
   UPDATE_PROFILE_SUCCESS,
   UPDATE_PROFILE_FAILURE,
-)<Partial<InitMember>, undefined, Error>();
+)<Partial<InitMember>&{file: File|number|null}, undefined, Error>();
 
 const actions = {
   openPopUp,

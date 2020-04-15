@@ -1,14 +1,17 @@
 import React, { useCallback, useState } from 'react';
 import { useDispatch } from 'react-redux';
+import Swal from 'sweetalert2';
 
+import server from 'config/server';
 import useInput from 'utils/hooks/useInput';
+import { ProfileImg } from 'utils/types/entity.type';
+import { fetchSignUpAsync, fetchUpdateProfileAsync } from 'store/reducers/auth.reducer';
+import unknowProfileImg from 'assets/image/default-profile.jpg';
 import { ImgPreviewer } from 'components/base/ImgPreviewer';
 import { SimpleInput } from 'components/base/SimpleInput';
 import { Button } from 'components/base/Button';
 
 import './SignUpModal.scss';
-import { fetchSignUpAsync } from 'store/reducers/auth.reducer';
-import Swal from 'sweetalert2';
 
 type Props = {
   visible: boolean;
@@ -17,7 +20,7 @@ type Props = {
   defaultData?: {
     name: string;
     intro: string;
-    profileImgUrl: string;
+    profileImg: ProfileImg|null;
   }
 };
 
@@ -25,38 +28,46 @@ function SignUpModal({
   visible,
   type, 
   onClose, 
-  defaultData = { name: '', intro: '', profileImgUrl: '' },
+  defaultData = { name: '', intro: '', profileImg: null },
 }: Props) {
+  const currentProfileImg = defaultData.profileImg?.idx || null;
+  const defaultImgUrl = defaultData.profileImg ? `${server.imgServer}/${defaultData.profileImg.name}` 
+  : unknowProfileImg;
   const dispatch = useDispatch();
 
   const id = useInput('');
   const pw = useInput('');
   const name = useInput(defaultData.name);
   const intro = useInput(defaultData.intro);
-  const [profileImg, setProfileImg] = useState<File|null>(null);
+  const [uploadedFile, setUploadedFile] = useState<File|null|number>(currentProfileImg);
+  const [imgBase64, setImgBase64] = useState<string>(defaultImgUrl);
 
   const form = type === 'signup'? {
     name: '회원가입',
     confirmText: '가입',
     signInfoVisible: true,
   } : {
-    name: '회원수정',
+    name: '정보변경',
     confirmText: '수정',
     signInfoVisible: false,
   };
 
   const onCloseView = useCallback(() => {
-    id.setValue('');
-    pw.setValue('');
-    name.setValue('');
-    intro.setValue('');
-    setProfileImg(null);
+    if (form.signInfoVisible) {
+      id.setValue('');
+      pw.setValue('');
+      name.setValue('');
+      intro.setValue('');
+    }
+
+    setUploadedFile(currentProfileImg);
+    setImgBase64(defaultImgUrl);
     
     onClose();
-  }, [id, intro, name, onClose, pw]);
+  }, [form.signInfoVisible, currentProfileImg, defaultImgUrl, onClose, id, pw, name, intro]);
 
   const onChangeProfileImg = useCallback((file: File|null) => {
-    setProfileImg(file);
+    setUploadedFile(file);
   }, []);
 
   const handleSignUp = useCallback(() => {
@@ -73,15 +84,20 @@ function SignUpModal({
         pw: pw.value,
         name: name.value,
         intro: intro.value,
-        file: profileImg,
+        file: uploadedFile,
       }));
       onCloseView();
     }
-  }, [dispatch, id.value, intro.value, name.value, profileImg, pw.value, onCloseView]);
+  }, [dispatch, id.value, intro.value, name.value, uploadedFile, pw.value, onCloseView]);
 
   const handleUpdateProfile = useCallback(() => {
-
-  }, []);
+    dispatch(fetchUpdateProfileAsync.request({
+      name: name.value,
+      intro: intro.value,
+      file: uploadedFile,
+    }));
+    onCloseView();
+  }, [dispatch, intro.value, name.value, uploadedFile, onCloseView]);
 
   return (
     <div className="signup-modal-bg" style={visible ? {}:{display: 'none'}}>
@@ -115,9 +131,10 @@ function SignUpModal({
             <div className="signup-modal__subtitle">프로필 이미지</div>
             <div className="signup-modal__content">
               <ImgPreviewer 
-                defaultImgUrl={defaultData.profileImgUrl} 
-                imgFile={profileImg}
-                setImgFile={onChangeProfileImg} />
+                imgFile={uploadedFile}
+                setImgFile={onChangeProfileImg}
+                imgBase64={imgBase64}
+                setImgBase64={setImgBase64} />
             </div>
           </div>
         </div>

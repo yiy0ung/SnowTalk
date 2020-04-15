@@ -3,6 +3,7 @@ import { fetchSignUpAsync, fetchUpdateProfileAsync, openPopUp } from 'store/redu
 import AuthRepo from './auth.repo';
 import UploadRepo from '../upload/upload.repo';
 import { SavedImg } from 'utils/types/entity.type';
+import { fetchMembersInfoAsync } from 'store/reducers/member.reducer';
 
 function* uploadImg(files: File[]) {
   try {
@@ -18,7 +19,7 @@ function* signUp(action: ReturnType<typeof fetchSignUpAsync.request>) {
   try {
     let profileImgIdx = null;
 
-    if (action.payload.file) {
+    if (action.payload.file && typeof action.payload.file === 'object') {
       const files = [action.payload.file];
 
       const savedFiles: SavedImg[] = yield uploadImg(files);
@@ -46,14 +47,29 @@ function* signUp(action: ReturnType<typeof fetchSignUpAsync.request>) {
 
 function* updateProfile(action: ReturnType<typeof fetchUpdateProfileAsync.request>) {
   try {
-    const { status } = yield call(AuthRepo.updateProfile, action.payload);
+    let profileImgIdx = null;
+    if (action.payload.file && typeof action.payload.file === 'object') {
+      const files = [action.payload.file];
+
+      const savedFiles: SavedImg[] = yield uploadImg(files);
+
+      profileImgIdx = savedFiles[0].fileIdx;
+    } else if (typeof action.payload.file === 'number') {
+      profileImgIdx = action.payload.file;
+    }
+
+    const { status } = yield call(AuthRepo.updateProfile, action.payload, profileImgIdx);
 
     if (status === 200) {
-      yield put(fetchUpdateProfileAsync.success());
-      yield put(openPopUp({
-        title: '정보 수정을 성공하였습니다',
-        text: '',
-      }));
+      yield all([
+        yield put(fetchUpdateProfileAsync.success()),
+        yield put(openPopUp({
+          title: '정보 수정을 성공하였습니다',
+          text: '',
+        })),
+      ]);
+
+      yield put(fetchMembersInfoAsync.request());
     }
   } catch (error) {
     yield put(fetchUpdateProfileAsync.failure(error));

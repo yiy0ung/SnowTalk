@@ -17,14 +17,18 @@ class AuthRepo {
     return resp.data;
   }
 
-  public async updateProfile(member: Partial<InitMember>) {
-    const { pw, name, intro, profileImg } = member;
+  public async updateProfile(member: Partial<InitMember>, fileIdx: number|null) {
+    const { pw, name, intro } = member;
 
     const resp = await axios.put(`${server.host}/auth/`, {
       pw,
       name,
       intro,
-      profileImg,
+      profileImg: fileIdx,
+    }, {
+      headers: {
+        token: sessionStorage.getItem('token'),
+      },
     });
 
     return resp.data;

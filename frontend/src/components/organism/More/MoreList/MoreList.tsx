@@ -1,13 +1,15 @@
-import React, { ReactNode, useCallback } from 'react';
-
-import { logout } from 'store/reducers/member.reducer';
+import React, { ReactNode, useCallback, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { FaRegListAlt } from 'react-icons/fa';
 import { FiLogOut, FiBell } from 'react-icons/fi';
 import { IoIosFlask, IoIosHelpCircleOutline } from 'react-icons/io';
 import { TiCogOutline } from 'react-icons/ti';
-import { useDispatch } from 'react-redux';
+
+import { logout } from 'store/reducers/member.reducer';
+import { SignUpModal } from 'components/organism/Sign/SignUpModal';
 
 import './MoreList.scss';
+import { RootState } from 'store/reducers';
 
 type Props = {
   icon: ReactNode;
@@ -26,6 +28,9 @@ function MoreListItem({ icon, onClick, children }: Props) {
 
 function MoreList() {
   const dispatch = useDispatch();
+  const { member } = useSelector((state: RootState) => state.member);
+  const [visible, setVisible] = useState(false);
+
   const onLogout = useCallback(() => {
     dispatch(logout());
     sessionStorage.removeItem('token');
@@ -35,7 +40,9 @@ function MoreList() {
     <div className="more-list">
       <div className="more-list__line"></div>
       <ul>
-        <MoreListItem icon={<FaRegListAlt />}>정보 변경</MoreListItem>
+        <MoreListItem onClick={() => setVisible(true)} icon={<FaRegListAlt />}>
+          정보 변경
+        </MoreListItem>
         <MoreListItem icon={<FiBell />}>공지사항</MoreListItem>
         <MoreListItem icon={<TiCogOutline />}>설정</MoreListItem>
         <MoreListItem icon={<IoIosHelpCircleOutline />}>도움말</MoreListItem>
@@ -44,6 +51,16 @@ function MoreList() {
           로그아웃
         </MoreListItem>
       </ul>
+      <SignUpModal 
+        visible={visible} 
+        onClose={() => setVisible(false)}
+        type="update"
+        defaultData={{
+          name: member.name,
+          intro: member.intro,
+          profileImg: member.profileImg,
+        }} />
+
     </div>
   );
 }

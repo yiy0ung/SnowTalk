@@ -68,11 +68,10 @@ export class MemberService {
     return member;
   }
 
-  public async updateMember(memberId: string, data: Pick<Member, 'pw'|'name'|'intro'|'profileImg'>) {
+  public async updateMember(memberId: string, data: Pick<Member, 'name'|'intro'|'profileImg'>) {
     const result = await this.memberRepo.update({
       id: memberId,
     }, {
-      pw: data.pw,
       name: data.name,
       intro: data.intro,
       profileImg: data.profileImg,
