@@ -1,5 +1,5 @@
-import { Container, Service } from "typedi";
-import { Server, Namespace, Socket } from 'socket.io';
+import { Container } from "typedi";
+import { Server, Namespace } from 'socket.io';
 import { ChatNmsp } from "./namespace/chat/chat.nmsp";
 
 export function runSocket(io: Server) {

@@ -17,11 +17,12 @@ export class ChatNmsp {
 
   public handleingEvent(socket: AuthSocket) {
     const token = socket.handshake.query['token'];
-    // console.log(ChatNmsp.instance.sockets && ChatNmsp.instance.connected);
+
     try {
       const decoded = tokenLib.verifyToken(token);
       socket.decoded = decoded;
 
+      socket.on(ChatListener.joinRoom, () => this.chatEvent.joinChatRoom(socket));
       socket.on(ChatListener.sendMsg, (data) => this.chatEvent.sendMsg(socket, data));
     } catch (error) {
       console.error('채팅 에러 발생');

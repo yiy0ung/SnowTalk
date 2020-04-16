@@ -6,7 +6,6 @@ import moment from 'moment-timezone';
 import * as tokenLib from '../lib/token.lib';
 import { Member } from "../database/models/Member";
 
-
 @Service()
 export class MemberService {
   constructor(
