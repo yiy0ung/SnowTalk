@@ -10,6 +10,9 @@ export class ChatParticipant {
   @Column({ type: 'varchar', length: 50, nullable: true })
   nickname?: string;
 
+  @Column({ type: 'int' })
+  activation: number;
+
   @ManyToOne(type => Member, member => member.idx, {
     onDelete: 'CASCADE',
   })

@@ -39,8 +39,25 @@ export class ChatEvent {
 
   }
 
-  public async leaveChatRoom() {
+  public async leaveChatRoom(socket: AuthSocket, data) {
+    try {
+      const { decoded } = socket;
+      const { chatRoomIdx } = data;
 
+      await this.chatService.leaveChatRoomByIdx(decoded.memberIdx, chatRoomIdx);
+
+      // 채팅방의 인원이 1명일때, 채팅방을 비활성화 한다.
+
+      socket.emit(ChatListener.leaveRoom, {
+        status: 0,
+        message: '채팅방을 나갔습니다',
+      });
+    } catch (error) {
+      console.error(error);
+      socket.emit(ChatListener.chatError, {
+        status: 4,
+      });
+    }
   }
 
   public sendMsg(socket: AuthSocket, data) {

@@ -11,4 +11,8 @@ export class ChatService {
   public getChatRoomByMemberIdx(memberIdx: number) {
     return this.chatRoomRepo.getChatRoomByMemberIdx(memberIdx);
   }
+
+  public async leaveChatRoomByIdx(memberIdx: number, chatRoomIdx: number) {
+    
+  }
 }

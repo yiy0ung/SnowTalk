@@ -10,6 +10,9 @@ export class ChatRoom {
   @Column({ type: 'varchar', length: 50 })
   title: string;
 
+  @Column({ type: 'int' })
+  activation: number;
+
   @OneToMany(type => ChatParticipant, participant => participant.member)
   participants: ChatParticipant[];
 
