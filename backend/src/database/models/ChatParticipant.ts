@@ -10,7 +10,7 @@ export class ChatParticipant {
   @Column({ type: 'varchar', length: 50, nullable: true })
   nickname?: string;
 
-  @Column({ type: 'int' })
+  @Column({ type: 'int', default: 1 })
   activation: number;
 
   @ManyToOne(type => Member, member => member.idx, {

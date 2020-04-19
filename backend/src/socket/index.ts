@@ -11,6 +11,3 @@ export function runSocket(io: Server) {
 
   chat.on('connection', Container.get(ChatNmsp).handleingEvent);
 }
-
-// socket status
-// https://gist.github.com/gabrielfalcao/4216897

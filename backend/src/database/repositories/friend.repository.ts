@@ -1,5 +1,4 @@
-import { Repository, EntityRepository } from "typeorm"
-import { Member } from "../models/Member";
+import { Repository, EntityRepository } from "typeorm";
 import { Friend } from "../models/Friend";
 
 @EntityRepository(Friend)

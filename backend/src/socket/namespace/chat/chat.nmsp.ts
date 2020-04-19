@@ -1,10 +1,12 @@
 import { Service } from "typedi";
 import { Namespace } from "socket.io";
 import { autobind } from 'core-decorators';
-import { ChatEvent } from "./chat.event";
-import { ChatListener } from './chat.listener';
+
 import * as tokenLib from '../../../lib/token.lib';
 import { AuthSocket } from "../../../typings";
+import { ChatListener } from './chat.listener';
+import { ChatEvent } from "./chat.event";
+import { MessageEvent } from "./message.event";
 
 @autobind
 @Service()
@@ -13,6 +15,7 @@ export class ChatNmsp {
 
   constructor(
     private chatEvent: ChatEvent,
+    private messageEvent: MessageEvent,
   ) {}
 
   public handleingEvent(socket: AuthSocket) {
@@ -23,7 +26,7 @@ export class ChatNmsp {
       socket.decoded = decoded;
 
       socket.on(ChatListener.joinRoom, () => this.chatEvent.joinChatRoom(socket));
-      socket.on(ChatListener.sendMsg, (data) => this.chatEvent.sendMsg(socket, data));
+      socket.on(ChatListener.sendMsg, (data) => this.messageEvent.sendMsg(socket, data));
     } catch (error) {
       console.error('채팅 에러 발생');
       console.error(error);

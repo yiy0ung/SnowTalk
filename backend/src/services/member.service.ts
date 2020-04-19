@@ -24,15 +24,17 @@ export class MemberService {
       where: {
         idx: memberIdx,
       },
-      join: {
-        alias: 'member',
-        leftJoinAndSelect: {
-          profileImg: 'member.profileImg',
-        },
-      },
     });
 
     return member;
+  }
+
+  public async getMembersByIdxes(memberIdxes: number[]) {
+    const members = await this.memberRepo.createQueryBuilder('member')
+      .where('member.idx IN (:idxes)', { idxes: memberIdxes })
+      .getMany();
+
+    return members;
   }
 
   public async getMemberBySecurity(id: string, pw: string) {

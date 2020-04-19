@@ -1,6 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from "typeorm";
 import { ChatParticipant } from "./ChatParticipant";
 import { ChatMessage } from "./ChatMessage";
+import { RoomType } from "../enum/ChatType";
 
 @Entity({ name: 'chat_room' })
 export class ChatRoom {
@@ -10,8 +11,11 @@ export class ChatRoom {
   @Column({ type: 'varchar', length: 50 })
   title: string;
 
-  @Column({ type: 'int' })
+  @Column({ type: 'int', default: 1 })
   activation: number;
+
+  @Column({ type: 'enum', enum: RoomType })
+  type: RoomType;
 
   @OneToMany(type => ChatParticipant, participant => participant.member)
   participants: ChatParticipant[];
