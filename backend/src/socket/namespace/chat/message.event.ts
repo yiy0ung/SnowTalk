@@ -1,29 +1,38 @@
 import { Service } from "typedi";
 import { AuthSocket } from "../../../typings";
 import { ChatListener } from "./chat.listener";
+import { ChatRoom } from "../../../database/models/ChatRoom";
+import { MessageService } from "../../../services/message.service";
+import { ChatNmsp } from "./chat.nmsp";
 
 @Service()
 export class MessageEvent {
+  constructor(
+    private messageService: MessageService,
+  ) {}
 
-  public sendSystemMsg(socket: AuthSocket, {
+  public async sendSystemMsg(socket: AuthSocket, {
+    room,
     message,
-    roomIdx,  
-  }: { message: string, roomIdx: number }) {
-    // save a message to a database;
+  }: { room: ChatRoom, message: string }) {
+    const messageData = await this.messageService.createSystemMsg(room, message);
 
     const payload = {
       status: 200,
-      data: {},
+      data: {
+        message: messageData,
+      },
     };
 
     socket.broadcast
-      .to(`chatroom-${roomIdx}`)
+      .to(`chatroom-${room.idx}`)
       .emit(ChatListener.receiveMsg, payload);
 
-    return;
+    return messageData;
   }
 
   public sendMsg(socket: AuthSocket, data) {
+    console.log(ChatNmsp.instance);
     console.log(socket.decoded);
     console.log(data);
 

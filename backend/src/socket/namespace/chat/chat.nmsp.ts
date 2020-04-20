@@ -21,6 +21,8 @@ export class ChatNmsp {
   public handleingEvent(socket: AuthSocket) {
     const token = socket.handshake.query['token'];
 
+    // redis에 연결정보 저장
+
     try {
       const decoded = tokenLib.verifyToken(token);
       socket.decoded = decoded;

@@ -4,6 +4,7 @@ import { InjectRepository } from "typeorm-typedi-extensions";
 import { ChatRoomRepository } from "../database/repositories/chat.repository";
 import { ChatParticipantRepository } from "../database/repositories/chatParticipant.repository";
 import { Member } from "../database/models/Member";
+import { ChatRoom } from "../database/models/ChatRoom";
 
 @Service()
 export class ChatService {
@@ -12,17 +13,12 @@ export class ChatService {
     @InjectRepository() private readonly chatParticipantRepo: ChatParticipantRepository,
   ) {}
 
-  public getChatRoomByMemberIdx(memberIdx: number) {
-    return this.chatRoomRepo.getActiveRoomsByMemberIdx(memberIdx);
+  public getChatRoomsByIdx(roomIdx: number, activation: 0|1) {
+    return this.chatRoomRepo.getRoomsByIdx(roomIdx, activation);
   }
 
-  public getParticipantsByRoomIdx(chatRoomIdx: number) {
-    return this.chatParticipantRepo.find({
-      where: {
-        chatRoom: chatRoomIdx,
-        activation: 1,
-      },
-    });
+  public getChatRoomByMemberIdx(memberIdx: number) {
+    return this.chatRoomRepo.getActiveRoomsByMemberIdx(memberIdx);
   }
 
   public changeRoomActivation(chatRoomIdx: number, activation: 0|1) {
@@ -33,13 +29,7 @@ export class ChatService {
     });
   }
 
-  public async connectChatRoom(members: Member[], chatRoomIdx: number) {
-    const room = await this.chatRoomRepo.getRoomsByIdx(chatRoomIdx, 1);
-
-    if (!room && members.length <= 0) {
-      return false;
-    }
-
+  public async connectChatRoom(members: Member[], room: ChatRoom) {
     for (const member of members) {
       const chatMember = await this.chatParticipantRepo.getParticipant(member.idx, room.idx);
 
@@ -53,8 +43,7 @@ export class ChatService {
     return true;
   }
 
-  public async leaveChatRoomByIdx(member: Member, chatRoomIdx: number) {
-    const room = await this.chatRoomRepo.getRoomsByIdx(chatRoomIdx, 1);
+  public async leaveChatRoomByIdx(member: Member, room: ChatRoom) {
     const chatMember = await this.chatParticipantRepo.getParticipant(member.idx, room.idx);
 
     if (!chatMember || chatMember.activation === 0) {
@@ -63,6 +52,17 @@ export class ChatService {
 
     // 참여 비활성화
     await this.chatParticipantRepo.changeMemberActivation(chatMember.idx, 0);
+
+    const roomMembers = await this.chatParticipantRepo.find({
+      where: {
+        chatRoom: room.idx,
+        activation: 1,
+      },
+    });;
+
+    if (roomMembers.length <= 0) {  // 채팅방 비활성화
+      await this.changeRoomActivation(room.idx, 0);
+    }
 
     return true;
   }

@@ -1,9 +1,11 @@
 import { Service } from "typedi";
-import { ChatService } from "../../../services/chat.service";
-import { AuthSocket } from "../../../typings";
-import { ChatListener } from "./chat.listener";
-import { MemberService } from "../../../services/member.service";
+
 import { MessageEvent } from "./message.event";
+import { ChatListener } from "./chat.listener";
+import { ChatService } from "../../../services/chat.service";
+import { MemberService } from "../../../services/member.service";
+import { AuthSocket } from "../../../typings";
+import * as Validate from '../../helper/validate';
 
 @Service()
 export class ChatEvent {
@@ -40,22 +42,46 @@ export class ChatEvent {
 
   public async inviteChatRoom(socket: AuthSocket, data) {
     try {
+      await Validate.inviteChatRoom(data);
+    } catch (error) {
+      console.error(error);
+      socket.emit(ChatListener.inviteRoom, {
+        status: 400,
+        message: '초대를 실패하였습니다',
+      });
+
+      return;
+    }
+
+    try {
       const { decoded } = socket;
       const { roomIdx, membersIdx } = data;
 
       const myInfo = await this.memberService.getMemberByIdx(decoded.memberIdx);
       const members = await this.memberService.getMembersByIdxes(membersIdx);
+      const room = await this.chatService.getChatRoomsByIdx(roomIdx, 1);
 
-      const connectResult = await this.chatService.connectChatRoom(members, roomIdx);
-
-      if (connectResult === false) {
+      if (!room && members.length <= 0) {
         socket.emit(ChatListener.inviteRoom, {
-          status: 400,
+          status: 404,
           message: '초대를 실패하였습니다',
         });
 
         return;
       }
+
+      const connectResult = await this.chatService.connectChatRoom(members, roomIdx);
+
+      if (connectResult === false) {
+        socket.emit(ChatListener.inviteRoom, {
+          status: 404,
+          message: '초대를 실패하였습니다',
+        });
+
+        return;
+      }
+
+      // 초대된 회원 중 온라인인 회원을 룸에 Join
 
       let message = '';
       if (members.length > 1) {
@@ -67,12 +93,19 @@ export class ChatEvent {
       // 시스템 메시지 전송
       await this.messageEvent.sendSystemMsg(socket, {
         message,
-        roomIdx: roomIdx,
+        room,
       });
 
-      socket.emit(ChatListener.inviteRoom, {
+      const payload = {
         status: 200,
-      });
+        data: {
+          roomIdx: room.idx,
+          members,
+        }
+      };
+
+      socket.emit(ChatListener.addRoomMember, payload);
+      socket.broadcast.to(`chatroom-${room.idx}`).emit(ChatListener.addRoomMember, payload);
     } catch (error) {
       console.error(error);
       socket.emit(ChatListener.chatError, {
@@ -83,13 +116,35 @@ export class ChatEvent {
 
   public async leaveChatRoom(socket: AuthSocket, data) {
     try {
+      await Validate.leaveChatRoom(data);
+    } catch (error) {
+      console.error(error);
+      socket.emit(ChatListener.inviteRoom, {
+        status: 400,
+        message: '초대를 실패하였습니다',
+      });
+
+      return;
+    }
+
+    try {
       const { decoded } = socket;
       const { roomIdx } = data;
 
       const myInfo = await this.memberService.getMemberByIdx(decoded.memberIdx);
+      const room = await this.chatService.getChatRoomsByIdx(roomIdx, 1);
+
+      if (!room) {
+        socket.emit(ChatListener.inviteRoom, {
+          status: 404,
+          message: '초대를 실패하였습니다',
+        });
+
+        return;
+      }
 
       // 채팅방 나가기
-      const leaveResult = await this.chatService.leaveChatRoomByIdx(myInfo, roomIdx);
+      const leaveResult = await this.chatService.leaveChatRoomByIdx(myInfo, room);
 
       if (leaveResult === false) {
         socket.emit(ChatListener.leaveRoom, {
@@ -100,22 +155,23 @@ export class ChatEvent {
         return;
       }
 
-      const roomMembers = await this.chatService.getParticipantsByRoomIdx(roomIdx);
-
-      if (roomMembers.length <= 1) {
-        // 채팅방 비활성화
-        await this.chatService.changeRoomActivation(roomIdx, 0);
-      }
-
       // 시스템 메시지 전송
       await this.messageEvent.sendSystemMsg(socket, {
         message: `${myInfo.name} 님이 채팅방을 나갔습니다`,
-        roomIdx: roomIdx,
+        room,
       });
 
-      socket.emit(ChatListener.leaveRoom, {
+      const payload = {
         status: 200,
-      });
+        data: {
+          roomIdx: room.idx,
+          memberId: myInfo.id,
+        },
+      };
+
+      socket.emit(ChatListener.leaveRoom, payload);
+      socket.broadcast.to(`chatroom-${room.idx}`).emit(ChatListener.leaveRoom, payload);
+      socket.leave(`chatroom-${room.idx}`);
     } catch (error) {
       console.error(error);
       socket.emit(ChatListener.chatError, {

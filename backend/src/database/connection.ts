@@ -30,12 +30,12 @@ async function connectDatabase() {
     const connection = await createConnection(options);
 
     if (connection) {
-      console.log('DB connected');
+      console.log('Connected to DabaBase');
     }
 
     return connection;
   } catch (error) {
-    console.error('DB connection failed');
+    console.error('Failed to connect Database');
     throw error;
   }
 }
