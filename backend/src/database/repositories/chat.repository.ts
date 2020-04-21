@@ -15,7 +15,7 @@ export class ChatRoomRepository extends Repository<ChatRoom> {
 
   public getActiveRoomsByMemberIdx(memberIdx: number) {
     return this.createQueryBuilder('chatRoom')
-      .leftJoin('chatRoom.participants', 'chatParticipant')
+      .leftJoinAndSelect('chatRoom.participants', 'chatParticipant')
       .where('chatParticipant.memberIdx = :memberIdx', { memberIdx })
       .andWhere('chatRoom.activation = :active', { active: 1 })
       .getMany();

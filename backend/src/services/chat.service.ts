@@ -5,6 +5,7 @@ import { ChatRoomRepository } from "../database/repositories/chat.repository";
 import { ChatParticipantRepository } from "../database/repositories/chatParticipant.repository";
 import { Member } from "../database/models/Member";
 import { ChatRoom } from "../database/models/ChatRoom";
+import { RoomType } from "../database/enum/ChatType";
 
 @Service()
 export class ChatService {
@@ -29,7 +30,17 @@ export class ChatService {
     });
   }
 
-  public async connectChatRoom(members: Member[], room: ChatRoom) {
+  public async createChatRoom(title: string, type: string) {
+    const roomType = type === String(RoomType.personal) ? RoomType.personal : RoomType.group;
+    const room = await this.chatRoomRepo.save({
+      title,
+      type: roomType,
+    });
+    
+    return room;
+  }
+
+  public async enterChatRoom(members: Member[], room: ChatRoom) {
     for (const member of members) {
       const chatMember = await this.chatParticipantRepo.getParticipant(member.idx, room.idx);
 

@@ -4,6 +4,7 @@ import { autobind } from 'core-decorators';
 
 import * as tokenLib from '../../../lib/token.lib';
 import { AuthSocket } from "../../../typings";
+import * as redisHelper from "../../helper/redis";
 import { ChatListener } from './chat.listener';
 import { ChatEvent } from "./chat.event";
 import { MessageEvent } from "./message.event";
@@ -18,17 +19,15 @@ export class ChatNmsp {
     private messageEvent: MessageEvent,
   ) {}
 
-  public handleingEvent(socket: AuthSocket) {
+  public async handleingEvent(socket: AuthSocket) {
     const token = socket.handshake.query['token'];
-
-    // redis에 연결정보 저장
 
     try {
       const decoded = tokenLib.verifyToken(token);
       socket.decoded = decoded;
 
-      socket.on(ChatListener.joinRoom, () => this.chatEvent.joinChatRoom(socket));
-      socket.on(ChatListener.sendMsg, (data) => this.messageEvent.sendMsg(socket, data));
+      // save socket connection info to redis
+      await redisHelper.registerSocket(ChatNmsp.instance, socket.decoded.memberId, socket.id);
     } catch (error) {
       console.error('채팅 에러 발생');
       console.error(error);
@@ -36,8 +35,19 @@ export class ChatNmsp {
       socket.disconnect();
     }
 
-    socket.on('disconnect', () => {
-      console.log(`채팅 소켓 연결 끊킴\n${socket.decoded}`);
+    socket.on(ChatListener.getRooms, () => this.chatEvent.getChatRooms(socket));
+    socket.on(ChatListener.createRoom, (data) => this.chatEvent.creatChatRoom(socket, data));
+    socket.on(ChatListener.inviteRoom, (data) => this.chatEvent.inviteChatRoom(socket, data));
+    socket.on(ChatListener.leaveRoom, (data) => this.chatEvent.leaveChatRoom(socket, data));
+    socket.on(ChatListener.sendMsg, (data) => this.messageEvent.sendMsg(socket, data));
+    socket.on('disconnect', async () => {
+      console.log(`채팅 소켓 연결 끊킴 : ${socket.decoded}`);
+
+      try {
+        await redisHelper.disconnectSocket(ChatNmsp.instance, socket.decoded.memberId);
+      } catch (error) {
+        console.error(`소켓 회원 정보 삭제 실패 : ${error}`);
+      }
     });
   }
 }

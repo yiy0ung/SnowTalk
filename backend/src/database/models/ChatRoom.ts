@@ -8,7 +8,7 @@ export class ChatRoom {
   @PrimaryGeneratedColumn({ type: 'int' })
   idx: number;
 
-  @Column({ type: 'varchar', length: 50 })
+  @Column({ type: 'varchar', length: 50, nullable: true })
   title: string;
 
   @Column({ type: 'int', default: 1 })

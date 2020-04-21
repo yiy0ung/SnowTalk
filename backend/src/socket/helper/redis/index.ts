@@ -1,5 +1,7 @@
 import redis from 'async-redis';
+import { Namespace } from 'socket.io';
 import config from '../../../config';
+import { Member } from '../../../database/models/Member';
 
 const { sesstionStorage } = config;
 
@@ -18,6 +20,24 @@ redisClient.on('error', (error) => {
   console.error(`Failed to connect Redis Database : ${error}`);
 });
 
-export function joinChatRoom() {
+export async function registerSocket(nmsp: Namespace, memberId: string, socketId: string) {
+  await redisClient.hmset(`${nmsp.name}-online`, memberId, socketId);
 
+  return true;
+}
+
+export async function disconnectSocket(nmsp: Namespace, memberId: string) {
+  await redisClient.hdel(`${nmsp.name}-online`, memberId);
+
+  return true;
+}
+
+export async function joinChatRoom(nmsp: Namespace, roomidx: number, members: Member[]) {
+  await Promise.all(members.map(async (member: Member) => {
+    const socketId = redisClient.hget(`${nmsp.name}-online`, member.id);
+
+    if (socketId) {
+      nmsp.connected[socketId].join(`chatroom-${roomidx}`);
+    }
+  }));
 }

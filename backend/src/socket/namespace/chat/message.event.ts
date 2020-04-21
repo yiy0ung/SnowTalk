@@ -20,6 +20,7 @@ export class MessageEvent {
     const payload = {
       status: 200,
       data: {
+        roomIdx: room.idx,
         message: messageData,
       },
     };
