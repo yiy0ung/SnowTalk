@@ -1,45 +1,96 @@
 import { Service } from "typedi";
-import { AuthSocket } from "../../../typings";
 import { ChatListener } from "./chat.listener";
-import { ChatRoom } from "../../../database/models/ChatRoom";
+import { AuthSocket } from "../../../typings";
 import { MessageService } from "../../../services/message.service";
-import { ChatNmsp } from "./chat.nmsp";
+import { MemberService } from "../../../services/member.service";
+import { ChatRoom } from "../../../database/models/ChatRoom";
+import * as Validate from "../../helper/validate";
 
 @Service()
 export class MessageEvent {
   constructor(
     private messageService: MessageService,
+    private memberService: MemberService,
   ) {}
 
   public async sendSystemMsg(socket: AuthSocket, {
     room,
     message,
   }: { room: ChatRoom, message: string }) {
-    const messageData = await this.messageService.createSystemMsg(room, message);
+    try {
+      const messageData = await this.messageService.saveSystemMsg(room, message);
 
-    const payload = {
-      status: 200,
-      data: {
-        roomIdx: room.idx,
-        message: messageData,
-      },
-    };
+      const payload = {
+        status: 200,
+        data: {
+          roomIdx: room.idx,
+          message: messageData,
+        },
+      };
 
-    socket.broadcast
-      .to(`chatroom-${room.idx}`)
-      .emit(ChatListener.receiveMsg, payload);
+      socket.emit(ChatListener.receiveMsg, payload);
+      socket.broadcast
+        .to(`chatroom-${room.idx}`)
+        .emit(ChatListener.receiveMsg, payload);
 
-    return messageData;
+      return messageData;
+    } catch (error) {
+      socket.emit(ChatListener.sendMsg, {
+        status: 500,
+      });
+    }
   }
 
-  public sendMsg(socket: AuthSocket, data) {
-    console.log(ChatNmsp.instance);
-    console.log(socket.decoded);
-    console.log(data);
+  public async sendMsg(socket: AuthSocket, data) {
+    try {
+      await Validate.sendRoomMessage(data);
+    } catch (error) {
+      socket.emit(ChatListener.sendMsg, {
+        status: 400,
+        message: '잘못된 요청 양식',
+      });
 
-    socket.emit(ChatListener.receiveMsg, {
-      status: 1,
-      message: '메세지 응답',
-    });
+      return;
+    }
+
+    try {
+      const { decoded } = socket;
+      const { roomIdx, imageIdx, message } = data;
+
+      const sender = await this.memberService.getMemberByIdx(decoded.memberIdx);
+      const { success, messageData, room } = await this.messageService.saveUserMsg({
+        roomIdx,
+        fileIdx: imageIdx,
+        sender, 
+        message,
+      });
+
+      if (!success) {
+        socket.emit(ChatListener.sendMsg, {
+          status: 404,
+          message: '메세지를 보낼 수 없습니다',
+        });
+
+        return;
+      }
+
+      const payload = {
+        status: 200,
+        data: {
+          roomIdx: room.idx,
+          message: messageData,
+        },
+      };
+
+      socket.emit(ChatListener.receiveMsg, payload);
+      socket.broadcast
+        .to(`chatroom-${room.idx}`)
+        .emit(ChatListener.receiveMsg, payload);
+    } catch (error) {
+      socket.emit(ChatListener.sendMsg, {
+        status: 500,
+        message: '메시지 전송 실패',
+      });
+    }
   }
 }

@@ -1,10 +1,9 @@
 import React from 'react';
-import { MainTemplate } from '../components/organism/template/MainTemplate';
 import useAuth from 'utils/hooks/useAuth';
+import { MainTemplate } from '../components/organism/template/MainTemplate';
 
 function Home() {
   useAuth();
-
   return (
     <MainTemplate>
       <div>qwe</div>

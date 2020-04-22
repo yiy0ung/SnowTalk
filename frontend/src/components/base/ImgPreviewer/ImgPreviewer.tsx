@@ -11,7 +11,7 @@ type Props = {
 };
 
 function ImgPreviewer({ 
-  imgFile, 
+  // imgFile, 
   setImgFile,
   imgBase64,
   setImgBase64,

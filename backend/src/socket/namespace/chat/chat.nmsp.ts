@@ -29,8 +29,8 @@ export class ChatNmsp {
       // save socket connection info to redis
       await redisHelper.registerSocket(ChatNmsp.instance, socket.decoded.memberId, socket.id);
     } catch (error) {
-      console.error('채팅 에러 발생');
-      console.error(error);
+      console.error('채팅 연결 에러 발생');
+      console.error(error.message);
 
       socket.disconnect();
     }

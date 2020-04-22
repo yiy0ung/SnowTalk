@@ -2,12 +2,13 @@ import path from 'path';
 import { Response } from "express";
 import { Service } from "typedi";
 import { AuthRequest } from "../../typings";
-import { FileService } from '../../services/file.service';
+import { InjectRepository } from 'typeorm-typedi-extensions';
+import { FileRepository } from '../../database/repositories/file.repository';
 
 @Service()
 export class UploadCtrl {
   constructor(
-    private fileService: FileService,
+    @InjectRepository() private readonly fileRepo: FileRepository,
   ) {}
 
   public uploadImgs = async (req: AuthRequest, res: Response) => {
@@ -26,7 +27,7 @@ export class UploadCtrl {
     try {
       for (const [_, file] of Object.entries(files)) {
         const extname = path.extname(file.originalname).substr(1);
-        const image = await this.fileService.createImg(file.filename, extname);
+        const image = await this.fileRepo.createImg(file.filename, extname);
 
         imgs.push({ fileIdx: image.idx, fileName: image.name });
       }

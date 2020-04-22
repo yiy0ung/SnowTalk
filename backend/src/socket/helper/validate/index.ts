@@ -31,3 +31,13 @@ export const leaveChatRoom = (body) => {
 
   return schema.validateAsync(body);
 };
+
+export const sendRoomMessage = (data) => {
+  const schema = Joi.object().keys({
+    roomIdx: Joi.number().integer().required(),
+    message: Joi.string().required(),
+    imageIdx: Joi.number().integer().allow(null),
+  });
+
+  return schema.validateAsync(data);
+};

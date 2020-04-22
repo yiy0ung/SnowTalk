@@ -33,6 +33,12 @@ export class FriendService {
       return false;
     }
 
+    const relationship = await this.friendRepo.getFriendRelation(follower.idx, friend.idx);
+
+    if (relationship) {
+      return false;
+    }
+
     const result = await this.friendRepo.save({
       followerMember: follower,
       followingMember: friend,
