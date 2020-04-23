@@ -1,31 +1,13 @@
 import socketio from 'socket.io-client';
 import server from 'config/server';
+import { existToken } from 'utils/token';
 
 const basicPath = '/socket';
 
 export const chatSocket = socketio.connect(`${server.socketHost}/chat`, {
   path: basicPath,
   query: {
-    token: sessionStorage.getItem('token'),
+    token: existToken(),
   },
+  autoConnect: false,
 });
-
-// chatSocket.on('reconnect', () => {
-
-// })
-
-// export function connectChatSocket() {
-//   let socket = null;
-//   const token = sessionStorage.getItem('token');
-  
-//   if (token) {
-//     socket = socketio.connect(`${server}/chat`, {
-//       path: basicPath,
-//       query: {
-//         token: sessionStorage.getItem('token'),
-//       },
-//     });
-//   }
-
-//   return socket;
-// }

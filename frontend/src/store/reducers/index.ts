@@ -2,11 +2,13 @@ import { combineReducers } from 'redux';
 
 import member from './member.reducer';
 import auth from './auth.reducer';
+import chat from './chat.reducer';
 
 const rootReducer = combineReducers({
   member,
   auth,
-})
+  chat,
+});
 
 export type RootState = ReturnType<typeof rootReducer>;
 

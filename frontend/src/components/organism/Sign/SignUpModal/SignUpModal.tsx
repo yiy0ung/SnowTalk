@@ -4,7 +4,7 @@ import Swal from 'sweetalert2';
 
 import server from 'config/server';
 import useInput from 'utils/hooks/useInput';
-import { ProfileImg } from 'utils/types/entity.type';
+import { FileState } from 'utils/types/entity.type';
 import { fetchSignUpAsync, fetchUpdateProfileAsync } from 'store/reducers/auth.reducer';
 import unknowProfileImg from 'assets/image/default-profile.jpg';
 import { ImgPreviewer } from 'components/base/ImgPreviewer';
@@ -20,7 +20,7 @@ type Props = {
   defaultData?: {
     name: string;
     intro: string;
-    profileImg: ProfileImg|null;
+    profileImg: FileState|null;
   }
 };
 

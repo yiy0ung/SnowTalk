@@ -28,6 +28,7 @@ export class ChatNmsp {
 
       // save socket connection info to redis
       await redisHelper.registerSocket(ChatNmsp.instance, socket.decoded.memberId, socket.id);
+      console.log(`socket connected : ${socket.decoded.memberId}`);
     } catch (error) {
       console.error('채팅 연결 에러 발생');
       console.error(error.message);
@@ -41,7 +42,7 @@ export class ChatNmsp {
     socket.on(ChatListener.leaveRoom, (data) => this.chatEvent.leaveChatRoom(socket, data));
     socket.on(ChatListener.sendMsg, (data) => this.messageEvent.sendMsg(socket, data));
     socket.on('disconnect', async () => {
-      console.log(`채팅 소켓 연결 끊킴 : ${socket.decoded}`);
+      console.log(`채팅 소켓 연결 끊킴 : ${socket.decoded.memberId}`);
 
       try {
         await redisHelper.disconnectSocket(ChatNmsp.instance, socket.decoded.memberId);

@@ -27,7 +27,7 @@ export class ChatEvent {
       for (const room of rooms) {
         socket.join(`chatroom-${room.idx}`);
       }
-
+      console.log(rooms);
       socket.emit(ChatListener.getRooms, {
         status: 200,
         data: {
@@ -160,8 +160,8 @@ export class ChatEvent {
         }
       };
 
-      socket.emit(ChatListener.addRoomMember, payload);
-      socket.broadcast.to(`chatroom-${room.idx}`).emit(ChatListener.addRoomMember, payload);
+      socket.emit(ChatListener.inviteRoom, payload);
+      socket.broadcast.to(`chatroom-${room.idx}`).emit(ChatListener.inviteRoom, payload);
     } catch (error) {
       console.error(error);
       socket.emit(ChatListener.chatError, {
