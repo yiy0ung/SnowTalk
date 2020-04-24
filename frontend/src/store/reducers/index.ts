@@ -2,12 +2,12 @@ import { combineReducers } from 'redux';
 
 import member from './member.reducer';
 import auth from './auth.reducer';
-import chat from './chat.reducer';
+import chatSocket from './chatSocket.reducer';
 
 const rootReducer = combineReducers({
   member,
   auth,
-  chat,
+  chatSocket,
 });
 
 export type RootState = ReturnType<typeof rootReducer>;

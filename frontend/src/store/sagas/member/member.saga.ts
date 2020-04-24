@@ -2,7 +2,6 @@ import { all, takeLatest, call, put } from 'redux-saga/effects';
 import { map } from 'lodash';
 
 import memberRepo from './member.repo';
-import { chatSocket } from 'socket/connection';
 import {
   fetchLoginAsync,
   fetchMembersInfoAsync,
@@ -10,7 +9,7 @@ import {
   fetchAppendFriendAsync,
   fetchRemoveFriendAsync,
 } from 'store/reducers/member.reducer';
-import { connectChatSocket } from 'store/reducers/chat.reducer';
+import { subscribeChatSocket } from 'store/reducers/chatSocket.reducer';
 
 function* login(action: ReturnType<typeof fetchLoginAsync.request>) {
   try {
@@ -23,11 +22,9 @@ function* login(action: ReturnType<typeof fetchLoginAsync.request>) {
 
     yield put(fetchLoginAsync.success(res.data));
 
-    yield chatSocket.open();
-
     yield all([
       put(fetchMembersInfoAsync.request()),
-      put(connectChatSocket()),
+      put(subscribeChatSocket()),
     ]);
   } catch (error) {
     yield put(fetchLoginAsync.failure(error));
