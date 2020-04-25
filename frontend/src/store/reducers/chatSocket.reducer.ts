@@ -1,5 +1,6 @@
 import { createAction, ActionType, createReducer } from "typesafe-actions";
 import { ChatRoom } from "utils/types/entity.type";
+import { GetRoomData } from "store/sagas/chatSocket/chat.event";
 
 type ChatSocketState = {
   chatRooms: ChatRoom[];
@@ -11,14 +12,20 @@ export const initalState: ChatSocketState = {
 
 export const SUBSCRIBE_CHAT_SOCKET = 'SUBSCRIBE_CHAT_SOCKET';
 export const UNSUBSCRIBE_CHAT_SOCKET = 'UNSUBSCRIBE_CHAT_SOCKET';
+export const EMIT_GET_ROOMS = 'EMIT_GET_ROOMS';
+export const RECEIVE_GET_ROOMS = 'RECEIVE_GET_ROOMS';
 
 export const subscribeChatSocket = createAction(SUBSCRIBE_CHAT_SOCKET)();
 export const unsubscribeChatSocket = createAction(UNSUBSCRIBE_CHAT_SOCKET)();
+export const emitGetRooms = createAction(EMIT_GET_ROOMS)();
+export const receiveGetRooms = createAction(RECEIVE_GET_ROOMS)<GetRoomData>();
 
 const actions = {
   subscribeChatSocket,
   unsubscribeChatSocket,
-}
+  emitGetRooms,
+  receiveGetRooms,
+};
 export type ChatSocketActions = ActionType<typeof actions>;
 
 export default createReducer<ChatSocketState, ChatSocketActions>(initalState, {

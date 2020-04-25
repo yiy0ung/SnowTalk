@@ -22,6 +22,7 @@ class Server {
     this.server = HTTP.createServer(this.app);
     this.socket = socketIo(this.server, {
       path: '/socket',
+      origins: '*',
     });
   }
 

@@ -34,6 +34,10 @@ export class ChatEvent {
           rooms,
         },
       });
+      socket.emit('test', {
+        status: 200,
+        data: 'test',
+      });
     } catch (error) {
       console.error(error);
       socket.emit(ChatListener.chatError, {
