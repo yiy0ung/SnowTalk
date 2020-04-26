@@ -1,8 +1,11 @@
 import { Repository, EntityRepository } from "typeorm";
+import { Service } from "typedi";
+import { map } from 'lodash';
 import { ChatParticipant } from "../models/ChatParticipant";
 import { Member } from "../models/Member";
 import { ChatRoom } from "../models/ChatRoom";
 
+@Service()
 @EntityRepository(ChatParticipant)
 export class ChatParticipantRepository extends Repository<ChatParticipant> {
   
@@ -29,5 +32,20 @@ export class ChatParticipantRepository extends Repository<ChatParticipant> {
     }, {
       activation,
     });
+  }
+
+  public getAccessibleRoomIdx(memberIdx: number) {
+    return this.find({
+      join: {
+        alias: 'chatParticipant',
+        leftJoinAndSelect: {
+          chatRoom: 'chatParticipant.chatRoom',
+        },
+      },
+      where: {
+        member: memberIdx,
+        activation: 1,
+      },
+    }). then(data => map(data, 'chatRoom.idx'));
   }
 }

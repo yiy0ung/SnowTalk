@@ -1,21 +1,14 @@
-import React, { useCallback } from 'react';
+import React from 'react';
+import { MainTemplate } from 'components/organism/template/MainTemplate';
+import Chat from 'components/organism/Chat';
 import useAuth from 'utils/hooks/useAuth';
-import { MainTemplate } from '../components/organism/template/MainTemplate';
-import { useDispatch } from 'react-redux';
-import { emitGetRooms } from 'store/reducers/chatSocket.reducer';
 
 function Home() {
   useAuth();
-  const dispatch = useDispatch();
-
-  const onGetRooms = useCallback(() => {
-    dispatch(emitGetRooms());
-  }, [dispatch]);
 
   return (
     <MainTemplate>
-      <div>qwe</div>
-      <button onClick={onGetRooms}>getRooms</button>
+      <Chat />
     </MainTemplate>
   );
 }

@@ -5,7 +5,6 @@ import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "store/reducers";
 import { existToken } from "utils/token";
 import link from "config/link";
-import { unsubscribeChatSocket } from "store/reducers/chatSocket.reducer";
 
 const useAuth = () => {
   const history = useHistory();
@@ -17,7 +16,6 @@ const useAuth = () => {
 
     if (!isLogin && notToken) {
       history.push(link.sign);
-      dispatch(unsubscribeChatSocket());
     }
   }, [dispatch, history, isLogin]);
 };

@@ -17,7 +17,7 @@ export class ChatRoom {
   @Column({ type: 'enum', enum: RoomType })
   type: RoomType;
 
-  @OneToMany(type => ChatParticipant, participant => participant.member)
+  @OneToMany(type => ChatParticipant, participant => participant.chatRoom)
   participants: ChatParticipant[];
 
   @OneToMany(type => ChatMessage, message => message.chatRoom)

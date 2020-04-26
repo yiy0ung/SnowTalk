@@ -1,15 +1,16 @@
 import React, { ReactNode, useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { FaRegListAlt } from 'react-icons/fa';
+import { TiCogOutline } from 'react-icons/ti';
 import { FiLogOut, FiBell } from 'react-icons/fi';
 import { IoIosFlask, IoIosHelpCircleOutline } from 'react-icons/io';
-import { TiCogOutline } from 'react-icons/ti';
 
+import { RootState } from 'store/reducers';
 import { logout } from 'store/reducers/member.reducer';
+import { unsubscribeChatSocket } from 'store/reducers/chatSocket.reducer';
 import { SignUpModal } from 'components/organism/Sign/SignUpModal';
 
 import './MoreList.scss';
-import { RootState } from 'store/reducers';
 
 type Props = {
   icon: ReactNode;
@@ -33,6 +34,7 @@ function MoreList() {
 
   const onLogout = useCallback(() => {
     dispatch(logout());
+    dispatch(unsubscribeChatSocket());
     sessionStorage.removeItem('token');
   }, [dispatch]);
 

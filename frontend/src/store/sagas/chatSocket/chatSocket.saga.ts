@@ -1,11 +1,11 @@
 import * as ioClient from 'socket.io-client';
 import { eventChannel } from 'redux-saga';
-import { all, fork, take, takeEvery, call, put, cancel, takeLatest } from 'redux-saga/effects';
+import { all, fork, take, takeEvery, call, put, cancel } from 'redux-saga/effects';
 import { PayloadAction } from 'typesafe-actions';
 
 import server from 'config/server';
 import { existToken } from 'utils/token';
-import { subscribeChatSocket, unsubscribeChatSocket, emitGetRooms } from 'store/reducers/chatSocket.reducer';
+import { subscribeChatSocket, unsubscribeChatSocket, emitGetRooms, receiveGetRooms } from 'store/reducers/chatSocket.reducer';
 import { ChatEvent, ChatSocketResp, GetRoomData } from './chat.event';
 
 function connect() {
@@ -27,31 +27,15 @@ function connect() {
   }).catch(error => ({ socket, error }));
 }
 
-function subscribe(socket: SocketIOClient.Socket) {
-  return eventChannel((emit) => {
-    socket.on('get-rooms', (resp: any) => {
-      console.log("object");
-      console.log(resp);
-      emit(resp);
-    });
-    socket.on('disconnect', (e: Error) => {
-      console.log(e)
-    });
-    socket.on('error', (error: Error) => {
-      console.log('Error while trying to connect');
-    });
-    return () => { };
-  });
+function generateEmit(socket: SocketIOClient.Socket, actionType: ChatEvent) {
+  return function () {
+    socket.emit(actionType);
+  }
 }
 
-function* read(socket: SocketIOClient.Socket) {
-  const channel = yield call(subscribe, socket);
-
-  while(true) {
-    const action = yield take(channel);
-    console.log(action);
-    
-    // yield put(action);
+function generatePayloadEmit<Action extends PayloadAction<any, any>>(socket: SocketIOClient.Socket, actionType: ChatEvent) {
+  return function (action: Action) {
+    socket.emit(actionType, action.payload);
   }
 }
 
@@ -59,11 +43,10 @@ function* flow() {
   yield takeEvery(subscribeChatSocket, function* () {
     const { socket, error } = yield call(connect);
 
-    console.log(socket);
     if (socket) {
       console.log('connect to chat socket');
       const ioTask = yield fork(handleIO, socket);
-      console.log(ioTask);
+
       yield take(unsubscribeChatSocket);
       yield cancel(ioTask);
       socket.disconnect();
@@ -74,32 +57,48 @@ function* flow() {
 }
 
 function* handleIO(socket: SocketIOClient.Socket) {
-  console.log('call handleIO')
-  yield fork(read, socket);
-  yield fork(setEmitActionListener, socket);
+  yield fork(read, socket); // 이벤트 listener 설정
+  yield fork(setEmitActionListener, socket); // 이벤트 emitter 설정
+  yield fork(initalEmit); // 최초 연결시, 필요한 emit 전송
 }
 
-function generateEmit(socket: SocketIOClient.Socket, actionType: ChatEvent) {
-  return function () {
-    socket.emit(actionType);
-  }
+function* read(socket: SocketIOClient.Socket) {
+  const channel = yield call(subscribe, socket);
+
+  yield takeEvery(channel, function* (action) {
+    yield put(action);
+  });
 }
 
-function generatePayloadEmit<Action extends PayloadAction<any, any>>(actionType: ChatEvent) {
-  return function* (action: Action) {
-    const { socket, error } = yield call(connect);
+function subscribe(socket: SocketIOClient.Socket) {
+  return eventChannel((emit) => {
+    socket.on('get-rooms', (resp: ChatSocketResp<GetRoomData>) => {
+      if (resp.status === 200 && resp.data) {
+        console.log(resp);
+        emit(receiveGetRooms(resp.data));
+      }
+    });
 
-    if (!socket.connected || error) {
-      return;
-    }
+    socket.on('disconnect', (e: any) => {
+      console.log(e)
+    });
+    socket.on('error', (error: Error) => {
+      console.log(`Error while trying to connect: ${error}`);
+    });
 
-    socket.emit(actionType, action.payload);
-  }
+    return () => { };
+  });
 }
 
 function* setEmitActionListener(socket: SocketIOClient.Socket) {
   yield all([
     takeEvery(emitGetRooms, generateEmit(socket, ChatEvent.getRooms)),
+  ])
+}
+
+function* initalEmit() {
+  yield all([
+    put(emitGetRooms()),
   ])
 }
 

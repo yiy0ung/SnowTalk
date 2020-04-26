@@ -1,0 +1,17 @@
+
+.chat-list-empty {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding-bottom: 5rem;
+
+  & span {
+    color: #949598;
+    font-size: 0.8rem;
+  }
+  & > * + * {
+    margin-top: 0.5rem;
+  }
+}

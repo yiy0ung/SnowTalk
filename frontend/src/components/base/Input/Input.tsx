@@ -1,11 +1,11 @@
-import React, { FormEvent } from 'react';
+import React, { ChangeEvent } from 'react';
 import { FiSearch } from 'react-icons/fi';
 
 import './Input.scss';
 
 type Props = {
   value: string;
-  onChange: (e: FormEvent<HTMLInputElement>) => void;
+  onChange: (e: ChangeEvent<HTMLInputElement>) => void;
   placeholder: string;
 };
 

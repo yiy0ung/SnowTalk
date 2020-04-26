@@ -18,8 +18,10 @@ export class ChatService {
     return this.chatRoomRepo.getRoomsByIdx(roomIdx, activation);
   }
 
-  public getChatRoomByMemberIdx(memberIdx: number) {
-    return this.chatRoomRepo.getActiveRoomsByMemberIdx(memberIdx);
+  public async getChatRoomByMemberIdx(memberIdx: number) {
+    const roomIdxs = await this.chatParticipantRepo.getAccessibleRoomIdx(memberIdx);
+
+    return this.chatRoomRepo.getActiveRoomsByIdx(roomIdxs);
   }
 
   public changeRoomActivation(chatRoomIdx: number, activation: 0|1) {

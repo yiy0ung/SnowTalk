@@ -23,20 +23,16 @@ export class ChatEvent {
       const { decoded } = socket;
 
       const rooms = await this.chatService.getChatRoomByMemberIdx(decoded.memberIdx);
-
+      console.log(rooms);
       for (const room of rooms) {
         socket.join(`chatroom-${room.idx}`);
       }
-      console.log(rooms);
+
       socket.emit(ChatListener.getRooms, {
         status: 200,
         data: {
           rooms,
         },
-      });
-      socket.emit('test', {
-        status: 200,
-        data: 'test',
       });
     } catch (error) {
       console.error(error);

@@ -29,7 +29,10 @@ const actions = {
 export type ChatSocketActions = ActionType<typeof actions>;
 
 export default createReducer<ChatSocketState, ChatSocketActions>(initalState, {
-
+  [RECEIVE_GET_ROOMS]: (state, action) => ({
+    ...state,
+    chatRooms: action.payload.rooms,
+  }),
 });
 
 // import produce from 'immer';
