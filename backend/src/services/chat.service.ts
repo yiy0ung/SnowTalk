@@ -1,15 +1,21 @@
 import { Service } from "typedi";
 import { InjectRepository } from "typeorm-typedi-extensions";
+import { map } from 'lodash';
 
 import { ChatRoomRepository } from "../database/repositories/chat.repository";
 import { ChatParticipantRepository } from "../database/repositories/chatParticipant.repository";
 import { Member } from "../database/models/Member";
 import { ChatRoom } from "../database/models/ChatRoom";
+import { ChatParticipant } from "../database/models/ChatParticipant";
 import { RoomType } from "../database/enum/ChatType";
+import { ChatDataloader } from "./dataloader/chat.dataloader";
+import { MessageService } from "./message.service";
 
 @Service()
 export class ChatService {
   constructor(
+    private chatDataloader: ChatDataloader,
+    private messageService: MessageService,
     @InjectRepository() private readonly chatRoomRepo: ChatRoomRepository,
     @InjectRepository() private readonly chatParticipantRepo: ChatParticipantRepository,
   ) {}
@@ -19,9 +25,20 @@ export class ChatService {
   }
 
   public async getChatRoomByMemberIdx(memberIdx: number) {
-    const roomIdxs = await this.chatParticipantRepo.getAccessibleRoomIdx(memberIdx);
+    const chatRooms = await this.chatRoomRepo.getActiveRoomsByMemberIdx(memberIdx);
+    const chatRoomIdxs = map(chatRooms, 'idx');
+    const participants = await this.chatDataloader.participantLoader.loadMany(chatRoomIdxs);
 
-    return this.chatRoomRepo.getActiveRoomsByIdx(roomIdxs);
+    for (let i = 0; i < chatRooms.length; i++) {
+      const participantData = participants[i];
+
+      if (!(participantData instanceof Error)) {
+        chatRooms[i].participants = participantData;
+      }
+      chatRooms[i].messages = await this.messageService.getMessage(chatRooms[i].idx);
+    }
+
+    return chatRooms;
   }
 
   public changeRoomActivation(chatRoomIdx: number, activation: 0|1) {
@@ -43,6 +60,13 @@ export class ChatService {
   }
 
   public async enterChatRoom(members: Member[], room: ChatRoom) {
+    const existMember = await this.chatParticipantRepo.getExistParticipant(
+      room.idx, map(members, 'idx'));
+
+    if (existMember) { // 초대하려는 회원이 이미 초대된 상태일 때
+      return false;
+    }
+
     for (const member of members) {
       const chatMember = await this.chatParticipantRepo.getParticipant(member.idx, room.idx);
 

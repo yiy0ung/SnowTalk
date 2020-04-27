@@ -1,4 +1,4 @@
-import { Entity, ManyToOne, PrimaryGeneratedColumn, Column, JoinColumn } from "typeorm";
+import { Entity, ManyToOne, PrimaryGeneratedColumn, Column, JoinColumn, RelationId } from "typeorm";
 import { Member } from "./Member";
 import { ChatRoom } from "./ChatRoom";
 
@@ -20,6 +20,8 @@ export class ChatParticipant {
   member: Member;
 
   // @JoinColumn({ name: 'chat_room_idx' })
+  @RelationId((participant: ChatParticipant) => participant.chatRoom)
+  chatRoomIdx: number;
   @ManyToOne(type => ChatRoom, chatroom => chatroom.idx, {
     onDelete: 'CASCADE',
   })

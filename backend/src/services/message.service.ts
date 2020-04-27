@@ -19,6 +19,10 @@ export class MessageService {
     return this.chatMsgRepo.saveSystemMessage(room, message);
   }
 
+  public getMessage(roomIdx?: number, lastMessagesIdx?: number) {
+    return this.chatMsgRepo.getMessageByChatRoomIdx(roomIdx, lastMessagesIdx);
+  }
+
   public async saveUserMsg({
     roomIdx,
     fileIdx,

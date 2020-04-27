@@ -14,12 +14,12 @@ export class ChatRoomRepository extends Repository<ChatRoom> {
     });
   }
 
-  public getActiveRoomsByIdx(roomIdxs: number[]) {
+  public getActiveRoomsByMemberIdx(memberIdx: number) {
     return this.createQueryBuilder('chatRoom')
-      .leftJoinAndSelect('chatRoom.participants', 'chatParticipant')
-      .leftJoinAndSelect('chatParticipant.member', 'member')
-      .where('chatRoom.idx IN (:roomIdxs)', { roomIdxs })
+      .leftJoin('chatRoom.participants', 'chatParticipant')
+      .where('chatParticipant.member = :memberIdx', { memberIdx })
       .andWhere('chatRoom.activation = :active', { active: 1 })
+      .andWhere('chatParticipant.activation = :active', { active: 1 })
       .getMany();
   }
 }

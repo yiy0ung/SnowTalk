@@ -23,7 +23,7 @@ export class ChatEvent {
       const { decoded } = socket;
 
       const rooms = await this.chatService.getChatRoomByMemberIdx(decoded.memberIdx);
-      console.log(rooms);
+
       for (const room of rooms) {
         socket.join(`chatroom-${room.idx}`);
       }
