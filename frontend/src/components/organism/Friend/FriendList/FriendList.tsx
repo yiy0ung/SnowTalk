@@ -3,7 +3,6 @@ import { useDispatch } from 'react-redux';
 import { FaRegTrashAlt } from 'react-icons/fa';
 import Swal from 'sweetalert2';
 
-import server from 'config/server';
 import { Member } from 'utils/types/entity.type';
 import { fetchRemoveFriendAsync } from 'store/reducers/member.reducer';
 import { UserCard } from 'components/common/UserCard';
@@ -30,7 +29,7 @@ function FriendList({ friends }: Props) {
       if (result.value) {
         dispatch(fetchRemoveFriendAsync.request(memberIdx));
       }
-    })
+    });
   }, [dispatch]);
 
   const friendNodes = friends.map((friend) => (
@@ -39,8 +38,8 @@ function FriendList({ friends }: Props) {
       title={friend.name}
       desc={friend.intro}
       type="profile"
-      imgUrls={friend.profileImg !== null ? [
-        `${server.imgServer}/${friend.profileImg.name}`,
+      imgIds={friend.profileImg !== null ? [
+        friend.profileImg.name,
       ]:[]}
       additionalInfo={(
         <FaRegTrashAlt 

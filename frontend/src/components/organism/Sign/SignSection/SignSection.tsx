@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-import logo from 'assets/image/logo.png';
+import logo from 'assets/image/snowman.png';
 import { SignLoginForm } from '../SignLoginForm';
 import { SignUpModal } from '../SignUpModal';
 
@@ -12,6 +12,7 @@ function SignSection() {
   return (
     <div className="sign-section">
       <div className="sign-section__body">
+        <div className="sign-section__logo-title">SNOW TALK</div>
         <div className="sign-section__logo">
           <img src={logo} alt="logo" />
         </div>

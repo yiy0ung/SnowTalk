@@ -1,24 +1,24 @@
 import React, { ReactNode } from 'react';
 import { AvatarList } from 'components/base/AvatarList';
-import Avatar, { Props as AvatarProps } from 'components/base/Avatar/Avatar';
-import defaultImg from 'assets/image/default-profile.jpg';
+import Avatar, { Props as AvatarProps, ImageType } from 'components/base/Avatar/Avatar';
 
 import './UserCard.scss';
 
 type Props = {
   title: string;
+  subtitle?: ReactNode;
   desc: string;
-  imgUrls: string[];
+  imgIds: ImageType[];
   type: 'profile'|'chat';
   avatar?: Pick<AvatarProps, "size">;
   additionalInfo?: ReactNode|string;
 };
 
-function UserCard({ title, desc, imgUrls, type, avatar, additionalInfo }: Props) {
+function UserCard({ title, subtitle, desc, imgIds, type, avatar, additionalInfo }: Props) {
   const userProfile = type === 'profile' ? (
-    <Avatar url={imgUrls[0] ? imgUrls[0] : defaultImg} size={avatar?.size} />
+    <Avatar imageId={imgIds[0]} size={avatar?.size} />
   ) : (
-    <AvatarList imgUrls={imgUrls} />
+    <AvatarList imgIds={imgIds} />
   );
   
   return (
@@ -27,7 +27,10 @@ function UserCard({ title, desc, imgUrls, type, avatar, additionalInfo }: Props)
         {userProfile}    
       </div>
       <div className="user-card__column user-card__content">
-        <span className="user-card__title">{title}</span>
+        <div className="user-card__head">
+          <span className="user-card__title">{title}</span>
+          {subtitle && <span className="user-card__subtitle">{subtitle}</span>}
+        </div>
         {desc && <span className="user-card__desc">{desc}</span>}
       </div>
       <div className="user-card__column user-card__additional">

@@ -18,7 +18,6 @@
   }
 
   &__column {
-
     & + & {
       margin-left: 0.8rem;
     }
@@ -29,23 +28,35 @@
     flex-direction: column;
     justify-content: center;
     font-size: 0.75rem;
+    line-height: normal;
+  }
 
-    & > span + span {
-      margin-top: 0.5rem;
-    }
+  &__head {
+    display: flex;
+    flex-direction: row;
   }
 
   &__title {
+    display: block;
+    max-width: 10rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
     font-size: 0.8rem;
     font-weight: 700;
   }
 
+  &__subtitle {
+    color: #999999;
+    margin-left: 0.3rem;
+  }
+
   &__desc {
-    // width: 200px;
-    padding-bottom: 0.3rem;
+    margin-top: 0.5rem;
     overflow-y: hidden;
     white-space: nowrap; 
     text-overflow: ellipsis;
+    color: #666666;
   }
 
   &__additional {

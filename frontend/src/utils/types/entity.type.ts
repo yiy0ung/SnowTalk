@@ -11,12 +11,12 @@ export interface Member {
 export interface InitMember extends Member {
   pw: string;
 }
-
+export type ChatRoomType = 'personal'|'group';
 export type ChatRoom = {
   idx: number;
   title: string|null;
   activation: number;
-  type: 'personal'|'group';
+  type: ChatRoomType;
   messages: Message[];
   participants: Participant[];
 };

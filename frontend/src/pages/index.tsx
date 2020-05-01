@@ -7,6 +7,7 @@ import Home from './Home';
 import Friend from './Friend';
 import More from './More';
 import Sign from './Sign';
+import ChatRoom from './ChatRoom';
 
 function Pages() {
   return (
@@ -23,6 +24,9 @@ function Pages() {
       <Route exact
         path={link.sign}
         component={Sign} />
+      <Route exact
+        path={`${link.chatroom}/:roomIdx`}
+        component={ChatRoom} />
     </Switch>
   );
 }

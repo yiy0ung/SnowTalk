@@ -4,6 +4,7 @@ const link = {
   home: '/',
   friend: '/friend',
   more: '/more',
+  chatroom: '/chatroom'
 };
 
 export default link;

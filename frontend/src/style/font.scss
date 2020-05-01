@@ -7,6 +7,7 @@
 
 $Malgun: 'malgun gothic';
 $Malgunbd: 'malgun gothic bold';
+$Pacifico: 'pacifico';
 
 @font-face {
   @include font_face($Malgun, url('../assets/font/malgun.ttf'));
@@ -14,4 +15,8 @@ $Malgunbd: 'malgun gothic bold';
 
 @font-face {
   @include font_face($Malgunbd, url('../assets/font/malgunbd.ttf'));
+}
+
+@font-face {
+  @include font_face($Pacifico, url('../assets/font/Pacifico-Regular.ttf'));
 }

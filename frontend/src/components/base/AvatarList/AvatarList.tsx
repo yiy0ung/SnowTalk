@@ -1,26 +1,28 @@
 import React from 'react';
-import Avatar from '../../base/Avatar/Avatar';
+import Avatar, { ImageType } from '../../base/Avatar/Avatar';
 
 import './AvatarList.scss';
 
 type Props = {
-  imgUrls: string[];
+  imgIds: ImageType[];
 };
 
-function AvatarList({ imgUrls }: Props) {
+function AvatarList({ imgIds }: Props) {
   let Avatars = (<></>);
-  const imgUrlList = imgUrls.slice(0, 4);
+  const imgUrlList = imgIds.slice(0, 4);
   
   if (imgUrlList.length === 1) {
     Avatars = (
-      <Avatar url={imgUrlList[0]} size="medium" />
+      <div className="avatar-list__single">
+        <Avatar imageId={imgUrlList[0]} size="medium" />
+      </div>
     );
   } else if (imgUrlList.length === 2) {
     Avatars = (
       <div className="avatar-list__duo">
         {
           imgUrlList.map((imgUrl, idx) => (
-            <Avatar key={idx} url={imgUrl} size="row-medium" />
+            <Avatar key={idx} imageId={imgUrl} size="row-medium" />
           ))
         }
       </div>
@@ -30,7 +32,7 @@ function AvatarList({ imgUrls }: Props) {
       <div className="avatar-list__multi">
         {
           imgUrlList.map((imgUrl, idx) => (
-            <Avatar key={idx} url={imgUrl} size="small" />
+            <Avatar key={idx} imageId={imgUrl} size="small" />
           ))
         }
       </div>

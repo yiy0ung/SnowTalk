@@ -1,6 +1,8 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
+
 import { RootState } from 'store/reducers';
+import { ChatRoomItem } from 'components/common/ChatRoomItem';
 import lionEmpty from 'assets/image/lion-empty.png';
 
 import './ChatRoomList.scss';
@@ -12,11 +14,17 @@ type Props = {
 function ChatRoomList({ searchChat }: Props) {
   const { chatRooms } = useSelector((state: RootState) => state.chatSocket);
 
+  const chatRoomList = chatRooms.map(chatRoom => (
+    <ChatRoomItem key={chatRoom.idx} roomInfo={chatRoom} />
+  ));
+
   return (
     <>
       {
         (chatRooms.length > 0) ? (
-          <div>qwer</div>
+          <div className="chat-list">
+            {chatRoomList}
+          </div>
         ) : (
           <div className="chat-list-empty">
             <img src={lionEmpty} alt="empty" />

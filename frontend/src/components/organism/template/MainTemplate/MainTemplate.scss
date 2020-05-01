@@ -3,6 +3,8 @@
 .main-template {
   display: flex;
   height: 100vh;
+  overflow-y: auto;
+  overflow-x: hidden;
 
   &__nav {
     padding: 3rem 0 1rem;

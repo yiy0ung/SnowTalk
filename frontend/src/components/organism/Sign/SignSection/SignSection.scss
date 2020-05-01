@@ -1,4 +1,5 @@
 @import 'style/color.scss';
+@import 'style/font.scss';
 
 .sign-section {
   display: flex;
@@ -10,8 +11,17 @@
 
   &__body {
     & > * + * {
-      margin-top: 0.6rem;
+      margin-top: 1rem;
     }
+  }
+
+  &__logo-title {
+    font-family: $Pacifico;
+    text-align: center;
+    font-size: 1.7rem;
+    font-weight: 700;
+    color: #fafafa;
+    line-height: normal;
   }
 
   &__logo {
@@ -20,7 +30,7 @@
     justify-content: center;
 
     & > img {
-      width: 9.7rem;
+      width: 8rem;
     }
   }
 

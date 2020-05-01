@@ -1,13 +1,16 @@
 import React, { CSSProperties } from 'react';
-
+import server from 'config/server';
+import defaultImg from 'assets/image/default-profile.jpg';
 import './Avatar.scss';
 
+export type ImageType = string|null|undefined;
+
 export type Props = {
-  url: string;
+  imageId: ImageType;
   size?: 'xlarge'|'large'|'medium'|'row-medium'|'small';
 };
 
-function Avatar({ url, size='medium' }: Props) {
+function Avatar({ imageId, size='medium' }: Props) {
   let style: CSSProperties = {};
 
   if (size === 'xlarge') {
@@ -39,7 +42,7 @@ function Avatar({ url, size='medium' }: Props) {
 
   return (
     <div className="avatar" style={style}>
-      <img src={url} alt="profile-img" />
+      <img src={imageId ? `${server.imgServer}/${imageId}` : defaultImg} alt="profile-img" />
     </div>
   );
 }
