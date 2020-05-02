@@ -21,20 +21,20 @@
   &__title {
     font-size: 0.85rem;
     font-weight: 700;
-    color: #4d4d4d;
+    color: #f7f7f7;
 
     & > span + span {
       margin-left: 0.3rem;
     }
 
     &-sub {
-      color: #737373;
+      color: #b1bad1;
       font-weight: 400;
     }
   }
 
   &__icons {
-    color: #737373;
+    color: #b1bad1;
     font-size: 0.8rem;
     margin-top: 0.4rem;
     padding-left: 0.2rem;
@@ -46,7 +46,7 @@
 
     & > span + span {
       padding-left: 0.5rem;
-      border-left: 1px solid #999999;
+      border-left: 1px solid #b1bad1;
     }
   }
 
@@ -63,11 +63,11 @@
   &__option {
     cursor: pointer;
     border-radius: 50%;
-    background-color: #a0b3c3;
+    background-color: #7e8eb4;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #606b75;
+    color: #bfc6d9;
     padding: 0.4rem;
 
     & > * {

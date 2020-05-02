@@ -1,9 +1,10 @@
-
+@import 'style/color.scss';
 
 .chatroom-input {
   display: flex;
   background-color: #fff;
   padding: 0.8rem 1rem 1rem;
+  min-height: auto;
 
   &__column:nth-child(2) {
     flex: 1;
@@ -26,19 +27,26 @@
 
   &__messageArea {
     width: 100%;
+    min-height: 4rem;
     resize: none;
+    padding: 0;
     border: none;
     outline: none;
-    row-gap: 3;
-    height: 3.5rem;
+    background-color: inherit;
   }
 
   &__btn {
+    cursor: pointer;
     outline: none;
     border-radius: 3px;
     padding: 0.4rem 0.8rem;
     color: #fff;
     border: none;
-    background-color: #0acf97;
+    background-color: rgba($snow-bold, 0.85);
+  }
+
+  &__btn-lock {
+    color: #cccccc;
+    background-color: $snow-bold;
   }
 }

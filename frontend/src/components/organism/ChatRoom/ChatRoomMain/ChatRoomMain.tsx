@@ -1,12 +1,14 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
-import { RootState } from 'store/reducers';
+
 import { ChatRoomHead } from '../ChatRoomHead';
+import { ChatRoomInput } from '../ChatRoomInput';
+import { ChatRoomMsg } from '../ChatRoomMsg';
+import { RootState } from 'store/reducers';
 import link from 'config/link';
 
 import './ChatRoomMain.scss';
-import { ChatRoomInput } from '../ChatRoomInput';
 
 type Props = {
   roomIdx: number;
@@ -27,8 +29,8 @@ function ChatRoomMain({ roomIdx }: Props) {
         <ChatRoomHead roomInfo={chatRoom} />
       </div>
 
-      <div className="chatroom-main__chat">
-        chat
+      <div className="chatroom-main__messages">
+        <ChatRoomMsg roomInfo={chatRoom} />
       </div>
 
       <div className="chatroom-main__input">

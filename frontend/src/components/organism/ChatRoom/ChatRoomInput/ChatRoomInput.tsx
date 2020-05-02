@@ -1,4 +1,4 @@
-import React, { useRef, useCallback } from 'react';
+import React, { useCallback } from 'react';
 import { FiSmile, FiImage } from 'react-icons/fi';
 import useInput from 'utils/hooks/useInput';
 
@@ -6,15 +6,20 @@ import './ChatRoomInput.scss';
 
 function ChatRoomInput() {
   const message = useInput('');
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  const textareaResize = useCallback(() => {
-    if (!textareaRef.current) {
+  const onSubmitMessage = useCallback(() => {
+    console.log(message.value);
+    if (message.value.length <= 0) {
       return;
     }
-    const scrollHeight = textareaRef.current.scrollHeight;
-    textareaRef.current.style.height = `${12 + scrollHeight} px`;
-  }, []);
+    console.log('submit');
+  }, [message.value]);
+
+  const onEnter = useCallback((e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.shiftKey === false && e.keyCode === 13) {
+      onSubmitMessage();
+    }
+  }, [onSubmitMessage]);
 
   return (
     <div className="chatroom-input">
@@ -24,14 +29,15 @@ function ChatRoomInput() {
       </div>
       <div className="chatroom-input__column">
         <textarea
-          onKeyDown={textareaResize}
           className="chatroom-input__messageArea"
           value={message.value}
-          onChange={message.onChange}
-          ref={textareaRef}></textarea>
+          onKeyUp={onEnter}
+          onChange={message.onChange}></textarea>
       </div>
       <div className="chatroom-input__column">
-        <button className="chatroom-input__btn">전송</button>
+        <button 
+          className={`chatroom-input__btn ${message.value.length <= 0 ? 'chatroom-input__btn-lock':''}`} 
+          onClick={onSubmitMessage}>전송</button>
       </div>
     </div>
   );

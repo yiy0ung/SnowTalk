@@ -1,12 +1,14 @@
+@import 'style/color.scss';
 
 .chatroom-main {
   display: flex;
   flex-direction: column;
   padding-top: 2.5rem;
   height: 100%;
-  background-color: #a9bdce;
+  background-color: $snow-high-bold;
 
-  &__chat {
+  &__messages {
     flex: 1;
+    background-color: $snow-bold;
   }
 }
