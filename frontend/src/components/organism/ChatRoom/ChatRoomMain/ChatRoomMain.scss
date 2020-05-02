@@ -2,7 +2,9 @@
 .chatroom-main {
   display: flex;
   flex-direction: column;
+  padding-top: 2.5rem;
   height: 100%;
+  background-color: #a9bdce;
 
   &__chat {
     flex: 1;

@@ -6,7 +6,7 @@ type Props = {
 
 function ChatRoomTemplate({ children }: Props) {
   return (
-    <div style={{ paddingTop: '2.5rem', height: '100%' }}>
+    <div style={{ height: '100%' }}>
       {children}
     </div>
   );

@@ -1,0 +1,30 @@
+
+
+.dropdown-item {
+  cursor: pointer;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 0.2rem 0.3rem;
+
+  &:hover {
+    background-color: #d9d9d9;
+  }
+
+  & + & {
+    margin-top: 0.3rem;
+  }
+
+  &__icon {
+    color: #666666; 
+    font-size: 0.8rem;
+    width: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  &__text {
+    font-size: 0.77rem;
+  }
+}

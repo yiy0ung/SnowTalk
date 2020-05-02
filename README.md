@@ -1,2 +1,2 @@
 # SnowTalk
-❄️ SnowTalk - KakaoTalk Clone Project
+❄️ SnowTalk - Messager Project

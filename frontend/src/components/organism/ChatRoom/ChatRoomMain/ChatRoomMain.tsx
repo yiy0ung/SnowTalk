@@ -6,6 +6,7 @@ import { ChatRoomHead } from '../ChatRoomHead';
 import link from 'config/link';
 
 import './ChatRoomMain.scss';
+import { ChatRoomInput } from '../ChatRoomInput';
 
 type Props = {
   roomIdx: number;
@@ -31,7 +32,7 @@ function ChatRoomMain({ roomIdx }: Props) {
       </div>
 
       <div className="chatroom-main__input">
-        input
+        <ChatRoomInput />
       </div>
     </div>
   );
