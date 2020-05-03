@@ -1,0 +1,25 @@
+@import 'components/base/SpeechBubble/SpeechBubble.scss';
+
+.speech-section {
+  display: flex;
+  font-size: $SpeechFontSize;
+  padding: $SpeechGap;
+  
+  &__column + &__column {
+    margin-left: 1rem;
+  }
+
+  &__body {
+    flex: 1;
+  }
+
+  &__speaker {
+    color: #fff;
+    margin-bottom: 0.35rem;
+  }
+}
+
+.speech-section-system {
+  background-color: #6275a3;
+  color: #fff;
+}

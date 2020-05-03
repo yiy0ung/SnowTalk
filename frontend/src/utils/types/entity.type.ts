@@ -21,10 +21,11 @@ export type ChatRoom = {
   participants: Participant[];
 };
 
+export type MessageType = 'user'|'system';
 export type Message = {
   idx: number;
   message: string;
-  type: 'user'|'system',
+  type: MessageType,
   deleted: number;
   createAt: string;
   member?: Member;

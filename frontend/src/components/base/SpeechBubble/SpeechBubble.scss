@@ -1,0 +1,58 @@
+@import 'style/color.scss';
+
+$SpeechFontSize: 0.85rem;
+$SpeechGap: 0.5rem 0.8rem;
+
+.speech-bubble {
+  font-size: $SpeechFontSize;
+  display: flex;
+
+  &__tip {
+    margin-top: 0.3rem;
+    width: 0px;
+    height: 0px;
+    border-top: 3px solid #fff;
+    border-bottom: 3px solid transparent;
+    border-right: 3px solid #fff;
+    border-left: 3px solid  transparent;
+  }
+
+  &__message {
+    padding: 0.5rem 0.6rem;
+    background-color: #fff;
+    border-radius: 5px;
+  }
+
+  &__date {
+    margin-left: 0.3rem;
+    color: #e6e6e6;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+  }
+}
+
+.speech-bubble-me {
+  display: flex;
+  justify-content: flex-end;
+  padding: $SpeechGap;
+
+  &__message {
+    margin-left: 0.3rem;
+    background-color: $snow-blue;
+  }
+
+  .speech-bubble__date {
+    margin: 0;
+  }
+  
+  &__tip {
+    margin-top: 0.3rem;
+    width: 0px;
+    height: 0px;
+    border-top: 3px solid $snow-blue;
+    border-bottom: 3px solid transparent;
+    border-right: 3px solid transparent;
+    border-left: 3px solid $snow-blue;
+  }
+}

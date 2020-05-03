@@ -32,29 +32,19 @@ export class ChatMessageRepository extends Repository<ChatMessage> {
   }
 
   public getMessageByChatRoomIdx(roomIdx: number, lastMessageIdx?: number) {
+    const messageQuery = this.createQueryBuilder('chatMessage')
+      .leftJoinAndSelect('chatMessage.member', 'member')
+      .leftJoinAndSelect('member.profileImg', 'file')
+      .where('chatMessage.chatRoom = :roomIdx', { roomIdx })
+      .orderBy('chatMessage.idx', 'DESC')
+      .addOrderBy('chatMessage.createAt', 'DESC')
+      .limit(MESSAGE_LIMIT);
+
     if (lastMessageIdx) {
-      return this.find({
-        where: {
-          idx: LessThan(lastMessageIdx),
-          chatRoom: roomIdx,
-        },
-        order: {
-          idx: 'DESC',
-          createAt: 'DESC',
-        },
-        take: MESSAGE_LIMIT,
-      });
+      return messageQuery.andWhere('chatMessage.idx < :lastMessageIdx', { lastMessageIdx })
+        .getMany();
     }
 
-    return this.find({
-      where: {
-        chatRoom: roomIdx,
-      },
-      order: {
-        idx: 'DESC',
-        createAt: 'DESC',
-      },
-      take: MESSAGE_LIMIT,
-    });
+    return messageQuery.getMany();
   }
 }

@@ -10,6 +10,7 @@ import {
   fetchRemoveFriendAsync,
 } from 'store/reducers/member.reducer';
 import { subscribeChatSocket } from 'store/reducers/chatSocket.reducer';
+import Swal from 'sweetalert2';
 
 function* login(action: ReturnType<typeof fetchLoginAsync.request>) {
   try {
@@ -27,6 +28,11 @@ function* login(action: ReturnType<typeof fetchLoginAsync.request>) {
       put(subscribeChatSocket()),
     ]);
   } catch (error) {
+    Swal.fire({
+      icon: 'error',
+      title: '로그인 실패',
+      text: '아이디 또는 비밀번호를 확인해주세요',
+    });
     yield put(fetchLoginAsync.failure(error));
   }
 }

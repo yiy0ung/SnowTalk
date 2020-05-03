@@ -10,5 +10,15 @@
   &__messages {
     flex: 1;
     background-color: $snow-bold;
+    overflow-y: auto;
+
+    &::-webkit-scrollbar {
+      width: 0.3rem;
+    }
+    &::-webkit-scrollbar-thumb {
+      cursor: pointer;
+      background: #8595bd;
+      border-radius: 26px;
+    }
   }
 }
