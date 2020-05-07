@@ -6,7 +6,6 @@ import { ChatRoomRepository } from "../database/repositories/chat.repository";
 import { ChatParticipantRepository } from "../database/repositories/chatParticipant.repository";
 import { Member } from "../database/models/Member";
 import { ChatRoom } from "../database/models/ChatRoom";
-import { ChatParticipant } from "../database/models/ChatParticipant";
 import { RoomType } from "../database/enum/ChatType";
 import { ChatDataloader } from "./dataloader/chat.dataloader";
 import { MessageService } from "./message.service";

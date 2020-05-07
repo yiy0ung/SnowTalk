@@ -4,14 +4,16 @@ import { InjectRepository } from "typeorm-typedi-extensions";
 import { ChatRoom } from "../database/models/ChatRoom";
 import { Member } from "../database/models/Member";
 import { FileRepository } from "../database/repositories/file.repository";
-import { ChatMessageRepository } from "../database/repositories/chatMessage.repository";
 import { ChatRoomRepository } from "../database/repositories/chat.repository";
+import { ChatMessageRepository } from "../database/repositories/chatMessage.repository";
+import { ChatParticipantRepository } from "../database/repositories/chatParticipant.repository";
 
 @Service()
 export class MessageService {
   constructor(
     @InjectRepository() private readonly chatRoomRepo: ChatRoomRepository,
     @InjectRepository() private readonly chatMsgRepo: ChatMessageRepository,
+    @InjectRepository() private readonly chatParticipantRepo: ChatParticipantRepository,
     @InjectRepository() private readonly fileRepo: FileRepository,
   ) {}
   
@@ -21,6 +23,18 @@ export class MessageService {
 
   public getMessage(roomIdx?: number, lastMessagesIdx?: number) {
     return this.chatMsgRepo.getMessageByChatRoomIdx(roomIdx, lastMessagesIdx);
+  }
+
+  public async getChatRoomMessage(memberIdx: number, roomIdx: number, lastMessagesIdx?: number) {
+    const member = await this.chatParticipantRepo.getParticipant(memberIdx, roomIdx);
+
+    if (!member || member.activation === 0) {
+      return null;
+    }
+
+    const message = await this.getMessage(roomIdx, lastMessagesIdx);
+
+    return message;
   }
 
   public async saveUserMsg({

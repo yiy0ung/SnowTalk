@@ -1,6 +1,5 @@
 import { Repository, EntityRepository, In } from "typeorm";
 import { Service } from "typedi";
-import { map } from 'lodash';
 import { ChatParticipant } from "../models/ChatParticipant";
 import { Member } from "../models/Member";
 import { ChatRoom } from "../models/ChatRoom";
