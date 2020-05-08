@@ -1,19 +1,32 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { FiSmile, FiImage } from 'react-icons/fi';
 import useInput from 'utils/hooks/useInput';
+import { sendMessage } from 'store/reducers/chatSocket.reducer';
 
 import './ChatRoomInput.scss';
 
-function ChatRoomInput() {
+type Props = {
+  roomIdx: number;
+}
+
+function ChatRoomInput({ roomIdx }: Props) {
+  const dispatch = useDispatch();
+  useState();
   const message = useInput('');
 
   const onSubmitMessage = useCallback(() => {
     console.log(message.value);
-    if (message.value.length <= 0) {
-      return;
+
+    if (message.value.length > 0) {
+      dispatch(sendMessage({
+        roomIdx,
+        message: message.value,
+      }));
+      
+      message.setValue('');
     }
-    console.log('submit');
-  }, [message.value]);
+  }, [dispatch, message, roomIdx]);
 
   const onEnter = useCallback((e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.shiftKey === false && e.keyCode === 13) {

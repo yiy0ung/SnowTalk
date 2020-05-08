@@ -26,6 +26,7 @@ export class ChatMessageRepository extends Repository<ChatMessage> {
       message,
       member: sender,
       type: MessageType.user,
+      deleted: 0,
       file,
       createAt: moment().tz('Asia/Seoul').toString(),
     });

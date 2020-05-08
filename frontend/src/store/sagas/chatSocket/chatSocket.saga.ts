@@ -5,8 +5,8 @@ import { PayloadAction } from 'typesafe-actions';
 
 import server from 'config/server';
 import { existToken } from 'utils/token';
-import { subscribeChatSocket, unsubscribeChatSocket, emitGetRooms, receiveGetRooms } from 'store/reducers/chatSocket.reducer';
-import { ChatEvent, ChatSocketResp, GetRoomData } from './chat.event';
+import { subscribeChatSocket, unsubscribeChatSocket, emitGetRooms, receiveGetRooms, sendMessage, receiveMessage } from 'store/reducers/chatSocket.reducer';
+import { ChatEvent, ChatSocketResp, GetRoomData, ReceiveMsgData } from './chat.event';
 
 function connect() {
   const socket = ioClient.connect(`${server.socketHost}/chat`, {
@@ -27,15 +27,17 @@ function connect() {
   }).catch(error => ({ socket, error }));
 }
 
-function generateEmit(socket: SocketIOClient.Socket, actionType: ChatEvent) {
+function emitter(socket: SocketIOClient.Socket, actionType: ChatEvent) {
   return function () {
     socket.emit(actionType);
   }
 }
 
-function generatePayloadEmit<Action extends PayloadAction<any, any>>(socket: SocketIOClient.Socket, actionType: ChatEvent) {
+function payloadEmitter<Action extends PayloadAction<any, any>>(socket: SocketIOClient.Socket, actionType: ChatEvent) {
   return function (action: Action) {
-    socket.emit(actionType, action.payload);
+    if (action.payload) {
+      socket.emit(actionType, action.payload);
+    }
   }
 }
 
@@ -58,7 +60,7 @@ function* flow() {
 
 function* handleIO(socket: SocketIOClient.Socket) {
   yield fork(read, socket); // 이벤트 listener 설정
-  yield fork(setEmitActionListener, socket); // 이벤트 emitter 설정
+  yield fork(setEmitters, socket); // 이벤트 emitter 설정
   yield fork(initalEmit); // 최초 연결시, 필요한 emit 전송
 }
 
@@ -72,10 +74,14 @@ function* read(socket: SocketIOClient.Socket) {
 
 function subscribe(socket: SocketIOClient.Socket) {
   return eventChannel((emit) => {
-    socket.on('get-rooms', (resp: ChatSocketResp<GetRoomData>) => {
+    socket.on(ChatEvent.getRooms, (resp: ChatSocketResp<GetRoomData>) => {
       if (resp.status === 200 && resp.data) {
-        console.log(resp);
         emit(receiveGetRooms(resp.data));
+      }
+    });
+    socket.on(ChatEvent.receiveMsg, (resp: ChatSocketResp<ReceiveMsgData>) => {
+      if (resp.status === 200 && resp.data) {
+        emit(receiveMessage(resp.data));
       }
     });
 
@@ -90,16 +96,17 @@ function subscribe(socket: SocketIOClient.Socket) {
   });
 }
 
-function* setEmitActionListener(socket: SocketIOClient.Socket) {
+function* setEmitters(socket: SocketIOClient.Socket) {
   yield all([
-    takeEvery(emitGetRooms, generateEmit(socket, ChatEvent.getRooms)),
-  ])
+    takeEvery(emitGetRooms, emitter(socket, ChatEvent.getRooms)),
+    takeEvery(sendMessage, payloadEmitter(socket, ChatEvent.sendMsg)),
+  ]);
 }
 
 function* initalEmit() {
   yield all([
     put(emitGetRooms()),
-  ])
+  ]);
 }
 
 export default function* () {

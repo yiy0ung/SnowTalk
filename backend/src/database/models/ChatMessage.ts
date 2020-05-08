@@ -15,7 +15,7 @@ export class ChatMessage {
   @Column({ type: 'enum', enum: MessageType })
   type: MessageType;
 
-  @Column({ type: 'int', default: 0 })
+  @Column({ type: 'int', nullable: true, default: 0 })
   deleted: number;
 
   @Column({ type: 'varchar', name: 'create_at' })

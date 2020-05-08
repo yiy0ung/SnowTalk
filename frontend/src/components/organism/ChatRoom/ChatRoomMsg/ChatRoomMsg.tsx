@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import moment from 'moment';
 import { useSelector } from 'react-redux';
 
@@ -28,17 +28,16 @@ function ChatRoomMsg({ roomInfo }: Props) {
     }
 
     return (
-      <>
+      <Fragment key={idx}>
         {dateSection}
         <SpeechSection
-          key={idx}
           messageType={type}
           loginMemberId={logedMember.id}
           member={member}
           message={message}
           sendDate={createAt}
           deleted={deleted} />
-      </>
+      </Fragment>
     );
   });
 

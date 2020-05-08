@@ -1,6 +1,8 @@
+import produce from 'immer';
 import { createAction, ActionType, createReducer } from "typesafe-actions";
+import { find } from 'lodash';
 import { ChatRoom } from "utils/types/entity.type";
-import { GetRoomData } from "store/sagas/chatSocket/chat.event";
+import { GetRoomData, ReceiveMsgData, SendMsgData } from "store/sagas/chatSocket/chat.event";
 
 type ChatSocketState = {
   chatRooms: ChatRoom[];
@@ -12,17 +14,23 @@ export const initalState: ChatSocketState = {
 
 export const SUBSCRIBE_CHAT_SOCKET = 'SUBSCRIBE_CHAT_SOCKET';
 export const UNSUBSCRIBE_CHAT_SOCKET = 'UNSUBSCRIBE_CHAT_SOCKET';
+export const SEND_MESSAGE = 'SEND_MESSAGE';
+export const RECEIVE_MESSAGE = 'RECEIVE_MESSAGE';
 export const EMIT_GET_ROOMS = 'EMIT_GET_ROOMS';
 export const RECEIVE_GET_ROOMS = 'RECEIVE_GET_ROOMS';
 
 export const subscribeChatSocket = createAction(SUBSCRIBE_CHAT_SOCKET)();
 export const unsubscribeChatSocket = createAction(UNSUBSCRIBE_CHAT_SOCKET)();
+export const sendMessage = createAction(SEND_MESSAGE)<SendMsgData>();
+export const receiveMessage = createAction(RECEIVE_MESSAGE)<ReceiveMsgData>();
 export const emitGetRooms = createAction(EMIT_GET_ROOMS)();
 export const receiveGetRooms = createAction(RECEIVE_GET_ROOMS)<GetRoomData>();
 
 const actions = {
   subscribeChatSocket,
   unsubscribeChatSocket,
+  sendMessage,
+  receiveMessage,
   emitGetRooms,
   receiveGetRooms,
 };
@@ -33,6 +41,19 @@ export default createReducer<ChatSocketState, ChatSocketActions>(initalState, {
     ...state,
     chatRooms: action.payload.rooms,
   }),
+  [RECEIVE_MESSAGE]: (state, { payload }) => {
+    console.log(payload);
+    const { roomIdx, message } = payload;
+
+    return produce(state, draft => {
+      draft.chatRooms.map((chatRoom) => {
+        if (chatRoom.idx === roomIdx) {
+          chatRoom.messages = [message, ...chatRoom.messages];
+        }
+        return chatRoom;
+      });
+    });
+  },
 });
 
 // import produce from 'immer';

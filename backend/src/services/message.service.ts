@@ -51,7 +51,10 @@ export class MessageService {
       };
     }
 
-    const file = await this.fileRepo.getFileByIdx(fileIdx);
+    let file = null;
+    if (!fileIdx) {
+      file = await this.fileRepo.getFileByIdx(fileIdx);
+    }
     const messageData = await this.chatMsgRepo.saveUserMessage(room, message, sender, file);
 
     return {
@@ -64,7 +67,7 @@ export class MessageService {
 
 type UserMessageForm = {
   roomIdx: number;
-  fileIdx: number;
+  fileIdx?: number|null;
   sender: Member;
   message: string;
 }

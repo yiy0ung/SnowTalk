@@ -1,4 +1,4 @@
-import React, { ReactNode, useRef, useState, useCallback } from 'react';
+import React, { ReactNode, useState, useCallback } from 'react';
 import './DropdownMenu.scss';
 
 type Props = {

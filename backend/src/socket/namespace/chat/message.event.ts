@@ -43,6 +43,7 @@ export class MessageEvent {
 
   public async sendMsg(socket: AuthSocket, data) {
     try {
+      console.log(data);
       await Validate.sendRoomMessage(data);
     } catch (error) {
       socket.emit(ChatListener.sendMsg, {
@@ -86,7 +87,10 @@ export class MessageEvent {
       socket.broadcast
         .to(`chatroom-${room.idx}`)
         .emit(ChatListener.receiveMsg, payload);
+
+      console.log(payload);
     } catch (error) {
+      console.error(error);
       socket.emit(ChatListener.sendMsg, {
         status: 500,
         message: '메시지 전송 실패',

@@ -21,6 +21,12 @@ export type GetRoomData = {
   rooms: ChatRoom[];
 };
 
+export type SendMsgData = {
+  roomIdx: number;
+  message: string;
+  imageIdx?: number|null;
+};
+
 export type ReceiveMsgData = {
   roomIdx: number;
   message: Message;
