@@ -6,7 +6,7 @@ class AuthRepo {
   public async signUp(member: Partial<InitMember>, fileIdx: number|null) {
     const { id, pw, name, intro } = member;
 
-    const resp = await axios.post(`${server.host}/auth/signup`, {
+    const resp = await axios.post(`${server.apiHost}/auth/signup`, {
       id,
       pw,
       name,
@@ -20,7 +20,7 @@ class AuthRepo {
   public async updateProfile(member: Partial<InitMember>, fileIdx: number|null) {
     const { pw, name, intro } = member;
 
-    const resp = await axios.put(`${server.host}/auth/`, {
+    const resp = await axios.put(`${server.apiHost}/auth/`, {
       pw,
       name,
       intro,

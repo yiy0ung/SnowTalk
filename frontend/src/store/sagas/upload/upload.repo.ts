@@ -9,7 +9,7 @@ class UploadRepo {
       formData.append('image', file);
     }
 
-    const resp = await axios.post(`${server.host}/upload/image`, formData);
+    const resp = await axios.post(`${server.apiHost}/upload/image`, formData);
 
     return resp.data;
   }

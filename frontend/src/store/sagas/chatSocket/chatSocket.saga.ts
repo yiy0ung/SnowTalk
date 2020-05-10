@@ -9,7 +9,7 @@ import { subscribeChatSocket, unsubscribeChatSocket, emitGetRooms, receiveGetRoo
 import { ChatEvent, ChatSocketResp, GetRoomData, ReceiveMsgData } from './chat.event';
 
 function connect() {
-  const socket = ioClient.connect(`${server.socketHost}/chat`, {
+  const socket = ioClient.connect(`${server.host}/chat`, {
     path: '/socket',
     query: {
       token: existToken(),

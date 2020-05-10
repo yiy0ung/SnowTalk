@@ -4,7 +4,7 @@ import server from 'config/server';
 class MemberRepo {
 
   public async login(id: string, pw: string) {
-    const res = await axios.post(`${server.host}/auth/login`, {
+    const res = await axios.post(`${server.apiHost}/auth/login`, {
       id,
       pw,
     });
@@ -13,7 +13,7 @@ class MemberRepo {
   }
 
   public async getMyInfo() {
-    const res = await axios.get(`${server.host}/member/my`, {
+    const res = await axios.get(`${server.apiHost}/member/my`, {
       headers: {
         token: sessionStorage.getItem('token'),
       },
@@ -23,7 +23,7 @@ class MemberRepo {
   }
 
   public async getFriends() {
-    const res = await axios.get(`${server.host}/member/friend`, {
+    const res = await axios.get(`${server.apiHost}/member/friend`, {
       headers: {
         token: sessionStorage.getItem('token'),
       },
@@ -34,7 +34,7 @@ class MemberRepo {
 
   public async appendFriends(friendId: number) {
     console.log(friendId, typeof friendId);
-    const res = await axios.post(`${server.host}/member/friend`, {
+    const res = await axios.post(`${server.apiHost}/member/friend`, {
       friendId,
     }, {
       headers: {
@@ -46,7 +46,7 @@ class MemberRepo {
   }
 
   public async removeFriends(friendIdx: number) {
-    const res = await axios.delete(`${server.host}/member/friend`, {
+    const res = await axios.delete(`${server.apiHost}/member/friend`, {
       headers: {
         token: sessionStorage.getItem('token'),
       },
