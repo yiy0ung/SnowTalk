@@ -12,8 +12,7 @@ type Props = {
 };
 
 function FriendSection({ searchWord }: Props) {
-  const memberStore = useSelector((store: RootState) => store.member);
-  const { member, friends } = memberStore;
+  const { user, friends } = useSelector((state: RootState) => state.member);
 
   return (
     <div className="friend-section">
@@ -21,11 +20,11 @@ function FriendSection({ searchWord }: Props) {
         searchWord.length <= 0 && (
           <>
             <UserCard
-              title={member.name}
-              desc={member.intro}
+              title={user.name}
+              desc={user.intro}
               type="profile"
-              imgIds={member.profileImg !== null ? [
-                member.profileImg.name,
+              imgIds={user.profileImg !== null ? [
+                user.profileImg.name,
               ]:[]}
               avatar={{ size: 'xlarge' }}
             />

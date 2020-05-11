@@ -11,11 +11,11 @@ import { GrAdd } from 'react-icons/gr';
 import { ChatRoom } from 'utils/types/entity.type';
 import { RootState } from 'store/reducers';
 import { AvatarList } from 'components/base/AvatarList';
+import { DropdownMenu } from 'components/base/DropdownMenu';
+import { DropdownMenuItem } from 'components/base/DropdownMenu/DropdownMenuItem';
 import link from 'config/link';
 
 import './ChatRoomHead.scss';
-import { DropdownMenu } from 'components/base/DropdownMenu';
-import { DropdownMenuItem } from 'components/base/DropdownMenu/DropdownMenuItem';
 
 type Props = {
   roomInfo: ChatRoom;
@@ -23,14 +23,14 @@ type Props = {
 
 function ChatRoomHead({ roomInfo }: Props) {
   const { title, participants, type } = roomInfo;
-  const memberStore = useSelector((state: RootState) => state.member);
+  const memberState = useSelector((state: RootState) => state.member);
   let roomTitle = [];
   let profileImgs = [];
 
   for (const participant of participants) {
-    if (participant.member.idx !== memberStore.member.idx) {
-      profileImgs.push(participant.member.profileImg?.name);
+    if (participant.member.idx !== memberState.user.idx) {
       roomTitle.push(participant.member.name);
+      profileImgs.push(participant.member.profileImg?.name);
     }
   }
 

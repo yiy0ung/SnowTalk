@@ -1,6 +1,7 @@
 import React, { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import { FaRegTrashAlt } from 'react-icons/fa';
+import { BsThreeDots } from 'react-icons/bs';
 import Swal from 'sweetalert2';
 
 import { Member } from 'utils/types/entity.type';
@@ -8,6 +9,8 @@ import { fetchRemoveFriendAsync } from 'store/reducers/member.reducer';
 import { UserCard } from 'components/common/UserCard';
 
 import './FriendList.scss';
+import { DropdownMenu } from 'components/base/DropdownMenu';
+import { DropdownMenuItem } from 'components/base/DropdownMenu/DropdownMenuItem';
 
 type Props = {
   friends: Member[];
@@ -42,14 +45,16 @@ function FriendList({ friends }: Props) {
         friend.profileImg.name,
       ]:[]}
       additionalInfo={(
-        <FaRegTrashAlt 
-          className="friend-list__item-option remove"
-          onClick={() => onRemoveFriend(friend.idx)} 
-          title="친구 삭제" />
+        <DropdownMenu component={<BsThreeDots />}>
+          <DropdownMenuItem 
+            icon={<FaRegTrashAlt />} 
+            text="친구 삭제" 
+            onClick={() => onRemoveFriend(friend.idx)} />
+        </DropdownMenu>
       )}
     />
   ));
-
+  
   return (
     <div className="friend-list">
       <div className="friend-list__head">

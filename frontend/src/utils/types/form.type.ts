@@ -8,11 +8,6 @@ export interface BasicResForm {
 export interface LoginReq {
   id: string;
   pw: string;
-};
-
-export interface LoginRes {
-  token: string;
-  refresh: string;
 }
 
 export interface MembersInfoRes {

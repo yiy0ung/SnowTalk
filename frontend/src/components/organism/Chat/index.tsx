@@ -1,4 +1,6 @@
 import React, { useState, useCallback, ChangeEvent } from 'react';
+import { IoMdAdd } from 'react-icons/io';
+
 import { ContentTemplate } from '../template/ContentTemplate';
 import { Header } from 'components/base/Header';
 import { Input } from 'components/base/Input';
@@ -15,7 +17,9 @@ function Chat() {
     <ContentTemplate
       headerComponent={(
         <>
-          <Header title="채팅"/>
+          <Header title="채팅">
+            <IoMdAdd />
+          </Header>
           <Input 
             value={searchChat}
             onChange={onChangeSearchChat} 

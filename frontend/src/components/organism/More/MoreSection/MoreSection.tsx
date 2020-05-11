@@ -8,8 +8,7 @@ import { UserCard } from 'components/common/UserCard';
 import { MoreList } from '../MoreList';
 
 function MoreSection() {
-  const memberStore = useSelector((state: RootState) => state.member);
-  const { member } = memberStore;
+  const { user } = useSelector((state: RootState) => state.member);
 
   return (
     <ContentTemplate
@@ -20,10 +19,10 @@ function MoreSection() {
       )}
     >
       <UserCard
-        title={member.name}
-        desc={member.intro}
-        imgIds={member.profileImg !== null ? [
-          member.profileImg.name,
+        title={user.name}
+        desc={user.intro}
+        imgIds={user.profileImg !== null ? [
+          user.profileImg.name,
         ]:[]}
         avatar={{ size: 'xlarge' }}
         type="profile"

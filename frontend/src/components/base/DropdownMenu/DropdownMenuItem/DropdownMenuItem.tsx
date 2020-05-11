@@ -5,7 +5,7 @@ import './DropdownMenuItem.scss';
 type Props = {
   icon?: ReactNode;
   text: string;
-  onClick: () => void;
+  onClick?: () => void;
 };
 
 function DropdownMenuItem({ icon, text, onClick }: Props) {

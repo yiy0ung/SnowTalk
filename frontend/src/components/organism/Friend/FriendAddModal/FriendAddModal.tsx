@@ -3,11 +3,11 @@ import { useSelector, useDispatch } from 'react-redux';
 
 import useInput from 'utils/hooks/useInput';
 import { RootState } from 'store/reducers';
+import { fetchAppendFriendAsync } from 'store/reducers/member.reducer';
 import { Button } from 'components/base/Button';
+import { SimpleInput } from 'components/base/SimpleInput';
 
 import './FriendAddModal.scss';
-import { SimpleInput } from 'components/base/SimpleInput';
-import { fetchAppendFriendAsync } from 'store/reducers/member.reducer';
 
 type Props = {
   onClose: Function;
@@ -15,8 +15,8 @@ type Props = {
 
 function FriendAddModal({ onClose }: Props) {
   const dispatch = useDispatch();
+  const { user } = useSelector((state: RootState) => state.member);
   const friendId = useInput('');
-  const { member } = useSelector((state: RootState) => state.member);
 
   const onAppendFriend = useCallback(() => {
     const value = parseInt(friendId.value, 10);
@@ -38,7 +38,7 @@ function FriendAddModal({ onClose }: Props) {
         </div>
         <div className="friend-add-modal__sec">
           <div className="friend-add-modal__sec-my">
-            {member.friendId}
+            {user.friendId}
           </div>
           <div>내 친구 ID를 공유해주세요!</div>
         </div>

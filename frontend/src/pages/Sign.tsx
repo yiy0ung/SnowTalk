@@ -1,13 +1,14 @@
 import React, { useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router';
+
+import { existToken } from 'utils/token';
+import { RootState } from 'store/reducers';
 import { SignSection } from 'components/organism/Sign/SignSection';
 import link from 'config/link';
-import { existToken } from 'utils/token';
-import { useSelector } from 'react-redux';
-import { RootState } from 'store/reducers';
 
 function Sign() {
-  const { isLogin } = useSelector((store: RootState) => store.member);
+  const { isLogin } = useSelector((state: RootState) => state.core);
   const history = useHistory();
 
   useEffect(() => {

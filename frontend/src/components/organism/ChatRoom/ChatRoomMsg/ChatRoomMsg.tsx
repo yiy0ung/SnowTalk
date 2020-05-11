@@ -14,7 +14,7 @@ type Props = {
 };
 
 function ChatRoomMsg({ roomInfo }: Props) {
-  const { member: logedMember } = useSelector((state: RootState) => state.member);
+  const { user } = useSelector((state: RootState) => state.member);
   const { messages } = roomInfo;
 
   const messageBubbles = messages.map((messageItem, index) => {
@@ -32,7 +32,7 @@ function ChatRoomMsg({ roomInfo }: Props) {
         {dateSection}
         <SpeechSection
           messageType={type}
-          loginMemberId={logedMember.id}
+          loginMemberId={user.id}
           member={member}
           message={message}
           sendDate={createAt}

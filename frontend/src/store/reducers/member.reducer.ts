@@ -1,34 +1,33 @@
 import {
-  createAction,
   createAsyncAction,
   ActionType,
   createReducer,
 } from 'typesafe-actions';
-import { Member } from 'utils/types/entity.type';
-import { LoginReq, LoginRes, MembersInfoRes } from 'utils/types/form.type';
+import { InitMember, Member } from 'utils/types/entity.type';
 
-// init state
 type MemberState = {
-  isLogin: boolean;
-  member: Member;
+  user: Member;
   friends: Member[];
-}
+};
+
 
 export const initialState: MemberState = {
-  isLogin: false,
-  member: {} as Member,
+  user: {} as Member,
   friends: [],
 };
 
-// action
-export const LOGIN = 'LOGIN';
-export const LOGOUT = 'LOGOUT';
-export const LOGIN_REQUEST = 'LOGIN_REQUEST'; // login
-export const LOGIN_SUCCESS = 'LOGIN_SUCCESS';
-export const LOGIN_FAILURE = 'LOGIN_FAILURE';
-export const MEMBERSINFO_REQUEST = 'MEMBERSINFO_REQUEST'; // my info
-export const MEMBERSINFO_SUCCESS = 'MEMBERSINFO_SUCCESS';
-export const MEMBERSINFO_FAILURE = 'MEMBERSINFO_FAILURE';
+export const SIGNUP_REQUEST = 'SIGNUP_REQUEST';
+export const SIGNUP_SUCCESS = 'SIGNUP_SUCCESS';
+export const SIGNUP_FAILURE = 'SIGNUP_FAILURE';
+export const USER_INFO_REQUEST = 'USER_INFO_REQUEST';
+export const USER_INFO_SUCCESS = 'USER_INFO_SUCCESS';
+export const USER_INFO_FAILUSE = 'USER_INFO_FAILUSE';
+export const FRIENDS_LIST_REQUEST = 'FRIENDS_LIST_REQUEST';
+export const FRIENDS_LIST_SUCCESS = 'FRIENDS_LIST_SUCCESS';
+export const FRIENDS_LIST_FAILURE = 'FRIENDS_LIST_FAILURE';
+export const UPDATE_PROFILE_REQUEST = 'UPDATE_PROFILE_REQUEST';
+export const UPDATE_PROFILE_SUCCESS = 'UPDATE_PROFILE_SUCCESS';
+export const UPDATE_PROFILE_FAILURE = 'UPDATE_PROFILE_FAILURE';
 export const APPEND_FRIEND_REQUEST = 'APPEND_FRIEND_REQUEST'; // add member
 export const APPEND_FRIEND_SUCCESS = 'APPEND_FRIEND_SUCCESS';
 export const APPEND_FRIEND_FAILURE = 'APPEND_FRIEND_FAILURE';
@@ -36,20 +35,26 @@ export const REMOVE_FRIEND_REQUEST = 'REMOVE_FRIEND_REQUEST'; // remove member
 export const REMOVE_FRIEND_SUCCESS = 'REMOVE_FRIEND_SUCCESS';
 export const REMOVE_FRIEND_FAILURE = 'REMOVE_FRIEND_FAILURE';
 
-
-// action func
-export const login = createAction(LOGIN)<boolean>();
-export const logout = createAction(LOGOUT)();
-export const fetchLoginAsync = createAsyncAction(
-  LOGIN_REQUEST,
-  LOGIN_SUCCESS,
-  LOGIN_FAILURE,
-)<LoginReq, LoginRes, Error>();
-export const fetchMembersInfoAsync = createAsyncAction(
-  MEMBERSINFO_REQUEST,
-  MEMBERSINFO_SUCCESS,
-  MEMBERSINFO_FAILURE,
-)<undefined, MembersInfoRes, Error>();
+export const fetchSignUpAsync = createAsyncAction(
+  SIGNUP_REQUEST,
+  SIGNUP_SUCCESS,
+  SIGNUP_FAILURE,
+)<Partial<InitMember>&{file: File|number|null}, undefined, Error>();
+export const fetchUpdateProfileAsync = createAsyncAction(
+  UPDATE_PROFILE_REQUEST,
+  UPDATE_PROFILE_SUCCESS,
+  UPDATE_PROFILE_FAILURE,
+)<Partial<InitMember>&{file: File|number|null}, undefined, Error>();
+export const fetchUserInfoAsync = createAsyncAction(
+  USER_INFO_REQUEST,
+  USER_INFO_SUCCESS,
+  USER_INFO_FAILUSE,
+)<undefined, Member, Error>();
+export const fetchFriendsListAsync = createAsyncAction(
+  FRIENDS_LIST_REQUEST,
+  FRIENDS_LIST_SUCCESS,
+  FRIENDS_LIST_FAILURE,
+)<undefined, Member[], Error>();
 export const fetchAppendFriendAsync = createAsyncAction(
   APPEND_FRIEND_REQUEST,
   APPEND_FRIEND_SUCCESS,
@@ -62,28 +67,22 @@ export const fetchRemoveFriendAsync = createAsyncAction(
 )<number, undefined, Error>();
 
 const actions = {
-  fetchLoginAsync,
-  fetchMembersInfoAsync,
+  fetchSignUpAsync,
+  fetchUpdateProfileAsync,
+  fetchUserInfoAsync,
+  fetchFriendsListAsync,
   fetchAppendFriendAsync,
   fetchRemoveFriendAsync,
-  logout,
-  login,
 };
-type MemberAction = ActionType<typeof actions> 
+type MemberAction = ActionType<typeof actions>;
 
-// reducer
 export default createReducer<MemberState, MemberAction>(initialState, {
-  [MEMBERSINFO_SUCCESS]: (state, action) => ({
+  [USER_INFO_SUCCESS]: (state, action) => ({
     ...state,
-    member: action.payload.member,
-    friends: action.payload.friends,
+    user: action.payload,
   }),
-  [LOGIN]: (state, action) => ({
+  [FRIENDS_LIST_SUCCESS]: (state, action) => ({
     ...state,
-    isLogin: action.payload,
-  }),
-  [LOGOUT]: (state) => ({
-    ...state,
-    isLogin: false,
+    friends: action.payload,
   }),
 });

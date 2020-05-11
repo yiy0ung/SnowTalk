@@ -6,7 +6,7 @@ import { FiLogOut, FiBell } from 'react-icons/fi';
 import { IoIosFlask, IoIosHelpCircleOutline } from 'react-icons/io';
 
 import { RootState } from 'store/reducers';
-import { logout } from 'store/reducers/member.reducer';
+import { logout } from 'store/reducers/core.reducer';
 import { unsubscribeChatSocket } from 'store/reducers/chatSocket.reducer';
 import { SignUpModal } from 'components/organism/Sign/SignUpModal';
 
@@ -29,7 +29,7 @@ function MoreListItem({ icon, onClick, children }: Props) {
 
 function MoreList() {
   const dispatch = useDispatch();
-  const { member } = useSelector((state: RootState) => state.member);
+  const { user } = useSelector((state: RootState) => state.member);
   const [visible, setVisible] = useState(false);
 
   const onLogout = useCallback(() => {
@@ -53,16 +53,16 @@ function MoreList() {
           로그아웃
         </MoreListItem>
       </ul>
-      <SignUpModal 
+
+      <SignUpModal
         visible={visible} 
         onClose={() => setVisible(false)}
         type="update"
         defaultData={{
-          name: member.name,
-          intro: member.intro,
-          profileImg: member.profileImg,
+          name: user.name,
+          intro: user.intro,
+          profileImg: user.profileImg,
         }} />
-
     </div>
   );
 }

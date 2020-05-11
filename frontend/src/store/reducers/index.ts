@@ -1,12 +1,12 @@
 import { combineReducers } from 'redux';
 
+import core from './core.reducer';
 import member from './member.reducer';
-import auth from './auth.reducer';
 import chatSocket from './chatSocket.reducer';
 
 const rootReducer = combineReducers({
+  core,
   member,
-  auth,
   chatSocket,
 });
 

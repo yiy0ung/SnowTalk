@@ -1,58 +1,89 @@
-import { all, takeLatest, call, put } from 'redux-saga/effects';
+import { all, takeLatest, put, call } from 'redux-saga/effects';
 import { map } from 'lodash';
-
+import AuthRepo from './member.repo';
+import UploadRepo from '../upload/upload.repo';
+import { SavedImg } from 'utils/types/entity.type';
 import memberRepo from './member.repo';
-import {
-  fetchLoginAsync,
-  fetchMembersInfoAsync,
-  login as loginAction,
-  fetchAppendFriendAsync,
+import { openPopUp } from 'store/reducers/core.reducer';
+import { 
+  fetchSignUpAsync, 
+  fetchUpdateProfileAsync, 
+  fetchAppendFriendAsync, 
   fetchRemoveFriendAsync,
+  fetchUserInfoAsync,
+  fetchFriendsListAsync,
 } from 'store/reducers/member.reducer';
-import { subscribeChatSocket } from 'store/reducers/chatSocket.reducer';
-import Swal from 'sweetalert2';
 
-function* login(action: ReturnType<typeof fetchLoginAsync.request>) {
+function* uploadImg(files: File[]) {
   try {
-    const { id, pw } = action.payload;
-    const res = yield call(memberRepo.login, id, pw);
-    const { token, refresh } = res.data;
+    const { data } = yield call(UploadRepo.uploadImg, files);
 
-    sessionStorage.setItem('token', token);
-    localStorage.setItem('refresh', refresh);
-
-    yield put(fetchLoginAsync.success(res.data));
-
-    yield all([
-      put(fetchMembersInfoAsync.request()),
-      put(subscribeChatSocket()),
-    ]);
+    return data.images;
   } catch (error) {
-    Swal.fire({
-      icon: 'error',
-      title: '로그인 실패',
-      text: '아이디 또는 비밀번호를 확인해주세요',
-    });
-    yield put(fetchLoginAsync.failure(error));
+    throw error;
   }
 }
 
-function* getMyInfo() {
+function* signUp(action: ReturnType<typeof fetchSignUpAsync.request>) {
   try {
-    const { data: myInfoRes} = yield call(memberRepo.getMyInfo);
-    const friendRes = yield call(memberRepo.getFriends);
+    let profileImgIdx = null;
 
-    const friends = map(friendRes.data.friend, 'followingMember');
+    if (action.payload.file && typeof action.payload.file === 'object') {
+      const files = [action.payload.file];
+      const savedFiles: SavedImg[] = yield uploadImg(files);
 
-    const result = {
-      member: myInfoRes.info,
-      friends,
-    };
-    
-    yield put(fetchMembersInfoAsync.success(result));
-    yield put(loginAction(true));
+      profileImgIdx = savedFiles[0].fileIdx;
+    }
+
+    const { status } = yield call(AuthRepo.signUp, action.payload, profileImgIdx);
+
+    if (status === 200) {
+      yield put(fetchSignUpAsync.success());
+      yield put(openPopUp({
+        title: '회원가입에 성공하였습니다',
+        message: '',
+      }));
+    }
   } catch (error) {
-    yield put(fetchMembersInfoAsync.failure(error));
+    yield put(fetchUpdateProfileAsync.failure(error));
+    yield put(openPopUp({
+      title: '회원가입에 실패하였습니다',
+      message: '다시 시도 해주세요',
+    }));
+  }
+}
+
+function* updateProfile(action: ReturnType<typeof fetchUpdateProfileAsync.request>) {
+  try {
+    let profileImgIdx = null;
+    if (action.payload.file && typeof action.payload.file === 'object') {
+      const files = [action.payload.file];
+
+      const savedFiles: SavedImg[] = yield uploadImg(files);
+
+      profileImgIdx = savedFiles[0].fileIdx;
+    } else if (typeof action.payload.file === 'number') {
+      profileImgIdx = action.payload.file;
+    }
+
+    const { status } = yield call(AuthRepo.updateProfile, action.payload, profileImgIdx);
+
+    if (status === 200) {
+      yield all([
+        put(fetchUpdateProfileAsync.success()),
+        put(fetchUserInfoAsync.request()),
+        put(openPopUp({
+          title: '정보 수정을 성공하였습니다',
+          message: '',
+        })),
+      ]);
+    }
+  } catch (error) {
+    yield put(fetchUpdateProfileAsync.failure(error));
+    yield put(openPopUp({
+      title: '정보 수정을 실패하였습니다',
+      message: '다시 시도 해주세요',
+    }));
   }
 }
 
@@ -63,7 +94,7 @@ function* appendFriend(action: ReturnType<typeof fetchAppendFriendAsync.request>
     if (result.status === 200) {
       yield all([
         put(fetchAppendFriendAsync.success()),
-        put(fetchMembersInfoAsync.request()),
+        put(fetchFriendsListAsync.request()),
       ]);
     }
   } catch (error) {
@@ -73,12 +104,12 @@ function* appendFriend(action: ReturnType<typeof fetchAppendFriendAsync.request>
 
 function* removeFriend(action: ReturnType<typeof fetchRemoveFriendAsync.request>) {
   try {
-    const result = yield call(memberRepo.removeFriends, action.payload);
+    const { status } = yield call(memberRepo.removeFriends, action.payload);
 
-    if (result.status === 200) {
+    if (status === 200) {
       yield all([
         put(fetchRemoveFriendAsync.success()),
-        put(fetchMembersInfoAsync.request()),
+        put(fetchFriendsListAsync.request()),
       ]);
     }
   } catch (error) {
@@ -86,11 +117,38 @@ function* removeFriend(action: ReturnType<typeof fetchRemoveFriendAsync.request>
   }
 }
 
-export default function* memberSaga() {
+function* getUserInfo() {
+  try {
+    const { status, data } = yield call(memberRepo.getUserInfo);
+
+    if (status === 200) {
+      yield put(fetchUserInfoAsync.success(data.info));
+    }
+  } catch (error) {
+    yield put(fetchUserInfoAsync.failure(error));
+  }
+}
+
+function* getFriendsList() {
+  try {
+    const { status, data } = yield call(memberRepo.getFriends);
+    const friends = map(data.friend, 'followingMember');
+
+    if (status === 200) {
+      yield put(fetchFriendsListAsync.success(friends));
+    }
+  } catch (error) {
+    yield put(fetchFriendsListAsync.failure(error));
+  }
+}
+
+export default function* authSaga() {
   yield all([
-    takeLatest(fetchLoginAsync.request, login),
-    takeLatest(fetchMembersInfoAsync.request, getMyInfo),
+    takeLatest(fetchSignUpAsync.request, signUp),
+    takeLatest(fetchUpdateProfileAsync.request, updateProfile),
     takeLatest(fetchAppendFriendAsync.request, appendFriend),
     takeLatest(fetchRemoveFriendAsync.request, removeFriend),
+    takeLatest(fetchUserInfoAsync.request, getUserInfo),
+    takeLatest(fetchFriendsListAsync.request, getFriendsList),
   ]);
 }

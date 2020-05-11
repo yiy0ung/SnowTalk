@@ -1,6 +1,5 @@
 import produce from 'immer';
 import { createAction, ActionType, createReducer } from "typesafe-actions";
-import { find } from 'lodash';
 import { ChatRoom } from "utils/types/entity.type";
 import { GetRoomData, ReceiveMsgData, SendMsgData } from "store/sagas/chatSocket/chat.event";
 

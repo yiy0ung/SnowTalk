@@ -2,7 +2,7 @@ import React, { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 
 import useInput from 'utils/hooks/useInput';
-import { fetchLoginAsync } from 'store/reducers/member.reducer';
+import { fetchLoginAsync } from 'store/reducers/core.reducer';
 import { SignInput } from 'components/base/SignInput';
 import { Button } from 'components/base/Button';
 

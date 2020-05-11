@@ -9,7 +9,7 @@ import link from "config/link";
 const useAuth = () => {
   const history = useHistory();
   const dispatch = useDispatch();
-  const { isLogin } = useSelector((store: RootState) => store.member);
+  const { isLogin } = useSelector((state: RootState) => state.core);
 
   useEffect(() => {
     const notToken = existToken() === null;

@@ -5,7 +5,7 @@ import Swal from 'sweetalert2';
 import server from 'config/server';
 import useInput from 'utils/hooks/useInput';
 import { FileState } from 'utils/types/entity.type';
-import { fetchSignUpAsync, fetchUpdateProfileAsync } from 'store/reducers/auth.reducer';
+import { fetchSignUpAsync, fetchUpdateProfileAsync } from 'store/reducers/member.reducer';
 import unknowProfileImg from 'assets/image/default-profile.jpg';
 import { ImgPreviewer } from 'components/base/ImgPreviewer';
 import { SimpleInput } from 'components/base/SimpleInput';
@@ -30,10 +30,10 @@ function SignUpModal({
   onClose, 
   defaultData = { name: '', intro: '', profileImg: null },
 }: Props) {
+  const dispatch = useDispatch();
   const currentProfileImg = defaultData.profileImg?.idx || null;
   const defaultImgUrl = defaultData.profileImg ? `${server.imgServer}/${defaultData.profileImg.name}` 
-  : unknowProfileImg;
-  const dispatch = useDispatch();
+    : unknowProfileImg;
 
   const id = useInput('');
   const pw = useInput('');

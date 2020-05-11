@@ -1,18 +1,40 @@
-import axios from 'axios';
+import axios from "axios";
 import server from 'config/server';
+import { InitMember } from "utils/types/entity.type";
 
-class MemberRepo {
+class AuthRepo {
+  public async signUp(member: Partial<InitMember>, fileIdx: number|null) {
+    const { id, pw, name, intro } = member;
 
-  public async login(id: string, pw: string) {
-    const res = await axios.post(`${server.apiHost}/auth/login`, {
+    const resp = await axios.post(`${server.apiHost}/auth/signup`, {
       id,
       pw,
+      name,
+      intro,
+      profileImg: fileIdx,
     });
 
-    return res.data;
+    return resp.data;
   }
 
-  public async getMyInfo() {
+  public async updateProfile(member: Partial<InitMember>, fileIdx: number|null) {
+    const { pw, name, intro } = member;
+
+    const resp = await axios.put(`${server.apiHost}/auth/`, {
+      pw,
+      name,
+      intro,
+      profileImg: fileIdx,
+    }, {
+      headers: {
+        token: sessionStorage.getItem('token'),
+      },
+    });
+
+    return resp.data;
+  }
+
+  public async getUserInfo() {
     const res = await axios.get(`${server.apiHost}/member/my`, {
       headers: {
         token: sessionStorage.getItem('token'),
@@ -59,4 +81,4 @@ class MemberRepo {
   }
 }
 
-export default new MemberRepo();
+export default new AuthRepo();

@@ -11,14 +11,14 @@ type Props = {
 }
 
 function ChatRoomItem({ roomInfo }: Props) {
-  const memberStore = useSelector((state: RootState) => state.member);
+  const memberState = useSelector((state: RootState) => state.member);
   const { idx, title, messages, participants, type } = roomInfo;
 
   let roomTitle: string[] = [];
   let profileImgs = [];
 
   for (const participant of participants) {
-    if (participant.member.idx !== memberStore.member.idx) {
+    if (participant.member.idx !== memberState.user.idx) {
       profileImgs.push(participant.member.profileImg?.name);
       roomTitle.push(participant.member.name);
     }
