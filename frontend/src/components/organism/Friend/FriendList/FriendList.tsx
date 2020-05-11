@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import { FaRegTrashAlt } from 'react-icons/fa';
-import { BsThreeDots } from 'react-icons/bs';
+import { BsThreeDots, BsChatQuote } from 'react-icons/bs';
 import Swal from 'sweetalert2';
 
 import { Member } from 'utils/types/entity.type';
@@ -47,6 +47,9 @@ function FriendList({ friends }: Props) {
       additionalInfo={(
         <DropdownMenu component={<BsThreeDots />}>
           <DropdownMenuItem 
+            icon={<BsChatQuote />} 
+            text="채팅방 참여" />
+          <DropdownMenuItem 
             icon={<FaRegTrashAlt />} 
             text="친구 삭제" 
             onClick={() => onRemoveFriend(friend.idx)} />
@@ -54,7 +57,7 @@ function FriendList({ friends }: Props) {
       )}
     />
   ));
-  
+
   return (
     <div className="friend-list">
       <div className="friend-list__head">

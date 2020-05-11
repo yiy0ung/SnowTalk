@@ -14,13 +14,16 @@ function DropdownMenu({ children, component }: Props) {
   }, [open]);
 
   return (
-    <div className="dropdown-menu">
+    <div 
+      className="dropdown-menu" 
+      tabIndex={0}
+      onBlur={onToggleMenu} >
       <div className="dropdown-menu__btn" onClick={onToggleMenu}>
         {component}
       </div>
       <div className="dropdown-menu__hidden">
         <ul 
-          className="hidden-menu" 
+          className="hidden-menu"
           style={ open ? { display: 'block' }:{} } 
         >
           {children}
