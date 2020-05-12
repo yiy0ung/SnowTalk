@@ -27,7 +27,7 @@ export class MessageEvent {
           message: messageData,
         },
       };
-
+      
       socket.emit(ChatListener.receiveMsg, payload);
       socket.broadcast
         .to(`chatroom-${room.idx}`)
@@ -35,6 +35,7 @@ export class MessageEvent {
 
       return messageData;
     } catch (error) {
+      console.log(error);
       socket.emit(ChatListener.sendMsg, {
         status: 500,
       });
@@ -43,7 +44,6 @@ export class MessageEvent {
 
   public async sendMsg(socket: AuthSocket, data) {
     try {
-      console.log(data);
       await Validate.sendRoomMessage(data);
     } catch (error) {
       socket.emit(ChatListener.sendMsg, {
@@ -87,8 +87,6 @@ export class MessageEvent {
       socket.broadcast
         .to(`chatroom-${room.idx}`)
         .emit(ChatListener.receiveMsg, payload);
-
-      console.log(payload);
     } catch (error) {
       console.error(error);
       socket.emit(ChatListener.sendMsg, {

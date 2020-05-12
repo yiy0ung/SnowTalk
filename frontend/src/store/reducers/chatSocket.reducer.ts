@@ -1,7 +1,7 @@
 import produce from 'immer';
 import { createAction, ActionType, createReducer } from "typesafe-actions";
 import { ChatRoom } from "utils/types/entity.type";
-import { GetRoomData, ReceiveMsgData, SendMsgData } from "store/sagas/chatSocket/chat.event";
+import { GetRoomData, ReceiveMsgData, SendMsgData, CreateRoomPayload, CreateRoomData } from "store/sagas/chatSocket/chat.event";
 
 type ChatSocketState = {
   chatRooms: ChatRoom[];
@@ -17,6 +17,8 @@ export const SEND_MESSAGE = 'SEND_MESSAGE';
 export const RECEIVE_MESSAGE = 'RECEIVE_MESSAGE';
 export const EMIT_GET_ROOMS = 'EMIT_GET_ROOMS';
 export const RECEIVE_GET_ROOMS = 'RECEIVE_GET_ROOMS';
+export const EMIT_CREATE_ROOM = 'EMIT_CREATE_ROOM';
+export const RECEIVE_CREATE_ROOM = 'RECEIVE_CREATE_ROOM';
 
 export const subscribeChatSocket = createAction(SUBSCRIBE_CHAT_SOCKET)();
 export const unsubscribeChatSocket = createAction(UNSUBSCRIBE_CHAT_SOCKET)();
@@ -24,6 +26,8 @@ export const sendMessage = createAction(SEND_MESSAGE)<SendMsgData>();
 export const receiveMessage = createAction(RECEIVE_MESSAGE)<ReceiveMsgData>();
 export const emitGetRooms = createAction(EMIT_GET_ROOMS)();
 export const receiveGetRooms = createAction(RECEIVE_GET_ROOMS)<GetRoomData>();
+export const emitCreateRoom = createAction(EMIT_CREATE_ROOM)<CreateRoomPayload>();
+export const receiveCreateRoom = createAction(RECEIVE_CREATE_ROOM)<CreateRoomData>();
 
 const actions = {
   subscribeChatSocket,
@@ -32,6 +36,8 @@ const actions = {
   receiveMessage,
   emitGetRooms,
   receiveGetRooms,
+  emitCreateRoom,
+  receiveCreateRoom,
 };
 export type ChatSocketActions = ActionType<typeof actions>;
 
@@ -53,6 +59,10 @@ export default createReducer<ChatSocketState, ChatSocketActions>(initalState, {
       });
     });
   },
+  [RECEIVE_CREATE_ROOM]: (state, action) => 
+    produce(state, draft => {
+      draft.chatRooms.unshift(action.payload.room);
+    }),
 });
 
 // import produce from 'immer';

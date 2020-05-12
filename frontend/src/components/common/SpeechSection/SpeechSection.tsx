@@ -4,6 +4,7 @@ import { Avatar } from 'components/base/Avatar';
 
 import './SpeechSection.scss';
 import { SpeechBubble } from 'components/base/SpeechBubble';
+import { SystemBubble } from 'components/base/SystemBubble';
 
 type Props = {
   member?: Member;
@@ -26,9 +27,7 @@ function SpeechSection({
 
   if (messageType === 'system') {
     return (
-      <div className="speech-section-system">
-        {message}
-      </div>
+      <SystemBubble message={message} />
     );
   }
 

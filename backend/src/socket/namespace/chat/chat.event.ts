@@ -77,13 +77,6 @@ export class ChatEvent {
 
       await redisHelper.joinChatRoom(ChatNmsp.instance, room.idx, entryMember);
 
-      // 시스템 메시지 전송
-      const message = messageHelper.invitingMsg(myInfo, members);
-      await this.messageEvent.sendSystemMsg(socket, {
-        message,
-        room,
-      });
-
       const payload = {
         status: 200,
         data: {
@@ -94,6 +87,13 @@ export class ChatEvent {
 
       socket.emit(ChatListener.createRoom, payload);
       socket.broadcast.to(`chatroom-${room.idx}`).emit(ChatListener.createRoom, payload);
+      
+      // 시스템 메시지 전송
+      const message = messageHelper.invitingMsg(myInfo, members);
+      await this.messageEvent.sendSystemMsg(socket, {
+        message,
+        room,
+      });
     } catch (error) {
       console.error(error);
       socket.emit(ChatListener.chatError, {

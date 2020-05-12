@@ -11,6 +11,7 @@ import { UserCard } from 'components/common/UserCard';
 import './FriendList.scss';
 import { DropdownMenu } from 'components/base/DropdownMenu';
 import { DropdownMenuItem } from 'components/base/DropdownMenu/DropdownMenuItem';
+import { emitCreateRoom } from 'store/reducers/chatSocket.reducer';
 
 type Props = {
   friends: Member[];
@@ -18,6 +19,13 @@ type Props = {
 
 function FriendList({ friends }: Props) {
   const dispatch = useDispatch();
+
+  const onCreateChatRoom = useCallback((memberIdx: number) => {
+    dispatch(emitCreateRoom({
+      membersIdx: [memberIdx],
+      type: 'personal',
+    }));
+  }, [dispatch]);
   
   const onRemoveFriend = useCallback((memberIdx: number) => {
     Swal.fire({
@@ -48,7 +56,8 @@ function FriendList({ friends }: Props) {
         <DropdownMenu component={<BsThreeDots />}>
           <DropdownMenuItem 
             icon={<BsChatQuote />} 
-            text="채팅방 참여" />
+            text="1대1 채팅"
+            onClick={() => onCreateChatRoom(friend.idx)} />
           <DropdownMenuItem 
             icon={<FaRegTrashAlt />} 
             text="친구 삭제" 

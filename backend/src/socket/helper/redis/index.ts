@@ -34,9 +34,9 @@ export async function disconnectSocket(nmsp: Namespace, memberId: string) {
 
 export async function joinChatRoom(nmsp: Namespace, roomidx: number, members: Member[]) {
   await Promise.all(members.map(async (member: Member) => {
-    const socketId = redisClient.hget(`${nmsp.name}-online`, member.id);
+    const socketId = await redisClient.hget(`${nmsp.name}-online`, member.id);
 
-    if (socketId) {
+    if (socketId && nmsp.connected[socketId]) {
       nmsp.connected[socketId].join(`chatroom-${roomidx}`);
     }
   }));

@@ -17,6 +17,7 @@ export class ChatMessageRepository extends Repository<ChatMessage> {
       chatRoom: room,
       message,
       type: MessageType.system,
+      createAt: moment().tz('Asia/Seoul').toString(),
     });
   }
 

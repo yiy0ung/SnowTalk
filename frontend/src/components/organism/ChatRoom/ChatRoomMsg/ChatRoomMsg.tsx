@@ -5,7 +5,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from 'store/reducers';
 import { ChatRoom } from 'utils/types/entity.type';
 import { SpeechSection } from 'components/common/SpeechSection';
-import { DateBlock } from 'components/base/DateBlock';
+import { SystemBubble } from 'components/base/SystemBubble';
 
 import './ChatRoomMsg.scss';
 
@@ -24,7 +24,11 @@ function ChatRoomMsg({ roomInfo }: Props) {
 
     if (provMessage 
       && moment(provMessage.createAt).diff(moment(createAt), 'days') >= 1) {
-      dateSection = (<DateBlock date={provMessage.createAt}/>);
+      dateSection = (
+        <SystemBubble
+          message={provMessage.createAt} 
+          option={{ date: true }} />
+      );
     }
 
     return (

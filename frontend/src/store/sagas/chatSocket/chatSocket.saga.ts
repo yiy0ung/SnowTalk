@@ -5,8 +5,17 @@ import { PayloadAction } from 'typesafe-actions';
 
 import server from 'config/server';
 import { existToken } from 'utils/token';
-import { subscribeChatSocket, unsubscribeChatSocket, emitGetRooms, receiveGetRooms, sendMessage, receiveMessage } from 'store/reducers/chatSocket.reducer';
-import { ChatEvent, ChatSocketResp, GetRoomData, ReceiveMsgData } from './chat.event';
+import { ChatEvent, ChatSocketResp, GetRoomData, ReceiveMsgData, CreateRoomData } from './chat.event';
+import {
+  subscribeChatSocket,
+  unsubscribeChatSocket,
+  emitGetRooms,
+  receiveGetRooms,
+  sendMessage,
+  receiveMessage,
+  receiveCreateRoom,
+  emitCreateRoom,
+} from 'store/reducers/chatSocket.reducer';
 
 function connect() {
   const socket = ioClient.connect(`${server.host}/chat`, {
@@ -84,6 +93,14 @@ function subscribe(socket: SocketIOClient.Socket) {
         emit(receiveMessage(resp.data));
       }
     });
+    socket.on(ChatEvent.createRoom, (resp: ChatSocketResp<CreateRoomData>) => {
+      console.log(resp);
+      if (resp.status === 200 && resp.data) {
+        // const { room, members } = resp.data;
+        // room.participants = members;
+        emit(receiveCreateRoom(resp.data));
+      }
+    });
 
     socket.on('disconnect', (e: any) => {
       console.log(e)
@@ -98,8 +115,9 @@ function subscribe(socket: SocketIOClient.Socket) {
 
 function* setEmitters(socket: SocketIOClient.Socket) {
   yield all([
-    takeEvery(emitGetRooms, emitter(socket, ChatEvent.getRooms)),
     takeEvery(sendMessage, payloadEmitter(socket, ChatEvent.sendMsg)),
+    takeEvery(emitGetRooms, emitter(socket, ChatEvent.getRooms)),
+    takeEvery(emitCreateRoom, payloadEmitter(socket, ChatEvent.createRoom)),
   ]);
 }
 
