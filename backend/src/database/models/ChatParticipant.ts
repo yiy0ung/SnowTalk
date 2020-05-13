@@ -14,6 +14,8 @@ export class ChatParticipant {
   activation: number;
 
   // @JoinColumn({ name: 'member_idx' })
+  @RelationId((participant: ChatParticipant) => participant.member)
+  memberIdx: number
   @ManyToOne(type => Member, member => member.idx, {
     onDelete: 'CASCADE',
   })

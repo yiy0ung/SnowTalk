@@ -21,10 +21,6 @@ export class MessageService {
     return this.chatMsgRepo.saveSystemMessage(room, message);
   }
 
-  public getMessage(roomIdx?: number, lastMessagesIdx?: number) {
-    return this.chatMsgRepo.getMessageByChatRoomIdx(roomIdx, lastMessagesIdx);
-  }
-
   public async getChatRoomMessage(memberIdx: number, roomIdx: number, lastMessagesIdx?: number) {
     const member = await this.chatParticipantRepo.getParticipant(memberIdx, roomIdx);
 
@@ -32,7 +28,7 @@ export class MessageService {
       return null;
     }
 
-    const message = await this.getMessage(roomIdx, lastMessagesIdx);
+    const message = await this.chatMsgRepo.getMessageByChatRoomIdx(roomIdx, lastMessagesIdx);
 
     return message;
   }

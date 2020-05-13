@@ -1,6 +1,7 @@
 import { Service } from "typedi";
 import { Repository } from "typeorm";
 import { InjectRepository } from 'typeorm-typedi-extensions';
+import { find, filter } from 'lodash';
 import moment from 'moment-timezone';
 
 import * as tokenLib from '../lib/token.lib';
@@ -35,13 +36,28 @@ export class MemberService {
     return member;
   }
 
-  public async getMembersByIdxes(memberIdxes: number[]) {
-    const members = await this.memberRepo.createQueryBuilder('member')
-      .where('member.idx IN (:idxes)', { idxes: memberIdxes })
+  public async getMembersDataByIdx({
+    userIdx, membersIdx,
+  }: { userIdx?: number, membersIdx: number[] }) {
+    const idxes = [userIdx, ...membersIdx];
+
+    const entire = await this.memberRepo.createQueryBuilder('member')
+      .where('member.idx IN (:idxes)', { idxes })
       .leftJoinAndSelect('member.profileImg', 'file')
       .getMany();
 
-    return members;
+    if (userIdx) {
+      const user = find(entire, { 'idx': userIdx }) as Member;
+      const invited = filter(entire, (member: Member) => member.idx !== userIdx);
+
+      return {
+        user,
+        invited,
+        entire,
+      };
+    }
+
+    return { entire };
   }
 
   public async getMemberBySecurity(id: string, pw: string) {

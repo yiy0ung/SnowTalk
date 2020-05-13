@@ -96,8 +96,6 @@ function subscribe(socket: SocketIOClient.Socket) {
     socket.on(ChatEvent.createRoom, (resp: ChatSocketResp<CreateRoomData>) => {
       console.log(resp);
       if (resp.status === 200 && resp.data) {
-        // const { room, members } = resp.data;
-        // room.participants = members;
         emit(receiveCreateRoom(resp.data));
       }
     });

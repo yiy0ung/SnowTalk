@@ -1,4 +1,5 @@
 import { Service } from "typedi";
+import { find } from 'lodash';
 
 import { ChatNmsp } from "./chat.nmsp";
 import { MessageEvent } from "./message.event";
@@ -9,6 +10,7 @@ import { AuthSocket } from "../../../typings";
 import * as Validate from '../../helper/validate';
 import * as redisHelper from "../../helper/redis";
 import * as messageHelper from "../../helper/message";
+import { Member } from "../../../database/models/Member";
 
 @Service()
 export class ChatEvent {
@@ -22,7 +24,7 @@ export class ChatEvent {
     try {
       const { decoded } = socket;
 
-      const rooms = await this.chatService.getChatRoomByMemberIdx(decoded.memberIdx);
+      const rooms = await this.chatService.getRoomByMemberIdx(decoded.memberIdx);
 
       for (const room of rooms) {
         socket.join(`chatroom-${room.idx}`);
@@ -59,14 +61,15 @@ export class ChatEvent {
       const { decoded } = socket;
       const { membersIdx, title, type } = data;
 
-      const myInfo = await this.memberService.getMemberByIdx(decoded.memberIdx);
-      const members = await this.memberService.getMembersByIdxes(membersIdx);
-      const entryMember = [...members, myInfo];
+      const { user, invited, entire } = await this.memberService.getMembersDataByIdx({
+        userIdx: decoded.memberIdx,
+        membersIdx,
+      });
 
-      const room = await this.chatService.createChatRoom(title, type);
-      const enterResult = await this.chatService.enterChatRoom(entryMember, room);
+      // 룸 생성 및 멤버 추가
+      const newRoom = await this.chatService.createChatRoom(title, type, entire);
 
-      if (enterResult === false) {
+      if (!newRoom) {
         socket.emit(ChatListener.createRoom, {
           status: 404,
           message: '채팅방 생성에 실패하였습니다',
@@ -75,13 +78,14 @@ export class ChatEvent {
         return;
       }
 
-      await redisHelper.joinChatRoom(ChatNmsp.instance, room.idx, entryMember);
+      const [room] = await this.chatService.getRoomByIdxes(newRoom.idx);
+
+      await redisHelper.joinChatRoom(ChatNmsp.instance, room.idx, entire);
 
       const payload = {
         status: 200,
         data: {
           room,
-          members: entryMember,
         },
       };
 
@@ -89,7 +93,7 @@ export class ChatEvent {
       socket.broadcast.to(`chatroom-${room.idx}`).emit(ChatListener.createRoom, payload);
       
       // 시스템 메시지 전송
-      const message = messageHelper.invitingMsg(myInfo, members);
+      const message = messageHelper.invitingMsg(user, invited);
       await this.messageEvent.sendSystemMsg(socket, {
         message,
         room,
@@ -119,49 +123,53 @@ export class ChatEvent {
       const { decoded } = socket;
       const { roomIdx, membersIdx } = data;
 
-      const myInfo = await this.memberService.getMemberByIdx(decoded.memberIdx);
-      const members = await this.memberService.getMembersByIdxes(membersIdx);
-      const room = await this.chatService.getChatRoomsByIdx(roomIdx, 1);
-
-      if (!room && members.length <= 0) {
-        socket.emit(ChatListener.inviteRoom, {
-          status: 404,
-          message: '초대를 실패하였습니다',
-        });
-
-        return;
-      }
-
-      const enterResult = await this.chatService.enterChatRoom(members, room);
-
-      if (enterResult === false) {
-        socket.emit(ChatListener.inviteRoom, {
-          status: 404,
-          message: '초대를 실패하였습니다',
-        });
-
-        return;
-      }
-
-      await redisHelper.joinChatRoom(ChatNmsp.instance, room.idx, members);
-
-      // 시스템 메시지 전송
-      const message = messageHelper.invitingMsg(myInfo, members);
-      await this.messageEvent.sendSystemMsg(socket, {
-        message,
-        room,
+      const roomData = await this.chatService.getChatRoomByIdx(roomIdx, 1);
+      const { user, invited } = await this.memberService.getMembersDataByIdx({
+        userIdx: decoded.memberIdx,
+        membersIdx,
       });
+
+      if (!roomData && invited.length <= 0) {
+        socket.emit(ChatListener.inviteRoom, {
+          status: 404,
+          message: '초대를 실패하였습니다',
+        });
+
+        return;
+      }
+
+      const { result, newMembers } = await this.chatService.enterChatRoom(invited, roomData);
+
+      if (result === false) {
+        socket.emit(ChatListener.inviteRoom, {
+          status: 404,
+          message: '초대를 실패하였습니다',
+        });
+
+        return;
+      }
+
+      const [room] = await this.chatService.getRoomByIdxes([roomData.idx]);
+
+      await redisHelper.joinChatRoom(ChatNmsp.instance, room.idx, invited);
 
       const payload = {
         status: 200,
         data: {
-          roomIdx: room.idx,
-          members,
+          room,
+          newMembers,
         }
       };
 
       socket.emit(ChatListener.inviteRoom, payload);
       socket.broadcast.to(`chatroom-${room.idx}`).emit(ChatListener.inviteRoom, payload);
+
+      // 시스템 메시지 전송
+      const message = messageHelper.invitingMsg(user, invited);
+      await this.messageEvent.sendSystemMsg(socket, {
+        room,
+        message,
+      });
     } catch (error) {
       console.error(error);
       socket.emit(ChatListener.chatError, {
@@ -187,8 +195,8 @@ export class ChatEvent {
       const { decoded } = socket;
       const { roomIdx } = data;
 
-      const myInfo = await this.memberService.getMemberByIdx(decoded.memberIdx);
-      const room = await this.chatService.getChatRoomsByIdx(roomIdx, 1);
+      const user = await this.memberService.getMemberByIdx(decoded.memberIdx);
+      const room = await this.chatService.getChatRoomByIdx(roomIdx, 1);
 
       if (!room) {
         socket.emit(ChatListener.inviteRoom, {
@@ -200,7 +208,7 @@ export class ChatEvent {
       }
 
       // 채팅방 나가기
-      const leaveResult = await this.chatService.leaveChatRoomByIdx(myInfo, room);
+      const leaveResult = await this.chatService.leaveChatRoomByIdx(user, room);
 
       if (leaveResult === false) {
         socket.emit(ChatListener.leaveRoom, {
@@ -212,7 +220,7 @@ export class ChatEvent {
       }
 
       // 시스템 메시지 전송
-      const message = messageHelper.leavingMsg(myInfo);
+      const message = messageHelper.leavingMsg(user);
       await this.messageEvent.sendSystemMsg(socket, {
         message,
         room,
@@ -222,7 +230,7 @@ export class ChatEvent {
         status: 200,
         data: {
           roomIdx: room.idx,
-          memberId: myInfo.id,
+          memberId: user.id,
         },
       };
 

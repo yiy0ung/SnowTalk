@@ -1,5 +1,6 @@
 import React, { useCallback } from 'react';
-import { useDispatch } from 'react-redux';
+import { find } from 'lodash';
+import { useDispatch, useSelector } from 'react-redux';
 import { FaRegTrashAlt } from 'react-icons/fa';
 import { BsThreeDots, BsChatQuote } from 'react-icons/bs';
 import Swal from 'sweetalert2';
@@ -12,13 +13,18 @@ import './FriendList.scss';
 import { DropdownMenu } from 'components/base/DropdownMenu';
 import { DropdownMenuItem } from 'components/base/DropdownMenu/DropdownMenuItem';
 import { emitCreateRoom } from 'store/reducers/chatSocket.reducer';
+import { RootState } from 'store/reducers';
+import { useHistory } from 'react-router-dom';
+import link from 'config/link';
 
 type Props = {
   friends: Member[];
 };
 
 function FriendList({ friends }: Props) {
+  const { chatRooms } = useSelector((state: RootState) => state.chatSocket);
   const dispatch = useDispatch();
+  const history = useHistory();
 
   const onCreateChatRoom = useCallback((memberIdx: number) => {
     dispatch(emitCreateRoom({
