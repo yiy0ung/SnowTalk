@@ -1,30 +1,24 @@
 import React, { useCallback } from 'react';
-import { find } from 'lodash';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { FaRegTrashAlt } from 'react-icons/fa';
 import { BsThreeDots, BsChatQuote } from 'react-icons/bs';
-import Swal from 'sweetalert2';
 
 import { Member } from 'utils/types/entity.type';
+import { emitCreateRoom } from 'store/reducers/chatSocket.reducer';
 import { fetchRemoveFriendAsync } from 'store/reducers/member.reducer';
 import { UserCard } from 'components/common/UserCard';
-
-import './FriendList.scss';
 import { DropdownMenu } from 'components/base/DropdownMenu';
 import { DropdownMenuItem } from 'components/base/DropdownMenu/DropdownMenuItem';
-import { emitCreateRoom } from 'store/reducers/chatSocket.reducer';
-import { RootState } from 'store/reducers';
-import { useHistory } from 'react-router-dom';
-import link from 'config/link';
+
+import './FriendList.scss';
+import { confirmAlert } from 'utils/alert';
 
 type Props = {
   friends: Member[];
 };
 
 function FriendList({ friends }: Props) {
-  const { chatRooms } = useSelector((state: RootState) => state.chatSocket);
   const dispatch = useDispatch();
-  const history = useHistory();
 
   const onCreateChatRoom = useCallback((memberIdx: number) => {
     dispatch(emitCreateRoom({
@@ -34,14 +28,10 @@ function FriendList({ friends }: Props) {
   }, [dispatch]);
   
   const onRemoveFriend = useCallback((memberIdx: number) => {
-    Swal.fire({
+    confirmAlert({
       title: '친구를 삭제하시겠습니까?',
       text: '이전 기록을 복구할 수 없습니다',
-      showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: '삭제',
-      cancelButtonText: '취소',
+      confirmText: '삭제',
     }).then(result => {
       if (result.value) {
         dispatch(fetchRemoveFriendAsync.request(memberIdx));

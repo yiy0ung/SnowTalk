@@ -39,7 +39,14 @@ export type CreateRoomPayload = {
 };
 
 export type CreateRoomData = {
+  roomIdx: number;
   room: ChatRoom;
   newMembers: Participant[];
+};
+
+export type LeaveRoomData = {
+  roomIdx: number,
+  memberIdx: number,
+  participantIdx: number,
 };
 

@@ -1,5 +1,5 @@
-import React from 'react';
-import { useSelector } from 'react-redux';
+import React, { useCallback } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { AiOutlineMenu, AiOutlineInbox } from 'react-icons/ai';
 import { RiLogoutBoxLine } from 'react-icons/ri';
@@ -8,8 +8,10 @@ import { FaRegHeart, FaCog } from 'react-icons/fa';
 import { TiDocumentText } from 'react-icons/ti';
 import { GrAdd } from 'react-icons/gr';
 
+import { confirmAlert } from 'utils/alert';
 import { ChatRoom } from 'utils/types/entity.type';
 import { RootState } from 'store/reducers';
+import { emitLeaveRoom } from 'store/reducers/chatSocket.reducer';
 import { AvatarList } from 'components/base/AvatarList';
 import { DropdownMenu } from 'components/base/DropdownMenu';
 import { DropdownMenuItem } from 'components/base/DropdownMenu/DropdownMenuItem';
@@ -22,6 +24,7 @@ type Props = {
 };
 
 function ChatRoomHead({ roomInfo }: Props) {
+  const dispatch = useDispatch();
   const { title, participants, type } = roomInfo;
   const memberState = useSelector((state: RootState) => state.member);
   let roomTitle = [];
@@ -38,6 +41,18 @@ function ChatRoomHead({ roomInfo }: Props) {
     roomTitle = ['그룹채팅'];
   }
 
+  const onLeaveRoom = useCallback((roomIdx: number) => {
+    confirmAlert({
+      title: '채팅방을 나가시겠습니까?',
+      text: '초대 받지 않으면 다시 들어올 수 없습니다',
+      confirmText: '나가기',
+    }).then(result => {
+      if (result.value) {
+        dispatch(emitLeaveRoom({roomIdx}));
+      }
+    });
+  }, [dispatch]);
+
   return (
     <div className="chatroom-head">
       <div className="chatroom-head__info">
@@ -45,7 +60,9 @@ function ChatRoomHead({ roomInfo }: Props) {
 
         <div className="chatroom-head__main">
           <div className="chatroom-head__title">
-            <span>{title || roomTitle.join(', ') || '알수없음'}</span>
+            <span className="chatroom-head__title-main">
+              {title || roomTitle.join(', ') || '알수없음'}
+            </span>
             {type === 'group' 
               && <span className="chatroom-head__title-sub">({participants.length})</span>}
           </div>
@@ -81,7 +98,7 @@ function ChatRoomHead({ roomInfo }: Props) {
             <DropdownMenuItem
               icon={<RiLogoutBoxLine />}
               text="채팅방 나가기"
-              onClick={() => {}}
+              onClick={() => onLeaveRoom(roomInfo.idx)}
             />
           </DropdownMenu>
         </div>

@@ -26,10 +26,11 @@ export class ChatRoomRepository extends Repository<ChatRoom> {
       .leftJoin('chatRoom.participants', 'chatParticipant')
       .where('chatRoom.type = :type', { type: RoomType.personal })
       .andWhere('chatRoom.activation = :active', { active: 1 })
-      .andWhere('chatParticipant.memberIdx IN (:idxes)', { idxes: membersIdx })
+      .andWhere('chatParticipant.memberIdx = :idx', { idx: membersIdx[0] })
+      .andWhere('chatParticipant.memberIdx = :idx', { idx: membersIdx[1] })
       .getMany();
 
-    return result.length > 0 ? true : false;
+    return result;
   }
 
   public getRoomsByIdx(chatRoomIdx: number, activation: 0|1) {

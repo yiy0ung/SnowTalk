@@ -5,7 +5,7 @@ import { PayloadAction } from 'typesafe-actions';
 
 import server from 'config/server';
 import { existToken } from 'utils/token';
-import { ChatEvent, ChatSocketResp, GetRoomData, ReceiveMsgData, CreateRoomData } from './chat.event';
+import { ChatEvent, ChatSocketResp, GetRoomData, ReceiveMsgData, CreateRoomData, LeaveRoomData } from './chat.event';
 import {
   subscribeChatSocket,
   unsubscribeChatSocket,
@@ -15,7 +15,11 @@ import {
   receiveMessage,
   receiveCreateRoom,
   emitCreateRoom,
+  emitLeaveRoom,
+  receiveLeaveRoom,
 } from 'store/reducers/chatSocket.reducer';
+import { pushUrl } from 'store/reducers/core.reducer';
+import link from 'config/link';
 
 function connect() {
   const socket = ioClient.connect(`${server.host}/chat`, {
@@ -97,8 +101,16 @@ function subscribe(socket: SocketIOClient.Socket) {
       console.log(resp);
       if (resp.status === 200 && resp.data) {
         emit(receiveCreateRoom(resp.data));
+        emit(pushUrl(`${link.chatroom}/${resp.data.roomIdx}`));
+      } else if (resp.status === 404 && resp.data) {
+        emit(pushUrl(`${link.chatroom}/${resp.data.roomIdx}`));
       }
     });
+    socket.on(ChatEvent.leaveRoom, (resp: ChatSocketResp<LeaveRoomData>) => {
+      if (resp.status === 200 && resp.data) {
+        emit(receiveLeaveRoom(resp.data));
+      }
+    })
 
     socket.on('disconnect', (e: any) => {
       console.log(e)
@@ -116,6 +128,7 @@ function* setEmitters(socket: SocketIOClient.Socket) {
     takeEvery(sendMessage, payloadEmitter(socket, ChatEvent.sendMsg)),
     takeEvery(emitGetRooms, emitter(socket, ChatEvent.getRooms)),
     takeEvery(emitCreateRoom, payloadEmitter(socket, ChatEvent.createRoom)),
+    takeEvery(emitLeaveRoom, payloadEmitter(socket, ChatEvent.leaveRoom)),
   ]);
 }
 

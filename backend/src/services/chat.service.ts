@@ -68,11 +68,14 @@ export class ChatService {
   public async createChatRoom(title: string, type: string, members: Member[]) {
     const roomType = type === String(RoomType.personal) ? RoomType.personal : RoomType.group;
 
-    if (roomType === RoomType.personal) { // 개인 채팅방은 1개만 활성화 가능
+    if (roomType === RoomType.personal && members.length === 2) { // 개인 채팅방은 1개만 활성화 가능
       const existence = await this.chatRoomRepo.existPersonalChatRoom(members);
-
-      if (existence) {
-        return null;
+      console.log(existence);
+      if (existence.length > 0) {
+        return {
+          created: false,
+          roomData: existence[0],
+        };
       }
     }
 
@@ -94,7 +97,10 @@ export class ChatService {
 
       await queryRunner.commitTransaction(); // commit
 
-      return room;
+      return {
+        created: true,
+        roomData: room,
+      };
     } catch (error) {
       console.error(error);
       await queryRunner.rollbackTransaction(); // rollback
@@ -159,7 +165,7 @@ export class ChatService {
     const chatMember = await this.chatParticipantRepo.getParticipant(member.idx, room.idx);
 
     if (!chatMember || chatMember.activation === 0) {
-      return false;
+      return null;
     }
 
     // 참여 비활성화
@@ -179,6 +185,6 @@ export class ChatService {
       await this.changeRoomActivation(room.idx, 0);
     }
 
-    return true;
+    return chatMember;
   }
 }

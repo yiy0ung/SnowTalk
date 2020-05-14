@@ -52,8 +52,9 @@
   }
 
   &__desc {
+    max-width: 10rem;
     margin-top: 0.5rem;
-    overflow-y: hidden;
+    overflow: hidden;
     white-space: nowrap; 
     text-overflow: ellipsis;
     color: #666666;

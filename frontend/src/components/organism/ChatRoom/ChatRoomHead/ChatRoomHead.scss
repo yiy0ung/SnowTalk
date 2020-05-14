@@ -23,11 +23,15 @@
     font-weight: 700;
     color: #f7f7f7;
 
-    & > span + span {
-      margin-left: 0.3rem;
+    &-main {
+      max-width: 10rem;
+      overflow: hidden;
+      white-space: nowrap; 
+      text-overflow: ellipsis;
     }
 
     &-sub {
+      margin-left: 0.3rem;
       color: #b1bad1;
       font-weight: 400;
     }

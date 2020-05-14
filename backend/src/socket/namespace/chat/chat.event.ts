@@ -67,25 +67,30 @@ export class ChatEvent {
       });
 
       // 룸 생성 및 멤버 추가
-      const newRoom = await this.chatService.createChatRoom(title, type, entire);
-
-      if (!newRoom) {
+      const { created, roomData } = await this.chatService.createChatRoom(title, type, entire);
+      console.log(roomData);
+      if (!created) {
         socket.emit(ChatListener.createRoom, {
           status: 404,
           message: '채팅방 생성에 실패하였습니다',
+          data: {
+            roomIdx: roomData.idx,
+          },
         });
 
         return;
       }
 
-      const [room] = await this.chatService.getRoomByIdxes(newRoom.idx);
+      const [room] = await this.chatService.getRoomByIdxes(roomData.idx);
 
       await redisHelper.joinChatRoom(ChatNmsp.instance, room.idx, entire);
 
       const payload = {
         status: 200,
         data: {
+          host: user,
           room,
+          roomIdx: room.idx,
         },
       };
 
@@ -208,9 +213,9 @@ export class ChatEvent {
       }
 
       // 채팅방 나가기
-      const leaveResult = await this.chatService.leaveChatRoomByIdx(user, room);
+      const leaveParticipant = await this.chatService.leaveChatRoomByIdx(user, room);
 
-      if (leaveResult === false) {
+      if (!leaveParticipant) {
         socket.emit(ChatListener.leaveRoom, {
           status: 404,
           message: '나가기를 실패하였습니다',
@@ -219,24 +224,25 @@ export class ChatEvent {
         return;
       }
 
-      // 시스템 메시지 전송
-      const message = messageHelper.leavingMsg(user);
-      await this.messageEvent.sendSystemMsg(socket, {
-        message,
-        room,
-      });
-
       const payload = {
         status: 200,
         data: {
           roomIdx: room.idx,
-          memberId: user.id,
+          memberIdx: user.id,
+          participantIdx: leaveParticipant.idx,
         },
       };
 
       socket.emit(ChatListener.leaveRoom, payload);
       socket.broadcast.to(`chatroom-${room.idx}`).emit(ChatListener.leaveRoom, payload);
       socket.leave(`chatroom-${room.idx}`);
+
+      // 시스템 메시지 전송
+      const message = messageHelper.leavingMsg(user);
+      await this.messageEvent.sendSystemMsg(socket, {
+        message,
+        room,
+      });
     } catch (error) {
       console.error(error);
       socket.emit(ChatListener.chatError, {

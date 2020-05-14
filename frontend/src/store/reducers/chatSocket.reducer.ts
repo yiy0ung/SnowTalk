@@ -1,7 +1,7 @@
 import produce from 'immer';
 import { createAction, ActionType, createReducer } from "typesafe-actions";
 import { ChatRoom } from "utils/types/entity.type";
-import { GetRoomData, ReceiveMsgData, SendMsgData, CreateRoomPayload, CreateRoomData } from "store/sagas/chatSocket/chat.event";
+import { GetRoomData, ReceiveMsgData, SendMsgData, CreateRoomPayload, CreateRoomData, LeaveRoomData } from "store/sagas/chatSocket/chat.event";
 
 type ChatSocketState = {
   chatRooms: ChatRoom[];
@@ -19,6 +19,8 @@ export const EMIT_GET_ROOMS = 'EMIT_GET_ROOMS';
 export const RECEIVE_GET_ROOMS = 'RECEIVE_GET_ROOMS';
 export const EMIT_CREATE_ROOM = 'EMIT_CREATE_ROOM';
 export const RECEIVE_CREATE_ROOM = 'RECEIVE_CREATE_ROOM';
+export const EMIT_LEAVE_ROOM = 'EMIT_LEAVE_ROOM';
+export const RECEIVE_LEAVE_ROOM = 'RECEIVE_LEAVE_ROOM';
 
 export const subscribeChatSocket = createAction(SUBSCRIBE_CHAT_SOCKET)();
 export const unsubscribeChatSocket = createAction(UNSUBSCRIBE_CHAT_SOCKET)();
@@ -28,6 +30,8 @@ export const emitGetRooms = createAction(EMIT_GET_ROOMS)();
 export const receiveGetRooms = createAction(RECEIVE_GET_ROOMS)<GetRoomData>();
 export const emitCreateRoom = createAction(EMIT_CREATE_ROOM)<CreateRoomPayload>();
 export const receiveCreateRoom = createAction(RECEIVE_CREATE_ROOM)<CreateRoomData>();
+export const emitLeaveRoom = createAction(EMIT_LEAVE_ROOM)<{ roomIdx: number }>();
+export const receiveLeaveRoom = createAction(RECEIVE_LEAVE_ROOM)<LeaveRoomData>();
 
 const actions = {
   subscribeChatSocket,
@@ -38,6 +42,8 @@ const actions = {
   receiveGetRooms,
   emitCreateRoom,
   receiveCreateRoom,
+  emitLeaveRoom,
+  receiveLeaveRoom,
 };
 export type ChatSocketActions = ActionType<typeof actions>;
 
@@ -63,6 +69,11 @@ export default createReducer<ChatSocketState, ChatSocketActions>(initalState, {
     produce(state, draft => {
       draft.chatRooms.unshift(action.payload.room);
     }),
+  [RECEIVE_LEAVE_ROOM]: (state, action) => {
+    if (action.payload.memberIdx) {}
+
+    return state;
+  }
 });
 
 // import produce from 'immer';

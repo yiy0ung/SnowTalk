@@ -1,10 +1,14 @@
 import React from 'react';
-import { ChatRoom } from 'utils/types/entity.type';
-import { UserCard } from '../UserCard';
-import { useSelector } from 'react-redux';
-import { RootState } from 'store/reducers';
 import { Link } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import moment from 'moment';
+
+import { RootState } from 'store/reducers';
+import { ChatRoom } from 'utils/types/entity.type';
 import link from 'config/link';
+import { UserCard } from '../UserCard';
+
+import './ChatRoomItem.scss';
 
 type Props = {
   roomInfo: ChatRoom;
@@ -36,6 +40,11 @@ function ChatRoomItem({ roomInfo }: Props) {
         desc={messages[0]?.message||' '}
         imgIds={profileImgs}
         type="chat"
+        additionalInfo={messages[0] ? (
+          <div className="chatroomitem__date">
+            {moment(messages[0].createAt).format('M월 D일')}
+          </div>
+        ) : ''}
       />
     </Link>
   );

@@ -2,6 +2,7 @@ import React from 'react';
 import { Switch, Route } from 'react-router-dom';
 
 import link from 'config/link';
+import useRedirect from 'utils/hooks/useRedirect';
 
 import Home from './Home';
 import Friend from './Friend';
@@ -10,6 +11,8 @@ import Sign from './Sign';
 import ChatRoom from './ChatRoom';
 
 function Pages() {
+  useRedirect();
+
   return (
     <Switch>
       <Route exact

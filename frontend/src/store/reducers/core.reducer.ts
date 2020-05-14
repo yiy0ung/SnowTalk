@@ -9,6 +9,7 @@ import { LoginReq } from 'utils/types/form.type';
 // init state
 type CoreState = {
   isLogin: boolean;
+  pushUrl: string;
   popup: {
     visible: boolean;
     title: string;
@@ -18,6 +19,7 @@ type CoreState = {
 
 export const initialState: CoreState = {
   isLogin: false,
+  pushUrl: '',
   popup: {
     visible: false,
     title: '',
@@ -32,12 +34,16 @@ export const LOGIN_REQUEST = 'LOGIN_REQUEST'; // login
 export const LOGIN_SUCCESS = 'LOGIN_SUCCESS';
 export const LOGIN_FAILURE = 'LOGIN_FAILURE';
 export const LOGOUT = 'LOGOUT';
+export const PUSH_URL = 'PUSH_URL';
+export const RESET_URL = 'RESET_URL';
 
 
 // action func
 export const logout = createAction(LOGOUT)();
 export const openPopUp = createAction(OPEN_POPUP)<{title: string; message: string;}>();
 export const closePopUp = createAction(CLOSE_POPUP)();
+export const pushUrl = createAction(PUSH_URL)<string>();
+export const resetUrl = createAction(RESET_URL)();
 export const fetchLoginAsync = createAsyncAction(
   LOGIN_REQUEST,
   LOGIN_SUCCESS,
@@ -46,6 +52,8 @@ export const fetchLoginAsync = createAsyncAction(
 
 const actions = {
   logout,
+  pushUrl,
+  resetUrl,
   openPopUp,
   closePopUp,
   fetchLoginAsync,
@@ -78,5 +86,13 @@ export default createReducer<CoreState, CoreAction>(initialState, {
       title: '',
       message: '',
     },
+  }),
+  [PUSH_URL]: (state, action) => ({
+    ...state,
+    pushUrl: action.payload,
+  }),
+  [RESET_URL]: (state) => ({
+    ...state,
+    pushUrl: '',
   }),
 });
