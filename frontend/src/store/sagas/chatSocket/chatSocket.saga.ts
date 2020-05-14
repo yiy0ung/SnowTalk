@@ -1,11 +1,12 @@
-import * as ioClient from 'socket.io-client';
+import { PayloadAction } from 'typesafe-actions';
 import { eventChannel } from 'redux-saga';
 import { all, fork, take, takeEvery, call, put, cancel } from 'redux-saga/effects';
-import { PayloadAction } from 'typesafe-actions';
+import * as ioClient from 'socket.io-client';
 
+import link from 'config/link';
 import server from 'config/server';
 import { existToken } from 'utils/token';
-import { ChatEvent, ChatSocketResp, GetRoomData, ReceiveMsgData, CreateRoomData, LeaveRoomData } from './chat.event';
+import { pushUrl } from 'store/reducers/core.reducer';
 import {
   subscribeChatSocket,
   unsubscribeChatSocket,
@@ -17,9 +18,16 @@ import {
   emitCreateRoom,
   emitLeaveRoom,
   receiveLeaveRoom,
+  receiveLeaveRoomMember,
 } from 'store/reducers/chatSocket.reducer';
-import { pushUrl } from 'store/reducers/core.reducer';
-import link from 'config/link';
+import {
+  ChatEvent,
+  ChatSocketResp,
+  GetRoomData,
+  ReceiveMsgData,
+  CreateRoomData,
+  LeaveRoomData,
+} from './chat.event';
 
 function connect() {
   const socket = ioClient.connect(`${server.host}/chat`, {
@@ -88,6 +96,7 @@ function* read(socket: SocketIOClient.Socket) {
 function subscribe(socket: SocketIOClient.Socket) {
   return eventChannel((emit) => {
     socket.on(ChatEvent.getRooms, (resp: ChatSocketResp<GetRoomData>) => {
+      console.log(resp);
       if (resp.status === 200 && resp.data) {
         emit(receiveGetRooms(resp.data));
       }
@@ -108,12 +117,18 @@ function subscribe(socket: SocketIOClient.Socket) {
     });
     socket.on(ChatEvent.leaveRoom, (resp: ChatSocketResp<LeaveRoomData>) => {
       if (resp.status === 200 && resp.data) {
+        emit(pushUrl(`${link.home}`));
         emit(receiveLeaveRoom(resp.data));
       }
-    })
+    });
+    socket.on(ChatEvent.leaveRoomMember, (resp: ChatSocketResp<LeaveRoomData>) => {
+      if (resp.status === 200 && resp.data) {
+        emit(receiveLeaveRoomMember(resp.data));
+      }
+    });
 
     socket.on('disconnect', (e: any) => {
-      console.log(e)
+      console.log(e);
     });
     socket.on('error', (error: Error) => {
       console.log(`Error while trying to connect: ${error}`);

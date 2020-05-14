@@ -1,5 +1,6 @@
 import produce from 'immer';
 import { createAction, ActionType, createReducer } from "typesafe-actions";
+import { findIndex } from 'lodash';
 import { ChatRoom } from "utils/types/entity.type";
 import { GetRoomData, ReceiveMsgData, SendMsgData, CreateRoomPayload, CreateRoomData, LeaveRoomData } from "store/sagas/chatSocket/chat.event";
 
@@ -21,6 +22,7 @@ export const EMIT_CREATE_ROOM = 'EMIT_CREATE_ROOM';
 export const RECEIVE_CREATE_ROOM = 'RECEIVE_CREATE_ROOM';
 export const EMIT_LEAVE_ROOM = 'EMIT_LEAVE_ROOM';
 export const RECEIVE_LEAVE_ROOM = 'RECEIVE_LEAVE_ROOM';
+export const RECEIVE_LEAVE_ROOM_MEMBER = 'RECEIVE_LEAVE_ROOM_MEMBER';
 
 export const subscribeChatSocket = createAction(SUBSCRIBE_CHAT_SOCKET)();
 export const unsubscribeChatSocket = createAction(UNSUBSCRIBE_CHAT_SOCKET)();
@@ -32,6 +34,7 @@ export const emitCreateRoom = createAction(EMIT_CREATE_ROOM)<CreateRoomPayload>(
 export const receiveCreateRoom = createAction(RECEIVE_CREATE_ROOM)<CreateRoomData>();
 export const emitLeaveRoom = createAction(EMIT_LEAVE_ROOM)<{ roomIdx: number }>();
 export const receiveLeaveRoom = createAction(RECEIVE_LEAVE_ROOM)<LeaveRoomData>();
+export const receiveLeaveRoomMember = createAction(RECEIVE_LEAVE_ROOM_MEMBER)<LeaveRoomData>();
 
 const actions = {
   subscribeChatSocket,
@@ -44,6 +47,7 @@ const actions = {
   receiveCreateRoom,
   emitLeaveRoom,
   receiveLeaveRoom,
+  receiveLeaveRoomMember,
 };
 export type ChatSocketActions = ActionType<typeof actions>;
 
@@ -69,11 +73,22 @@ export default createReducer<ChatSocketState, ChatSocketActions>(initalState, {
     produce(state, draft => {
       draft.chatRooms.unshift(action.payload.room);
     }),
-  [RECEIVE_LEAVE_ROOM]: (state, action) => {
-    if (action.payload.memberIdx) {}
+  [RECEIVE_LEAVE_ROOM]: (state, action) => 
+    produce(state, draft => {
+      draft.chatRooms = draft.chatRooms.filter((chatRoom) => 
+        chatRoom.idx !== action.payload.roomIdx);
+    }),
+  [RECEIVE_LEAVE_ROOM_MEMBER]: (state, action) => 
+    produce(state, draft => {
+      draft.chatRooms = draft.chatRooms.map(chatRoom => {
+        const idx = findIndex(chatRoom.participants, { 'idx': action.payload.participantIdx });
+        if (idx >= 0) {
+          chatRoom.participants.splice(idx, 1);
+        }
 
-    return state;
-  }
+        return chatRoom;
+      });
+    }),
 });
 
 // import produce from 'immer';

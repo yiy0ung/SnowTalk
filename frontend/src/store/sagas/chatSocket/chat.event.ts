@@ -9,6 +9,7 @@ export enum ChatEvent {
   createRoom = 'create-room',
   inviteRoom = 'invite-room',
   leaveRoom = 'leave-room',
+  leaveRoomMember = 'leave-room-member',
 }
 
 export interface ChatSocketResp<Data> {

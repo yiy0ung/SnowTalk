@@ -234,7 +234,7 @@ export class ChatEvent {
       };
 
       socket.emit(ChatListener.leaveRoom, payload);
-      socket.broadcast.to(`chatroom-${room.idx}`).emit(ChatListener.leaveRoom, payload);
+      socket.broadcast.to(`chatroom-${room.idx}`).emit(ChatListener.leaveRoomMember, payload);
       socket.leave(`chatroom-${room.idx}`);
 
       // 시스템 메시지 전송

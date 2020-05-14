@@ -22,7 +22,7 @@ export class ChatDataloader {
   }
 
   private chatParticipantByRoomIdxs = async (roomIdxs: readonly number[]) => {
-    const chatParticipants = await this.chatParticipantRepo.getParticipantByRoomIdxs(roomIdxs);
+    const chatParticipants = await this.chatParticipantRepo.getParticipantByRoomIdxs(roomIdxs, 1);
     const participants = groupBy(chatParticipants, 'chatRoomIdx');
 
     return roomIdxs.map(roomIdx => 

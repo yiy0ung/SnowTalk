@@ -8,4 +8,5 @@ export enum ChatListener {
   createRoom = 'create-room',
   inviteRoom = 'invite-room',
   leaveRoom = 'leave-room',
-}
+  leaveRoomMember = 'leave-room-member',
+};
