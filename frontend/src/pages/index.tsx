@@ -27,6 +27,7 @@ function Pages() {
       <Route exact
         path={link.sign}
         component={Sign} />
+        {/* render={() => <Sign />} /> */}
       <Route exact
         path={`${link.chatroom}/:roomIdx`}
         component={ChatRoom} />

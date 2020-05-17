@@ -1,51 +1,35 @@
-import React, { Children } from 'react';
-import { compose, withState, withHandlers } from 'recompose';
+import React, { ReactNode, useState, useCallback } from 'react';
 import { Modal } from './Modal';
 
-interface OutterProps {
-  modal: React.FC;
-  children: React.FC<{
-    isOpen: boolean;
-    onOpen: Function;
+type Props = {
+  modalContent: React.FC<any & {
     onClose: Function;
   }>;
-}
+  startOpen?: boolean;
+  children: ReactNode;
+};
 
-interface InnerProps {
-  isOpen: boolean;
-  setIsOpen: (x: boolean) => void;
-}
+const WithModal = ({ modalContent: ModalContent, startOpen = false, children }: Props) => {
+  const [isOpen, setIsOpen] = useState(startOpen);
 
-interface HandlerProps {
-  onOpen: Function;
-  onClose: Function;
-}
+  const onOpen = useCallback(() => {
+    setIsOpen(true);
+  }, []);
+  
+  const onClose = useCallback(() => {
+    setIsOpen(false);
+  }, []);
 
-type Props = InnerProps & OutterProps & HandlerProps;
-
-const WithModal: React.FC<Props> = ({ isOpen, onOpen, onClose, modal, children }) => {
   return (
     <>
-      {Children.only(children({ isOpen, onOpen, onClose }))}
+      <div onClick={onOpen}>
+        {children}
+      </div>
       <Modal isOpen={isOpen} onClose={onClose}>
-        {modal}
+        <ModalContent onClose={onClose} />
       </Modal>
     </>
   );
-}
+};
 
-export default compose(
-  withState(
-    'isOpen',
-    'setIsOpen',
-    false,
-  ),
-  withHandlers({
-    onOpen: ({ setIsOpen }: InnerProps) => () => {
-      setIsOpen(true);
-    },
-    onClose: ({ setIsOpen }: InnerProps) => () => {
-      setIsOpen(false);
-    },
-  })
-)(WithModal);
+export default WithModal;

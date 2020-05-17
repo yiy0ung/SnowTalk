@@ -1,1 +1,1 @@
-declare module 'recompose';
+// declare module '';

@@ -42,6 +42,7 @@ function* signUp(action: ReturnType<typeof fetchSignUpAsync.request>) {
       yield put(openPopUp({
         title: '회원가입에 성공하였습니다',
         message: '',
+        level: 'success',
       }));
     }
   } catch (error) {
@@ -49,6 +50,7 @@ function* signUp(action: ReturnType<typeof fetchSignUpAsync.request>) {
     yield put(openPopUp({
       title: '회원가입에 실패하였습니다',
       message: '다시 시도 해주세요',
+      level: 'warning',
     }));
   }
 }
@@ -75,6 +77,7 @@ function* updateProfile(action: ReturnType<typeof fetchUpdateProfileAsync.reques
         put(openPopUp({
           title: '정보 수정을 성공하였습니다',
           message: '',
+          level: 'success',
         })),
       ]);
     }
@@ -83,6 +86,7 @@ function* updateProfile(action: ReturnType<typeof fetchUpdateProfileAsync.reques
     yield put(openPopUp({
       title: '정보 수정을 실패하였습니다',
       message: '다시 시도 해주세요',
+      level: 'warning',
     }));
   }
 }

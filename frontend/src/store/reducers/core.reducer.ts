@@ -5,17 +5,21 @@ import {
   createReducer,
 } from 'typesafe-actions';
 import { LoginReq } from 'utils/types/form.type';
+import { PopupLevel } from 'utils/types/system.type';
+
+export type PopupData = {
+  title: string;
+  message: string;
+  level: PopupLevel;
+  visible: boolean;
+};
 
 // init state
 type CoreState = {
   isLogin: boolean;
   pushUrl: string;
-  popup: {
-    visible: boolean;
-    title: string;
-    message: string;
-  };
-}
+  popup: PopupData;
+};
 
 export const initialState: CoreState = {
   isLogin: false,
@@ -24,6 +28,7 @@ export const initialState: CoreState = {
     visible: false,
     title: '',
     message: '',
+    level: 'info',
   },
 };
 
@@ -40,7 +45,11 @@ export const RESET_URL = 'RESET_URL';
 
 // action func
 export const logout = createAction(LOGOUT)();
-export const openPopUp = createAction(OPEN_POPUP)<{title: string; message: string;}>();
+export const openPopUp = createAction(OPEN_POPUP)<{
+  title: string;
+  message: string;
+  level?: PopupLevel;
+}>();
 export const closePopUp = createAction(CLOSE_POPUP)();
 export const pushUrl = createAction(PUSH_URL)<string>();
 export const resetUrl = createAction(RESET_URL)();
@@ -77,6 +86,7 @@ export default createReducer<CoreState, CoreAction>(initialState, {
       visible: true,
       title: action.payload.title,
       message: action.payload.message,
+      level: action.payload.level || 'info',
     },
   }),
   [CLOSE_POPUP]: (state) => ({
@@ -85,6 +95,7 @@ export default createReducer<CoreState, CoreAction>(initialState, {
       visible: false,
       title: '',
       message: '',
+      level: 'info',
     },
   }),
   [PUSH_URL]: (state, action) => ({

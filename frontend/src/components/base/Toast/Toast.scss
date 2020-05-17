@@ -1,0 +1,45 @@
+
+.toast {
+  display: flex;
+  align-items: center;
+  width: 21rem;
+  padding: 0.6rem 1rem;
+  border-radius: 5px;
+  box-shadow: 0 0 8px 4px #cccccc;
+  color: #fff;
+  background-color: #2f96b4;
+
+  & + & {
+    margin-top: 0.8rem;
+  }
+
+  &__icon {
+    font-size: 1.2rem;
+    margin-right: 0.5rem;
+  }
+
+  &__content {
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__title {
+    font-size: 1rem;
+  }
+
+  &__msg {
+    font-size: 0.8rem;
+  }
+}
+
+.toast-success {
+  background-color: #51a351;
+}
+
+.toast-warning {
+  background-color: #f89406;
+}
+
+.toast-error {
+  background-color: #bd362f;
+}

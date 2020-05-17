@@ -20,10 +20,8 @@ function Friend() {
       headerComponent={(
         <>
           <Header title="친구">
-            <WithModal modal={FriendAddModal}>
-              {({ onOpen }: any) => (
-                <AiOutlineUserAdd onClick={onOpen} />
-              )}
+            <WithModal modalContent={FriendAddModal}>
+              <AiOutlineUserAdd />
             </WithModal>
           </Header>
           <Input value={searchWord} onChange={onChangeSearchWord} placeholder="이름 검색" />

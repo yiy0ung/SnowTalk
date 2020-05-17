@@ -6,6 +6,7 @@ import { existToken } from 'utils/token';
 import { RootState } from 'store/reducers';
 import { SignSection } from 'components/organism/Sign/SignSection';
 import link from 'config/link';
+import { withToast } from 'components/hoc/withToast';
 
 function Sign() {
   const { isLogin } = useSelector((state: RootState) => state.core);
@@ -24,4 +25,4 @@ function Sign() {
   );
 }
 
-export default Sign;
+export default withToast(Sign);
