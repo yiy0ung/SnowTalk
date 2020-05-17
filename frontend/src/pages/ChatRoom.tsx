@@ -1,7 +1,9 @@
 import React from 'react';
+import { useRouteMatch, useHistory } from 'react-router-dom';
+
 import { CommonTemplate } from 'components/organism/template/CommonTemplate';
 import { ChatRoomMain } from 'components/organism/ChatRoom/ChatRoomMain';
-import { useRouteMatch, useHistory } from 'react-router-dom';
+import { withPopup } from 'components/hoc/withPopup';
 import link from 'config/link';
 
 function ChatRoom() {
@@ -20,4 +22,4 @@ function ChatRoom() {
   );
 }
 
-export default ChatRoom;
+export default withPopup(ChatRoom);

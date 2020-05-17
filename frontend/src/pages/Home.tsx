@@ -1,6 +1,7 @@
 import React from 'react';
-import { MainTemplate } from 'components/organism/template/MainTemplate';
 import Chat from 'components/organism/Chat';
+import { MainTemplate } from 'components/organism/template/MainTemplate';
+import { withPopup } from 'components/hoc/withPopup';
 import useAuth from 'utils/hooks/useAuth';
 
 function Home() {
@@ -13,4 +14,4 @@ function Home() {
   );
 }
 
-export default Home;
+export default withPopup(Home);

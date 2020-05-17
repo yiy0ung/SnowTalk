@@ -5,8 +5,8 @@ import { useHistory } from 'react-router';
 import { existToken } from 'utils/token';
 import { RootState } from 'store/reducers';
 import { SignSection } from 'components/organism/Sign/SignSection';
+import { withPopup } from 'components/hoc/withPopup';
 import link from 'config/link';
-import { withToast } from 'components/hoc/withToast';
 
 function Sign() {
   const { isLogin } = useSelector((state: RootState) => state.core);
@@ -25,4 +25,4 @@ function Sign() {
   );
 }
 
-export default withToast(Sign);
+export default withPopup(Sign);

@@ -75,8 +75,8 @@ function* updateProfile(action: ReturnType<typeof fetchUpdateProfileAsync.reques
         put(fetchUpdateProfileAsync.success()),
         put(fetchUserInfoAsync.request()),
         put(openPopUp({
-          title: '정보 수정을 성공하였습니다',
-          message: '',
+          title: '',
+          message: '정보 수정을 성공하였습니다',
           level: 'success',
         })),
       ]);

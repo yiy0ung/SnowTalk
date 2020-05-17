@@ -8,6 +8,8 @@
   box-shadow: 0 0 8px 4px #cccccc;
   color: #fff;
   background-color: #2f96b4;
+  animation-duration: 3s;
+  animation: 3s ease-in-out remove forwards;
 
   & + & {
     margin-top: 0.8rem;
@@ -42,4 +44,14 @@
 
 .toast-error {
   background-color: #bd362f;
+}
+
+@keyframes remove {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    display: none;
+  }
 }
