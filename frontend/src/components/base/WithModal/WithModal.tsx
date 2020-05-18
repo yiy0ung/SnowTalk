@@ -2,14 +2,15 @@ import React, { ReactNode, useState, useCallback } from 'react';
 import { Modal } from './Modal';
 
 type Props = {
-  modalContent: React.FC<any & {
+  modal: React.FC<any & {
     onClose: Function;
   }>;
+  modalProps?: object;
   startOpen?: boolean;
   children: ReactNode;
 };
 
-const WithModal = ({ modalContent: ModalContent, startOpen = false, children }: Props) => {
+const WithModal = ({ modal: ModalContent, modalProps, startOpen = false, children }: Props) => {
   const [isOpen, setIsOpen] = useState(startOpen);
 
   const onOpen = useCallback(() => {
@@ -26,7 +27,7 @@ const WithModal = ({ modalContent: ModalContent, startOpen = false, children }: 
         {children}
       </div>
       <Modal isOpen={isOpen} onClose={onClose}>
-        <ModalContent onClose={onClose} />
+        <ModalContent onClose={onClose} {...modalProps} />
       </Modal>
     </>
   );

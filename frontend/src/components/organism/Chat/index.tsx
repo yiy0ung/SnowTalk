@@ -4,7 +4,9 @@ import { IoMdAdd } from 'react-icons/io';
 import { ContentTemplate } from '../template/ContentTemplate';
 import { Header } from 'components/base/Header';
 import { Input } from 'components/base/Input';
+import { WithModal } from 'components/base/WithModal';
 import { ChatRoomList } from './ChatRoomList';
+import { ChatMemberModal } from './ChatMemberModal';
 
 function Chat() {
   const [searchChat, setSearchChat] = useState('');
@@ -18,7 +20,9 @@ function Chat() {
       headerComponent={(
         <>
           <Header title="채팅">
-            <IoMdAdd />
+            <WithModal modal={ChatMemberModal} modalProps={{type: 'create'}}>
+              <IoMdAdd />
+            </WithModal>
           </Header>
           <Input 
             value={searchChat}

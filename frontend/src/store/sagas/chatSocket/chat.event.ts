@@ -1,4 +1,4 @@
-import { Message, ChatRoom, Member, Participant } from "utils/types/entity.type";
+import { Message, ChatRoom, Participant } from "utils/types/entity.type";
 
 export enum ChatEvent {
   chatError = 'chat-error',
@@ -49,5 +49,15 @@ export type LeaveRoomData = {
   roomIdx: number,
   memberIdx: number,
   participantIdx: number,
+};
+
+export type InviteRoomPayload = {
+  roomIdx: number;
+  membersIdx: number[];
+};
+
+export type InviteRoomData = {
+  room: ChatRoom;
+  newParticipants: Participant[];
 };
 

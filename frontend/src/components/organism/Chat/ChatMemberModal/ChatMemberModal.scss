@@ -1,0 +1,46 @@
+
+
+.chat-member-modal {
+  display: flex;
+  flex-direction: column;
+  height: 35rem;
+  padding: 0 0.5rem;
+
+  & > * + * {
+    margin-top: 1rem;
+  }
+
+  &__title {
+    font-size: 0.9rem;
+    color: #666666;
+  }
+
+  &__invited {
+    max-height: 5rem;
+    overflow-y: auto;
+    display: flex;
+    flex-wrap: wrap;
+
+    & > * {
+      margin-top: 0.5rem;
+      margin-left: 0.3rem;
+    }
+  }
+
+  &__friends {
+    flex: 1;
+    overflow-y: auto;
+  }
+
+  &__btnGroup {
+    border-top: 1px solid #b3b3b3;
+    padding-top: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+
+    & > * {
+      margin-left: 0.7rem;
+    }
+  }
+}

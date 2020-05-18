@@ -7,7 +7,7 @@ import './UserCard.scss';
 type Props = {
   title: string;
   subtitle?: ReactNode;
-  desc: string;
+  desc?: string;
   imgIds: ImageType[];
   type: 'profile'|'chat';
   avatar?: Pick<AvatarProps, "size">;

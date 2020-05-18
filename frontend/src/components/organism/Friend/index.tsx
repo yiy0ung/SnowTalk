@@ -20,7 +20,7 @@ function Friend() {
       headerComponent={(
         <>
           <Header title="친구">
-            <WithModal modalContent={FriendAddModal}>
+            <WithModal modal={FriendAddModal}>
               <AiOutlineUserAdd />
             </WithModal>
           </Header>

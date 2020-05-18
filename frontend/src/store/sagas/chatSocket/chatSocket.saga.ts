@@ -19,6 +19,8 @@ import {
   emitLeaveRoom,
   receiveLeaveRoom,
   receiveLeaveRoomMember,
+  emitInviteRoom,
+  receiveInviteRoom,
 } from 'store/reducers/chatSocket.reducer';
 import {
   ChatEvent,
@@ -27,6 +29,7 @@ import {
   ReceiveMsgData,
   CreateRoomData,
   LeaveRoomData,
+  InviteRoomData,
 } from './chat.event';
 
 function connect() {
@@ -126,6 +129,11 @@ function subscribe(socket: SocketIOClient.Socket) {
         emit(receiveLeaveRoomMember(resp.data));
       }
     });
+    socket.on(ChatEvent.inviteRoom, (resp: ChatSocketResp<InviteRoomData>) => {
+      if (resp.status === 200 && resp.data) {
+        emit(receiveInviteRoom(resp.data));
+      }
+    });
 
     socket.on('disconnect', (e: any) => {
       console.log(e);
@@ -144,6 +152,7 @@ function* setEmitters(socket: SocketIOClient.Socket) {
     takeEvery(emitGetRooms, emitter(socket, ChatEvent.getRooms)),
     takeEvery(emitCreateRoom, payloadEmitter(socket, ChatEvent.createRoom)),
     takeEvery(emitLeaveRoom, payloadEmitter(socket, ChatEvent.leaveRoom)),
+    takeEvery(emitInviteRoom, payloadEmitter(socket, ChatEvent.inviteRoom)),
   ]);
 }
 

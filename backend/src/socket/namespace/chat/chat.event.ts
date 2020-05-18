@@ -162,8 +162,8 @@ export class ChatEvent {
         status: 200,
         data: {
           room,
-          newMembers,
-        }
+          newParticipants: newMembers,
+        },
       };
 
       socket.emit(ChatListener.inviteRoom, payload);
