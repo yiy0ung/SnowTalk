@@ -15,6 +15,8 @@ import { emitLeaveRoom } from 'store/reducers/chatSocket.reducer';
 import { AvatarList } from 'components/base/AvatarList';
 import { DropdownMenu } from 'components/base/DropdownMenu';
 import { DropdownMenuItem } from 'components/base/DropdownMenu/DropdownMenuItem';
+import { WithModal } from 'components/base/WithModal';
+import { ChatMemberModal } from 'components/organism/Chat/ChatMemberModal';
 import link from 'config/link';
 
 import './ChatRoomHead.scss';
@@ -85,11 +87,18 @@ function ChatRoomHead({ roomInfo }: Props) {
               <AiOutlineMenu />
             </div>
           )}>
-            <DropdownMenuItem
-              icon={<GrAdd />}
-              text="대화상대 추가"
-              onClick={() => {}}
-            />
+            <WithModal 
+              modal={ChatMemberModal} 
+              modalProps={{
+                type: 'invite',
+                roomIdx: roomInfo.idx,
+                participants: roomInfo.participants,
+              }}>
+              <DropdownMenuItem
+                icon={<GrAdd />}
+                text="대화상대 추가"
+              />
+            </WithModal>
             <DropdownMenuItem
               icon={<FaCog />}
               text="채팅방 설정"

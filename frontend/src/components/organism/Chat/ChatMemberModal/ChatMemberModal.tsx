@@ -3,6 +3,10 @@ import { useSelector, useDispatch } from 'react-redux';
 import { map } from 'lodash';
 
 import { RootState } from 'store/reducers';
+import {
+  emitCreateRoom,
+  emitInviteRoom,
+} from 'store/reducers/chatSocket.reducer';
 import useInput from 'utils/hooks/useInput';
 import { Participant, Member } from 'utils/types/entity.type';
 import { Button } from 'components/base/Button';
@@ -38,13 +42,26 @@ function ChatMemberModal({ onClose, type, roomIdx, participants = [] }: Props) {
 
   const onSubmit = useCallback(() => {
     if (type === 'create') {
-
+      if (invitedMembers.length === 1) {
+        dispatch(emitCreateRoom({
+          type: 'personal',
+          membersIdx: invitedMemberIdxs,
+        }));
+      } else if (invitedMembers.length > 1) {
+        dispatch(emitCreateRoom({
+          type: 'group',
+          membersIdx: invitedMemberIdxs,
+        }));
+      }
     } else if (type === 'invite' && roomIdx) {
-
+      dispatch(emitInviteRoom({
+        roomIdx,
+        membersIdx: invitedMemberIdxs,
+      }));
     }
 
     onClose();
-  }, [onClose, roomIdx, type]);
+  }, [dispatch, invitedMemberIdxs, invitedMembers.length, onClose, roomIdx, type]);
 
   // 초대되지 않은 친구 목록
   const friendNodes = friends.map((friend) => {
@@ -110,7 +127,11 @@ function ChatMemberModal({ onClose, type, roomIdx, participants = [] }: Props) {
       </div>
       <div className="chat-member-modal__btnGroup">
         <div>
-          <Button type="primary" onClick={onSubmit}>{type==='create'? '채팅방 생성':'초대'}</Button>
+          <Button
+            type="primary" 
+            lock={invitedMembers.length <= 0}
+            onClick={onSubmit}
+          >{type==='create'? '채팅방 생성':'초대'}</Button>
         </div>
         <div><Button type="secondary" onClick={onClose}>취소</Button></div>
       </div>

@@ -5,10 +5,11 @@ import './Button.scss';
 type Props = {
   onClick: () => void;
   children: ReactNode;
+  lock?: boolean;
   type?: 'primary'|'secondary';
 };
 
-function Button({ onClick, children, type = 'primary' }: Props) {
+function Button({ onClick, children, type = 'primary', lock = false }: Props) {
   const btnStyle = {
     primary: {},
     secondary: {
@@ -19,7 +20,11 @@ function Button({ onClick, children, type = 'primary' }: Props) {
   };
 
   return (
-    <button className="basic-btn" onClick={onClick} style={btnStyle[type]}>
+    <button 
+      className={`basic-btn ${lock ? 'basic-btn-lock':''}`} 
+      onClick={lock ? onClick : undefined}
+      style={btnStyle[type]}
+    >
       <span>{children}</span>
     </button>
   );

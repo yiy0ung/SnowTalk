@@ -12,6 +12,11 @@ export enum ChatEvent {
   leaveRoomMember = 'leave-room-member',
 }
 
+export type RequestMsgRecordData = {
+  roomIdx: number;
+  lastMessageIdx: number;
+};
+
 export interface ChatSocketResp<Data> {
   status: number;
   message?: string;

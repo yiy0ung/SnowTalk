@@ -35,7 +35,7 @@ export const updateMember = (body) => {
 export const getMessage = (body) => {
   const schema = Joi.object().keys({
     roomIdx: Joi.number().integer().required(),
-    lastMessagesIdx: Joi.number().integer(),
+    lastMessageIdx: Joi.number().integer(),
   });
 
   return schema.validateAsync(body);

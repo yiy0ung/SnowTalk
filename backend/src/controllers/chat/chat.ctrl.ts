@@ -25,9 +25,9 @@ export class ChatCtrl {
     }
 
     try {
-      const { roomIdx, lastMessagesIdx } = body;
+      const { roomIdx, lastMessageIdx } = body;
       const messages = await this.messageService
-        .getChatRoomMessage(decoded.memberIdx, roomIdx, lastMessagesIdx);
+        .getChatRoomMessage(decoded.memberIdx, roomIdx, lastMessageIdx);
 
       if (!messages) {
         res.status(403).json({
