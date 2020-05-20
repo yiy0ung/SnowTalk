@@ -22,7 +22,7 @@ function Button({ onClick, children, type = 'primary', lock = false }: Props) {
   return (
     <button 
       className={`basic-btn ${lock ? 'basic-btn-lock':''}`} 
-      onClick={lock ? onClick : undefined}
+      onClick={!lock ? onClick : undefined}
       style={btnStyle[type]}
     >
       <span>{children}</span>

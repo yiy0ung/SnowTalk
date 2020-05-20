@@ -121,14 +121,20 @@ export default createReducer<ChatSocketState, ChatSocketActions>(initalState, {
   [RECEIVE_INVITE_ROOM]: (state, action) => {
     const { room, newParticipants } = action.payload;
     const existRoom = findIndex(state.chatRooms, { 'idx': room.idx });
+    console.log(action.payload)
+    console.log(existRoom);
 
     if (existRoom >= 0) { // 초대되어 있는 방
+      console.log("존재하는 방")
+      console.log(state.chatRooms[existRoom].participants);
+      console.log(newParticipants);
       return produce(state, draft => {
         draft.chatRooms[existRoom].participants.push(...newParticipants);
       });
     } else { // 처음 초대된 방
+      console.log("존재하지 않는 방")
       return produce(state, draft => {
-        draft.chatRooms.unshift(action.payload.room);
+        draft.chatRooms.push(action.payload.room);
       });
     }
   }

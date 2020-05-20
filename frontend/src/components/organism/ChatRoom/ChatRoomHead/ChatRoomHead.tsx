@@ -1,12 +1,12 @@
 import React, { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import { AiOutlineMenu, AiOutlineInbox } from 'react-icons/ai';
 import { RiLogoutBoxLine } from 'react-icons/ri';
 import { FiSearch, FiArrowLeft } from 'react-icons/fi';
 import { FaRegHeart, FaCog } from 'react-icons/fa';
 import { TiDocumentText } from 'react-icons/ti';
-import { GrAdd } from 'react-icons/gr';
+import { IoMdAdd } from 'react-icons/io';
 
 import { confirmAlert } from 'utils/alert';
 import { ChatRoom } from 'utils/types/entity.type';
@@ -26,6 +26,7 @@ type Props = {
 };
 
 function ChatRoomHead({ roomInfo }: Props) {
+  const history = useHistory();
   const dispatch = useDispatch();
   const { title, participants, type } = roomInfo;
   const memberState = useSelector((state: RootState) => state.member);
@@ -55,6 +56,10 @@ function ChatRoomHead({ roomInfo }: Props) {
     });
   }, [dispatch]);
 
+  const onGoToHome = useCallback(() => {
+    history.push(link.home);
+  }, [history]);
+
   return (
     <div className="chatroom-head">
       <div className="chatroom-head__info">
@@ -77,28 +82,32 @@ function ChatRoomHead({ roomInfo }: Props) {
         </div>
 
         <div className="chatroom-head__options">
-          <Link to={link.home} title="돌아가기">
-            <div className="chatroom-head__option">
-              <FiArrowLeft />
-            </div>
-          </Link>
+          {
+            roomInfo.type === 'group' && (
+              <WithModal 
+                modal={ChatMemberModal} 
+                modalProps={{
+                  type: 'invite',
+                  roomIdx: roomInfo.idx,
+                  participants: roomInfo.participants,
+                }}>
+                <div className="chatroom-head__option" title="대화상대 초대">
+                  <IoMdAdd />
+                </div>
+              </WithModal>
+            )
+          }
+
           <DropdownMenu component={(
             <div className="chatroom-head__option">
               <AiOutlineMenu />
             </div>
           )}>
-            <WithModal 
-              modal={ChatMemberModal} 
-              modalProps={{
-                type: 'invite',
-                roomIdx: roomInfo.idx,
-                participants: roomInfo.participants,
-              }}>
-              <DropdownMenuItem
-                icon={<GrAdd />}
-                text="대화상대 추가"
-              />
-            </WithModal>
+            <DropdownMenuItem
+              icon={<FiArrowLeft />}
+              text="홈으로"
+              onClick={onGoToHome}
+            />
             <DropdownMenuItem
               icon={<FaCog />}
               text="채팅방 설정"

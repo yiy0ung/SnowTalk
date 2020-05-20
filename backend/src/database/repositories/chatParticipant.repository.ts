@@ -29,7 +29,7 @@ export class ChatParticipantRepository extends Repository<ChatParticipant> {
   }
 
   public getParticipantsFull(membersIdx: number[], chatRoomIdx: number) {
-    return this.findOne({
+    return this.find({
       join: {
         alias: 'chatParticipant',
         leftJoinAndSelect: {

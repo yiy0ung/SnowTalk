@@ -33,6 +33,7 @@ function ChatMemberModal({ onClose, type, roomIdx, participants = [] }: Props) {
   const invitedMemberIdxs = map(invitedMembers, 'idx');
 
   const onAddInvite = useCallback((member: Member) => {
+    console.log("object");
     setInvitedMembers((prevMembers) => [...prevMembers, member]);
   }, []);
 
