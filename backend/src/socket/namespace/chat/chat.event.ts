@@ -68,7 +68,7 @@ export class ChatEvent {
 
       // 룸 생성 및 멤버 추가
       const { created, roomData } = await this.chatService.createChatRoom(title, type, entire);
-      console.log(roomData);
+
       if (!created) {
         socket.emit(ChatListener.createRoom, {
           status: 404,

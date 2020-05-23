@@ -34,7 +34,7 @@ function SpeechBubble({ someone, message, date }: Props) {
         <div className="speech-bubble__tip"></div>
       </div>
       <div className="speech-bubble__message">
-        {message}
+        <pre>{message}</pre>
       </div>
       <div className="speech-bubble__date">
         <span>{displayDate}</span>

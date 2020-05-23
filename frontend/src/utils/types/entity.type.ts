@@ -29,6 +29,7 @@ export type Message = {
   deleted: number;
   createAt: string;
   member?: Member;
+  msgfile: FileState|null;
 };
 
 export type Participant = {

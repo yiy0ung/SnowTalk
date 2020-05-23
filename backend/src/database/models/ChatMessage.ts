@@ -9,7 +9,7 @@ export class ChatMessage {
   @PrimaryGeneratedColumn({ type: 'int' })
   idx: number;
 
-  @Column({ type: 'varchar', length: 1000 })
+  @Column({ type: 'varchar', length: 1000, nullable: true })
   message: string;
 
   @Column({ type: 'enum', enum: MessageType })
@@ -37,8 +37,8 @@ export class ChatMessage {
   member: Member;
 
   @JoinColumn({
-    name: 'file',
+    name: 'msg_file',
   })
   @OneToOne(type => File, file => file.idx, { nullable: true })
-  file: File;
+  msgfile: File;
 }

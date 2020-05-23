@@ -4,7 +4,7 @@ import { AuthRequest } from "../typings";
 
 async function authMiddleware(req: AuthRequest, res: Response, next: NextFunction) {
   const token = req.headers['token'];
-
+  console.log("토큰: ", token);
   if (!token || Array.isArray(token)) {
     res.status(400).json({
       status: 400,

@@ -9,3 +9,18 @@ export function createKey(numLength: number) {
 
   return result;
 }
+
+export function trimNextLine(str: string) {
+  let result = str.trim();
+
+  const arrStr: (string|null)[] = result.split('\n');
+  if (arrStr[0] === '') {
+    arrStr[0] = null;
+  }
+  if (arrStr[arrStr.length - 1] === '') {
+    arrStr[arrStr.length - 1] = null;
+  }
+  result = arrStr.join('\n').trim();
+
+  return result;
+}

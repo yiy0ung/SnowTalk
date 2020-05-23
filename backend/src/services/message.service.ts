@@ -48,11 +48,13 @@ export class MessageService {
     }
 
     let file = null;
-    if (!fileIdx) {
+    console.log(fileIdx);
+    if (fileIdx) {
       file = await this.fileRepo.getFileByIdx(fileIdx);
     }
+    console.log(file);
     const messageData = await this.chatMsgRepo.saveUserMessage(room, message, sender, file);
-
+    console.log(messageData.msgfile);
     return {
       success: true,
       room,

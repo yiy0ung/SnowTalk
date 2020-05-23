@@ -15,7 +15,7 @@ export class ChatRoute {
   }
 
   private setRouter() {
-    this.router.get('/', this.chatCtrl.getChatMessage);
+    this.router.get('/msg', this.chatCtrl.getChatMessage);
   }
 
   public getRouter() {

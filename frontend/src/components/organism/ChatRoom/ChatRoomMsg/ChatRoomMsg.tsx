@@ -18,10 +18,10 @@ function ChatRoomMsg({ roomInfo }: Props) {
   const { messages } = roomInfo;
 
   const messageBubbles = messages.map((messageItem, index) => {
-    const { idx, message, createAt, type, member, deleted } = messageItem;
+    const { idx, message, createAt, type, member, deleted, msgfile } = messageItem;
     const provMessage = messages[index - 1];
     let dateSection = null;
-
+    
     if (provMessage 
       && moment(provMessage.createAt).diff(moment(createAt), 'days') >= 1) {
       dateSection = (
@@ -40,15 +40,18 @@ function ChatRoomMsg({ roomInfo }: Props) {
           member={member}
           message={message}
           sendDate={createAt}
-          deleted={deleted} />
+          deleted={deleted}
+          file={msgfile} />
       </Fragment>
     );
   });
 
   return (
-    <div className="chatroom-msg">
+    // <div className="chatroom-msg">
+    <>
       {messageBubbles}
-    </div>
+    </>
+    // </div>
   );
 }
 

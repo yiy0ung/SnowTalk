@@ -34,6 +34,7 @@ export class ChatService {
       if (!(participantData instanceof Error)) {
         chatRooms[i].participants = participantData;
       }
+
       chatRooms[i].messages = await this.chatMsgRepo.getMessageByChatRoomIdx(chatRooms[i].idx);
     }
 
@@ -70,7 +71,7 @@ export class ChatService {
 
     if (roomType === RoomType.personal && members.length === 2) { // 개인 채팅방은 1개만 활성화 가능
       const existence = await this.chatRoomRepo.existPersonalChatRoom(members);
-      console.log(existence);
+
       if (existence.length > 0) {
         return {
           created: false,

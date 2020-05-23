@@ -35,7 +35,7 @@ export const leaveChatRoom = (body) => {
 export const sendRoomMessage = (data) => {
   const schema = Joi.object().keys({
     roomIdx: Joi.number().integer().required(),
-    message: Joi.string().required(),
+    message: Joi.string().allow(null).required(),
     imageIdx: Joi.number().integer().allow(null),
   });
 

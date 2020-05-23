@@ -11,10 +11,11 @@ export class ChatCtrl {
   ) {}
 
   public getChatMessage = async (req: AuthRequest, res: Response) => {
-    const { decoded, body } = req;
+    const { decoded, query } = req;
+    let data;
 
     try {
-      await Validate.getMessage(body);
+      data = await Validate.getMessage(query);
     } catch (error) {
       res.status(400).json({
         status: 400,
@@ -25,7 +26,7 @@ export class ChatCtrl {
     }
 
     try {
-      const { roomIdx, lastMessageIdx } = body;
+      const { roomIdx, lastMessageIdx } = data;
       const messages = await this.messageService
         .getChatRoomMessage(decoded.memberIdx, roomIdx, lastMessageIdx);
 
@@ -42,6 +43,7 @@ export class ChatCtrl {
         status: 200,
         message: 'get messages',
         data: {
+          roomIdx,
           messages,
         },
       });

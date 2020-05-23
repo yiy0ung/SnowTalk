@@ -12,6 +12,8 @@ import {
   InviteRoomPayload,
   InviteRoomData,
   RequestMsgRecordData,
+  ResponseMsgRecordData,
+  SendFileMsgData,
 } from "store/sagas/chatSocket/chat.event";
 
 type ChatSocketState = {
@@ -29,6 +31,7 @@ export const UNSUBSCRIBE_CHAT_SOCKET = 'UNSUBSCRIBE_CHAT_SOCKET';
 export const MESSAGE_RECORD_REQUEST = 'MESSAGE_RECORD_REQUEST';
 export const MESSAGE_RECORD_SUCCESS = 'MESSAGE_RECORD_SUCCESS';
 export const MESSAGE_RECORD_FAILURE = 'MESSAGE_RECORD_FAILURE';
+export const SEND_FILE_MESSAGE = 'SEND_FILE_MESSAGE';
 export const SEND_MESSAGE = 'SEND_MESSAGE';
 export const RECEIVE_MESSAGE = 'RECEIVE_MESSAGE';
 export const EMIT_GET_ROOMS = 'EMIT_GET_ROOMS';
@@ -44,6 +47,7 @@ export const RECEIVE_INVITE_ROOM = 'RECEIVE_INVITE_ROOM';
 // Actions
 export const subscribeChatSocket = createAction(SUBSCRIBE_CHAT_SOCKET)();
 export const unsubscribeChatSocket = createAction(UNSUBSCRIBE_CHAT_SOCKET)();
+export const sendFileMessage = createAction(SEND_FILE_MESSAGE)<SendFileMsgData>();
 export const sendMessage = createAction(SEND_MESSAGE)<SendMsgData>();
 export const receiveMessage = createAction(RECEIVE_MESSAGE)<ReceiveMsgData>();
 export const emitGetRooms = createAction(EMIT_GET_ROOMS)();
@@ -59,7 +63,7 @@ export const fetchMessageRecord = createAsyncAction(
   MESSAGE_RECORD_REQUEST,
   MESSAGE_RECORD_SUCCESS,
   MESSAGE_RECORD_FAILURE,
-)<RequestMsgRecordData, undefined, Error>();
+)<RequestMsgRecordData, ResponseMsgRecordData, Error>();
 
 const actions = {
   subscribeChatSocket,
@@ -137,5 +141,22 @@ export default createReducer<ChatSocketState, ChatSocketActions>(initalState, {
         draft.chatRooms.push(action.payload.room);
       });
     }
+  },
+  [MESSAGE_RECORD_SUCCESS]: (state, action) => {
+    const { roomIdx, messages } = action.payload;
+
+    if (messages.length <= 0) {
+      return state;
+    }
+
+    return produce(state, draft => {
+      draft.chatRooms.map(chatRoom => {
+        if (chatRoom.idx === roomIdx) {
+          chatRoom.messages.push(...messages);
+        }
+
+        return chatRoom;
+      });
+    });
   }
 });

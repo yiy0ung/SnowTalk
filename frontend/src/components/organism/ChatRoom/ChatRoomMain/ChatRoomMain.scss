@@ -11,6 +11,8 @@
     flex: 1;
     background-color: $snow-bold;
     overflow-y: auto;
+    display: flex;
+    flex-direction: column-reverse;
 
     &::-webkit-scrollbar {
       width: 0.3rem;

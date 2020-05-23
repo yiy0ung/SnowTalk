@@ -1,8 +1,10 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useState, ChangeEvent } from 'react';
 import { useDispatch } from 'react-redux';
 import { FiSmile, FiImage } from 'react-icons/fi';
+
 import useInput from 'utils/hooks/useInput';
-import { sendMessage } from 'store/reducers/chatSocket.reducer';
+import { trimNextLine } from 'utils/method';
+import { sendMessage, sendFileMessage } from 'store/reducers/chatSocket.reducer';
 
 import './ChatRoomInput.scss';
 
@@ -12,7 +14,7 @@ type Props = {
 
 function ChatRoomInput({ roomIdx }: Props) {
   const dispatch = useDispatch();
-  useState();
+  const [file, setFile] = useState<File|null>(null);
   const message = useInput('');
 
   const onSubmitMessage = useCallback(() => {
@@ -21,7 +23,7 @@ function ChatRoomInput({ roomIdx }: Props) {
     if (message.value.length > 0) {
       dispatch(sendMessage({
         roomIdx,
-        message: message.value,
+        message: trimNextLine(message.value),
       }));
       
       message.setValue('');
@@ -34,11 +36,34 @@ function ChatRoomInput({ roomIdx }: Props) {
     }
   }, [onSubmitMessage]);
 
+  const onSetFile = useCallback((e: ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setFile(e.target.files[0]);
+    }
+  }, []);
+
+  const sendFileMsg = useCallback((e: ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      console.log("call upload");
+      dispatch(sendFileMessage({
+        roomIdx,
+        message: null,
+        file: e.target.files[0],
+      }));
+    }
+    message.setValue('');
+  }, [dispatch, message, roomIdx]);
+
   return (
     <div className="chatroom-input">
       <div className="chatroom-input__column">
         <span className="chatroom-input__icon"><FiSmile /></span>
-        <span className="chatroom-input__icon"><FiImage /></span>
+        <span className="chatroom-input__icon">
+          <label htmlFor="inputImg"><FiImage /></label>
+          <input 
+            type="file" id="inputImg" 
+            onChange={sendFileMsg} />
+        </span>
       </div>
       <div className="chatroom-input__column">
         <textarea

@@ -21,14 +21,14 @@ export class ChatMessageRepository extends Repository<ChatMessage> {
     });
   }
 
-  public saveUserMessage(room: ChatRoom, message: string, sender: Member, file: File) {
+  public saveUserMessage(room: ChatRoom, message: string, sender: Member, msgfile: File) {
     return this.save({
       chatRoom: room,
       message,
       member: sender,
       type: MessageType.user,
       deleted: 0,
-      file,
+      msgfile,
       createAt: moment().tz('Asia/Seoul').toString(),
     });
   }
@@ -36,11 +36,12 @@ export class ChatMessageRepository extends Repository<ChatMessage> {
   public getMessageByChatRoomIdx(roomIdx: number, lastMessageIdx?: number) {
     const messageQuery = this.createQueryBuilder('chatMessage')
       .leftJoinAndSelect('chatMessage.member', 'member')
+      .leftJoinAndSelect('chatMessage.msgfile', 'file.idx')
       .leftJoinAndSelect('member.profileImg', 'file')
       .where('chatMessage.chatRoom = :roomIdx', { roomIdx })
       .orderBy('chatMessage.idx', 'DESC')
-      .addOrderBy('chatMessage.createAt', 'DESC')
-      .limit(MESSAGE_LIMIT);
+      .addOrderBy('chatMessage.createAt', 'DESC');
+      // .limit(MESSAGE_LIMIT);
 
     if (lastMessageIdx) {
       return messageQuery.andWhere('chatMessage.idx < :lastMessageIdx', { lastMessageIdx })

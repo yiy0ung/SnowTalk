@@ -57,6 +57,7 @@ export class MessageEvent {
     try {
       const { decoded } = socket;
       const { roomIdx, imageIdx, message } = data;
+      console.log(data);
 
       const sender = await this.memberService.getMemberByIdx(decoded.memberIdx);
       const { success, messageData, room } = await this.messageService.saveUserMsg({

@@ -1,6 +1,6 @@
 import { PayloadAction } from 'typesafe-actions';
 import { eventChannel } from 'redux-saga';
-import { all, fork, take, takeEvery, call, put, cancel } from 'redux-saga/effects';
+import { all, fork, take, takeEvery, call, put, cancel, takeLatest } from 'redux-saga/effects';
 import * as ioClient from 'socket.io-client';
 
 import link from 'config/link';
@@ -21,6 +21,8 @@ import {
   receiveLeaveRoomMember,
   emitInviteRoom,
   receiveInviteRoom,
+  fetchMessageRecord,
+  sendFileMessage,
 } from 'store/reducers/chatSocket.reducer';
 import {
   ChatEvent,
@@ -31,6 +33,9 @@ import {
   LeaveRoomData,
   InviteRoomData,
 } from './chat.event';
+import chatRepo from './chat.repo';
+import { uploadImg } from '../member/member.saga';
+import { SavedImg } from 'utils/types/entity.type';
 
 function connect() {
   const socket = ioClient.connect(`${server.host}/chat`, {
@@ -65,7 +70,7 @@ function payloadEmitter<Action extends PayloadAction<any, any>>(socket: SocketIO
   }
 }
 
-function* flow() {
+function* socketFlow() {
   yield takeEvery(subscribeChatSocket, function* () {
     const { socket, error } = yield call(connect);
 
@@ -105,6 +110,7 @@ function subscribe(socket: SocketIOClient.Socket) {
       }
     });
     socket.on(ChatEvent.receiveMsg, (resp: ChatSocketResp<ReceiveMsgData>) => {
+      console.log(resp.data);
       if (resp.status === 200 && resp.data) {
         emit(receiveMessage(resp.data));
       }
@@ -162,8 +168,47 @@ function* initalEmit() {
   ]);
 }
 
+// ***************************************
+
+function *requestMessageRecord(action: ReturnType<typeof fetchMessageRecord.request>) {
+  try {
+    const { roomIdx, lastMessageIdx } = action.payload;
+    const resp = yield call(chatRepo.getMessageRecord, roomIdx, lastMessageIdx);
+
+    if (resp.status === 200) {
+      yield put(fetchMessageRecord.success({
+        roomIdx: resp.data.roomIdx,
+        messages: resp.data.messages,
+      }));
+    } else {
+      throw new Error('메시지를 조회할 수 없습니다');
+    }
+  } catch (error) {
+    yield put(fetchMessageRecord.failure(error));
+  }
+}
+
+function *requestFileMessage(action: ReturnType<typeof sendFileMessage>) {
+  try {
+    const { roomIdx, message, file } = action.payload;
+    const savedFiles: SavedImg[] = yield uploadImg([file]);
+    
+    const profileImgIdx = savedFiles[0].fileIdx;
+
+    yield put(sendMessage({
+      roomIdx,
+      message,
+      imageIdx: profileImgIdx,
+    }));
+  } catch (error) {
+    console.error('file message error : ', error);
+  }
+}
+
 export default function* () {
   yield all([
-    fork(flow),
+    fork(socketFlow),
+    takeLatest(fetchMessageRecord.request, requestMessageRecord),
+    takeLatest(sendFileMessage, requestFileMessage),
   ]);
 }

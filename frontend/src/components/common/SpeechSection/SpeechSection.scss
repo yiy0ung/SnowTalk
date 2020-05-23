@@ -11,11 +11,14 @@
 
   &__body {
     flex: 1;
+
+    & > * + * {
+      margin-top: 0.35rem;
+    }
   }
 
   &__speaker {
     color: #fff;
-    margin-bottom: 0.35rem;
   }
 }
 

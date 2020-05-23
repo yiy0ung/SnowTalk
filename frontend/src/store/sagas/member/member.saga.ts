@@ -14,7 +14,7 @@ import {
   fetchFriendsListAsync,
 } from 'store/reducers/member.reducer';
 
-function* uploadImg(files: File[]) {
+export function* uploadImg(files: File[]) {
   try {
     const { data } = yield call(UploadRepo.uploadImg, files);
 

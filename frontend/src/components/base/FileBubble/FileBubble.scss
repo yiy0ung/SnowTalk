@@ -1,0 +1,30 @@
+
+
+.file-bubble {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+  justify-content: flex-start;
+  color: #e6e6e6;
+
+  &__content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #fff;
+    border-radius: 10px;
+
+    & > img {
+      max-width: 10rem;
+    }
+  }
+
+  &__date {
+    padding: 0 0.3rem 0.3rem;
+  }
+}
+
+.file-bubble-me {
+  flex-direction: row-reverse;
+  padding: 0.5rem 0.8rem;
+}

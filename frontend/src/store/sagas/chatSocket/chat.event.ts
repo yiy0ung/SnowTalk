@@ -14,7 +14,12 @@ export enum ChatEvent {
 
 export type RequestMsgRecordData = {
   roomIdx: number;
-  lastMessageIdx: number;
+  lastMessageIdx?: number;
+};
+
+export type ResponseMsgRecordData = {
+  roomIdx: number;
+  messages: Message[];
 };
 
 export interface ChatSocketResp<Data> {
@@ -27,9 +32,15 @@ export type GetRoomData = {
   rooms: ChatRoom[];
 };
 
+export type SendFileMsgData = {
+  roomIdx: number;
+  message: string|null;
+  file: File;
+};
+
 export type SendMsgData = {
   roomIdx: number;
-  message: string;
+  message: string|null;
   imageIdx?: number|null;
 };
 
