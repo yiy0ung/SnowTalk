@@ -7,6 +7,7 @@ import { trimNextLine } from 'utils/method';
 import { sendMessage, sendFileMessage } from 'store/reducers/chatSocket.reducer';
 
 import './ChatRoomInput.scss';
+import { EmojiPicker } from 'components/base/EmojiPicker';
 
 type Props = {
   roomIdx: number;
@@ -14,8 +15,8 @@ type Props = {
 
 function ChatRoomInput({ roomIdx }: Props) {
   const dispatch = useDispatch();
-  const [file, setFile] = useState<File|null>(null);
   const message = useInput('');
+  const [visibleEmoji, setVisibleEmoji] = useState(false);
 
   const onSubmitMessage = useCallback(() => {
     console.log(message.value);
@@ -36,28 +37,40 @@ function ChatRoomInput({ roomIdx }: Props) {
     }
   }, [onSubmitMessage]);
 
-  const onSetFile = useCallback((e: ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      setFile(e.target.files[0]);
-    }
-  }, []);
-
   const sendFileMsg = useCallback((e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
-      console.log("call upload");
       dispatch(sendFileMessage({
         roomIdx,
         message: null,
         file: e.target.files[0],
       }));
     }
-    message.setValue('');
-  }, [dispatch, message, roomIdx]);
+  }, [dispatch, roomIdx]);
+  
+  const onAddMsgEmoji = useCallback((emoji) => {
+    message.setValue((prevStr: any) => (prevStr+emoji));
+  }, [message]);
+
+  const onCloseEmoji = useCallback(() => {
+    setVisibleEmoji(false)
+  }, []);
+
+  const onToggleEmoji = useCallback(() => {
+    setVisibleEmoji(!visibleEmoji);
+  }, [visibleEmoji]);
 
   return (
     <div className="chatroom-input">
       <div className="chatroom-input__column">
-        <span className="chatroom-input__icon"><FiSmile /></span>
+        <span className="chatroom-input__icon">
+          <EmojiPicker 
+            visible={visibleEmoji} 
+            onClickIcon={onAddMsgEmoji}
+            onClose={onCloseEmoji}>
+            <FiSmile onClick={onToggleEmoji} />
+          </EmojiPicker>
+        </span>
+
         <span className="chatroom-input__icon">
           <label htmlFor="inputImg"><FiImage /></label>
           <input 

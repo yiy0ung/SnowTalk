@@ -20,6 +20,7 @@ function ChatRoomItem({ roomInfo }: Props) {
 
   let roomTitle: string[] = [];
   let profileImgs = [];
+  let previevMsg = messages[0]?.message || (messages[0]?.msgfile && '<이미지 메시지>');
 
   for (const participant of participants) {
     if (participant.member.idx !== memberState.user.idx) {
@@ -37,7 +38,7 @@ function ChatRoomItem({ roomInfo }: Props) {
       <UserCard
         title={roomTitle.length > 0 ? roomTitle.join(', ') : '알수없음'}
         subtitle={type === 'group' && participants.length}
-        desc={messages[0]?.message||' '}
+        desc={previevMsg||' '}
         imgIds={profileImgs}
         type="chat"
         additionalInfo={messages[0] ? (

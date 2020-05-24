@@ -1,0 +1,19 @@
+
+
+.emoji-picker {
+  display: inline-block;
+
+  &__hidden {
+    position: relative;
+  }
+
+  &__viewer {
+    position: absolute;
+    bottom: 1rem;
+    left: 0;
+
+    & > * {
+      box-shadow: none !important;
+    }
+  }
+}

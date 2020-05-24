@@ -13,9 +13,10 @@
     justify-content: center;
     background-color: #fff;
     border-radius: 10px;
+    overflow: hidden;
 
     & > img {
-      max-width: 10rem;
+      max-width: 14rem;
     }
   }
 

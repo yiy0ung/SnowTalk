@@ -4386,6 +4386,11 @@ elliptic@^6.0.0:
     minimalistic-assert "^1.0.0"
     minimalistic-crypto-utils "^1.0.0"
 
+emoji-picker-react@^3.1.7:
+  version "3.1.7"
+  resolved "https://registry.yarnpkg.com/emoji-picker-react/-/emoji-picker-react-3.1.7.tgz#3d38a1a8b5f76c9016c6d92e46504140c7c3e6bf"
+  integrity sha512-feFDH32TpNoLql2QPrbfu8vEJHLyXeSIcCge2V643wT9XsoiaLlV5HJj7Wv6RWJXggQLlyhM5BdpaVQbBVc7Kw==
+
 emoji-regex@^7.0.1, emoji-regex@^7.0.2:
   version "7.0.3"
   resolved "https://registry.yarnpkg.com/emoji-regex/-/emoji-regex-7.0.3.tgz#933a04052860c85e83c122479c4748a8e4c72156"

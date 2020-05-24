@@ -62,7 +62,7 @@ function SpeechSection({
 
   // 내 메시지
   return (
-    <>
+    <div>
       {file && (<FileBubble file={file} someone={false} date={sendDate} />)}
       {
         message && (
@@ -73,7 +73,7 @@ function SpeechSection({
           />
         )
       }
-    </>
+    </div>
   );
 }
 
