@@ -110,7 +110,7 @@ function subscribe(socket: SocketIOClient.Socket) {
       }
     });
     socket.on(ChatEvent.receiveMsg, (resp: ChatSocketResp<ReceiveMsgData>) => {
-      console.log(resp.data);
+      console.log(resp);
       if (resp.status === 200 && resp.data) {
         emit(receiveMessage(resp.data));
       }
@@ -120,22 +120,26 @@ function subscribe(socket: SocketIOClient.Socket) {
       if (resp.status === 200 && resp.data) {
         emit(receiveCreateRoom(resp.data));
         emit(pushUrl(`${link.chatroom}/${resp.data.roomIdx}`));
-      } else if (resp.status === 404 && resp.data) {
+      } 
+      else if (resp.status === 404 && resp.data) {
         emit(pushUrl(`${link.chatroom}/${resp.data.roomIdx}`));
       }
     });
     socket.on(ChatEvent.leaveRoom, (resp: ChatSocketResp<LeaveRoomData>) => {
+      console.log(resp);
       if (resp.status === 200 && resp.data) {
         emit(pushUrl(`${link.home}`));
         emit(receiveLeaveRoom(resp.data));
       }
     });
     socket.on(ChatEvent.leaveRoomMember, (resp: ChatSocketResp<LeaveRoomData>) => {
+      console.log(resp);
       if (resp.status === 200 && resp.data) {
         emit(receiveLeaveRoomMember(resp.data));
       }
     });
     socket.on(ChatEvent.inviteRoom, (resp: ChatSocketResp<InviteRoomData>) => {
+      console.log(resp);
       if (resp.status === 200 && resp.data) {
         emit(receiveInviteRoom(resp.data));
       }

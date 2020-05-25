@@ -23,6 +23,8 @@ export class ChatMessage {
 
   @RelationId((message: ChatMessage) => message.chatRoom)
   chatRoomIdx: number;
+
+  @JoinColumn({ name: 'chat_room_idx' })
   @ManyToOne(type => ChatRoom, chatroom => chatroom.idx, {
     onDelete: 'CASCADE',
   })
@@ -30,6 +32,8 @@ export class ChatMessage {
 
   @RelationId((message: ChatMessage) => message.member)
   memberIdx: number;
+
+  @JoinColumn({ name: 'member_idx' })
   @ManyToOne(type => Member, member => member.idx, {
     onDelete: 'SET NULL',
     nullable: true,

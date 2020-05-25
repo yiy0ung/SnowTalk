@@ -106,11 +106,13 @@ export default createReducer<ChatSocketState, ChatSocketActions>(initalState, {
     produce(state, draft => {
       draft.chatRooms.unshift(action.payload.room);
     }),
-  [RECEIVE_LEAVE_ROOM]: (state, action) => 
-    produce(state, draft => {
+  [RECEIVE_LEAVE_ROOM]: (state, action) => {
+    console.log(action)
+    return produce(state, draft => {
       draft.chatRooms = draft.chatRooms.filter((chatRoom) => 
         chatRoom.idx !== action.payload.roomIdx);
-    }),
+    });
+  },
   [RECEIVE_LEAVE_ROOM_MEMBER]: (state, action) => 
     produce(state, draft => {
       draft.chatRooms = draft.chatRooms.map(chatRoom => {

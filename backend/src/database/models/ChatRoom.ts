@@ -17,6 +17,9 @@ export class ChatRoom {
   @Column({ type: 'enum', enum: RoomType })
   type: RoomType;
 
+  @Column({ type: 'varchar', name: 'personal_code', unique: true, nullable: true })
+  personalCode: string;
+
   @OneToMany(type => ChatParticipant, participant => participant.chatRoom)
   participants: ChatParticipant[];
 

@@ -21,9 +21,12 @@ $SpeechGap: 0.5rem 0.8rem;
     padding: 0.5rem 0.6rem;
     background-color: #fff;
     border-radius: 5px;
+    white-space: pre-line;
+    word-break: break-all;
   }
 
   &__date {
+    white-space: nowrap;
     margin-left: 0.3rem;
     color: #e6e6e6;
     display: flex;

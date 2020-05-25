@@ -1,9 +1,10 @@
 import React, { useCallback } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { find } from 'lodash';
 import { FaRegTrashAlt } from 'react-icons/fa';
 import { BsThreeDots, BsChatQuote } from 'react-icons/bs';
 
-import { Member } from 'utils/types/entity.type';
+import { Member, ChatRoom } from 'utils/types/entity.type';
 import { emitCreateRoom } from 'store/reducers/chatSocket.reducer';
 import { fetchRemoveFriendAsync } from 'store/reducers/member.reducer';
 import { UserCard } from 'components/common/UserCard';
@@ -12,20 +13,35 @@ import { DropdownMenuItem } from 'components/base/DropdownMenu/DropdownMenuItem'
 
 import './FriendList.scss';
 import { confirmAlert } from 'utils/alert';
+import { RootState } from 'store/reducers';
+import { useHistory } from 'react-router-dom';
+import link from 'config/link';
+import { hashPersonalChatCode } from 'utils/method';
 
 type Props = {
   friends: Member[];
+  searchWord: string;
 };
 
-function FriendList({ friends }: Props) {
+function FriendList({ friends, searchWord }: Props) {
+  const history = useHistory();
   const dispatch = useDispatch();
+  const { member: { user }, chatSocket: { chatRooms } } = useSelector((state: RootState) => state);
 
-  const onCreateChatRoom = useCallback((memberIdx: number) => {
-    dispatch(emitCreateRoom({
-      membersIdx: [memberIdx],
-      type: 'personal',
-    }));
-  }, [dispatch]);
+  const onCreatePersonalRoom = useCallback((memberIdx: number) => {
+    const room: any = find(chatRooms, {
+      personalCode: hashPersonalChatCode([user.idx, memberIdx]),
+    });
+
+    if (room) {
+      history.push(`${link.chatroom}/${room.idx}`);
+    } else {
+      dispatch(emitCreateRoom({
+        membersIdx: [memberIdx],
+        type: 'personal',
+      }));
+    }
+  }, [chatRooms, dispatch, history, user.idx]);
   
   const onRemoveFriend = useCallback((memberIdx: number) => {
     confirmAlert({
@@ -39,7 +55,7 @@ function FriendList({ friends }: Props) {
     });
   }, [dispatch]);
 
-  const friendNodes = friends.map((friend) => (
+  const friendNodes = friends.map((friend) => friend.name.match(searchWord) && (
     <UserCard
       key={friend.idx}
       title={friend.name}
@@ -53,7 +69,7 @@ function FriendList({ friends }: Props) {
           <DropdownMenuItem 
             icon={<BsChatQuote />} 
             text="1대1 채팅"
-            onClick={() => onCreateChatRoom(friend.idx)} />
+            onClick={() => onCreatePersonalRoom(friend.idx)} />
           <DropdownMenuItem 
             icon={<FaRegTrashAlt />} 
             text="친구 삭제" 
@@ -72,7 +88,7 @@ function FriendList({ friends }: Props) {
         </div>
       </div>
       {
-        friendNodes.length > 0 ? (
+        friends.length > 0 ? (
           <>{friendNodes}</>
         ) : (
           <div className="friend-list__empty">

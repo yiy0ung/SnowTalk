@@ -11,6 +11,7 @@ import { Container } from 'typedi';
 import connectDB from './database/connection';
 import RootRouter from './controllers';
 import { runSocket } from './socket';
+import { hashPersonalChatCode } from './lib/method.lib';
 
 class Server {
   public app: Express;

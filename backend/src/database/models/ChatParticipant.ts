@@ -13,17 +13,19 @@ export class ChatParticipant {
   @Column({ type: 'int', default: 1 })
   activation: number;
 
-  // @JoinColumn({ name: 'member_idx' })
   @RelationId((participant: ChatParticipant) => participant.member)
-  memberIdx: number
+  memberIdx: number;
+
+  @JoinColumn({ name: 'member_idx' })
   @ManyToOne(type => Member, member => member.idx, {
     onDelete: 'CASCADE',
   })
   member: Member;
 
-  // @JoinColumn({ name: 'chat_room_idx' })
   @RelationId((participant: ChatParticipant) => participant.chatRoom)
   chatRoomIdx: number;
+
+  @JoinColumn({ name: 'chat_room_idx' })
   @ManyToOne(type => ChatRoom, chatroom => chatroom.idx, {
     onDelete: 'CASCADE',
   })

@@ -31,7 +31,7 @@ function FriendSection({ searchWord }: Props) {
           </>
         )
       }
-      <FriendList friends={friends} />
+      <FriendList searchWord={searchWord} friends={friends} />
     </div>
   );
 }

@@ -75,9 +75,10 @@ export class ChatParticipantRepository extends Repository<ChatParticipant> {
     });
   }
 
-  public changeMemberActivation(participantIdx: number, activation: 0|1) {
+  public updateActivedMemberByRoomIdx(roomIdx: number, memberIdxs: number[], activation: 0|1) {
     return this.update({
-      idx: participantIdx,
+      chatRoomIdx: roomIdx,
+      member: In(memberIdxs),
     }, {
       activation,
     });

@@ -10,6 +10,7 @@ import { ChatRoom } from "../database/models/ChatRoom";
 import { RoomType } from "../database/enum/ChatType";
 import { ChatDataloader } from "./dataloader/chat.dataloader";
 import { getConnection } from "typeorm";
+import { hashPersonalChatCode } from "../lib/method.lib";
 
 @Service()
 export class ChatService {
@@ -67,20 +68,34 @@ export class ChatService {
   }
 
   public async createChatRoom(title: string, type: string, members: Member[]) {
+    let personalCode = null;
     const roomType = type === String(RoomType.personal) ? RoomType.personal : RoomType.group;
 
     if (roomType === RoomType.personal && members.length === 2) { // 개인 채팅방은 1개만 활성화 가능
-      const existence = await this.chatRoomRepo.existPersonalChatRoom(members);
-
-      if (existence.length > 0) {
+      personalCode = hashPersonalChatCode(members.map(member => member.idx));
+      const existence = await this.chatRoomRepo.existPersonalChatRoom(personalCode);
+      
+      if (existence && existence.activation === 1) {
         return {
           created: false,
-          roomData: existence[0],
+          roomIdx: existence.idx,
+        };
+      } else if (existence && existence.activation === 0)  {
+        // 활성화
+        await this.chatRoomRepo.updateRoomInfo(existence.idx, {
+          title: existence.title,
+          activation: 1,
+        });
+        await this.chatParticipantRepo.updateActivedMemberByRoomIdx(existence.idx, map(members, 'idx'), 1);
+
+        return {
+          created: true,
+          roomIdx: existence.idx,
         };
       }
     }
 
-    // start transaction
+    // start transaction - create new Chat Room
     const queryRunner = getConnection().createQueryRunner();
     await queryRunner.startTransaction();
 
@@ -88,6 +103,7 @@ export class ChatService {
       const room = await this.chatRoomRepo.createRoom(queryRunner.manager, {
         title,
         type: roomType,
+        personalCode,
       });
 
       for (const member of members) {
@@ -100,7 +116,7 @@ export class ChatService {
 
       return {
         created: true,
-        roomData: room,
+        roomIdx: room.idx,
       };
     } catch (error) {
       console.error(error);
@@ -123,7 +139,7 @@ export class ChatService {
       };
     }
 
-    // start transaction
+    // start transaction - 회원 생성 및 활성화
     const queryRunner = getConnection().createQueryRunner();
     await queryRunner.startTransaction();
     try {
@@ -170,20 +186,21 @@ export class ChatService {
     }
 
     // 참여 비활성화
-    await this.chatParticipantRepo.changeMemberActivation(chatMember.idx, 0);
-
-    const roomMembers = await this.chatParticipantRepo.find({
+    await this.chatParticipantRepo.updateActivedMemberByRoomIdx(room.idx, [member.idx], 0);
+    console.log("object");
+    const memberIdxs = await this.chatParticipantRepo.find({
       where: {
         chatRoom: room.idx,
         activation: 1,
       },
-    });;
+    }).then(participants => participants.map(partici => partici.memberIdx));
 
     // 채팅방 비활성화
-    if (room.type === RoomType.personal && roomMembers.length <= 1) {  // 개인 채팅방에 회원이 1명일때,
+    if (memberIdxs.length <= 1) {  // 개인 채팅방에 회원이 0명 이하 일때,
       await this.changeRoomActivation(room.idx, 0);
-    } else if (room.type === RoomType.group && roomMembers.length <= 0) { // 그룹 채팅방에 회원이 0명일떄,
-      await this.changeRoomActivation(room.idx, 0);
+      console.log("aqe");
+      await this.chatParticipantRepo.updateActivedMemberByRoomIdx(room.idx, memberIdxs, 0);
+      console.log("aqe2");
     }
 
     return chatMember;

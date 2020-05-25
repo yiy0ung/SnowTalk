@@ -1,3 +1,4 @@
+import crypto from 'crypto';
 
 export function createKey(numLength: number) {
   const numberSize = Math.pow(10, numLength);
@@ -24,3 +25,14 @@ export function trimNextLine(str: string) {
 
   return result;
 }
+
+export const hashPersonalChatCode = (idxs: number[]) => {
+  if (idxs.length !== 2) {
+    return null;
+  }
+
+  const hash = crypto.createHash('sha1').update(idxs.sort().join()).digest('hex');
+
+  return hash;
+};
+

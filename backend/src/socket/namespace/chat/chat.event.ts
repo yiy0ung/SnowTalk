@@ -49,9 +49,9 @@ export class ChatEvent {
       await Validate.createChatRoom(data);
     } catch (error) {
       console.error(error);
-      socket.emit(ChatListener.inviteRoom, {
+      socket.emit(ChatListener.createRoom, {
         status: 400,
-        message: '초대를 실패하였습니다',
+        message: '생성를 실패하였습니다',
       });
 
       return;
@@ -66,29 +66,28 @@ export class ChatEvent {
         membersIdx,
       });
 
-      // 룸 생성 및 멤버 추가
-      const { created, roomData } = await this.chatService.createChatRoom(title, type, entire);
+      // 룸 생성(활성화) 및 멤버 추가
+      const { created, roomIdx } = await this.chatService.createChatRoom(title, type, entire);
 
       if (!created) {
         socket.emit(ChatListener.createRoom, {
           status: 404,
           message: '채팅방 생성에 실패하였습니다',
           data: {
-            roomIdx: roomData.idx,
+            roomIdx: roomIdx,
           },
         });
 
         return;
       }
 
-      const [room] = await this.chatService.getRoomByIdxes(roomData.idx);
+      const [room] = await this.chatService.getRoomByIdxes(roomIdx);
 
       await redisHelper.joinChatRoom(ChatNmsp.instance, room.idx, entire);
 
       const payload = {
         status: 200,
         data: {
-          host: user,
           room,
           roomIdx: room.idx,
         },
@@ -188,9 +187,9 @@ export class ChatEvent {
       await Validate.leaveChatRoom(data);
     } catch (error) {
       console.error(error);
-      socket.emit(ChatListener.inviteRoom, {
+      socket.emit(ChatListener.leaveRoom, {
         status: 400,
-        message: '초대를 실패하였습니다',
+        message: '나가기를 실패하였습니다(포멧)',
       });
 
       return;
@@ -204,9 +203,9 @@ export class ChatEvent {
       const room = await this.chatService.getChatRoomByIdx(roomIdx, 1);
 
       if (!room) {
-        socket.emit(ChatListener.inviteRoom, {
+        socket.emit(ChatListener.leaveRoom, {
           status: 404,
-          message: '초대를 실패하였습니다',
+          message: '(없는 방) 나가기를 실패하였습니다',
         });
 
         return;
