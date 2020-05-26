@@ -6,7 +6,7 @@ import './Avatar.scss';
 export type ImageType = string|null|undefined;
 
 export type Props = {
-  imageId: ImageType;
+  imageId?: ImageType;
   size?: 'xlarge'|'large'|'medium'|'row-medium'|'small';
 };
 

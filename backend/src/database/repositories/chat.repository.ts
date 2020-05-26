@@ -13,38 +13,32 @@ export class ChatRoomRepository extends Repository<ChatRoom> {
     const room = new ChatRoom();
     room.title = title;
     room.type = type;
-    room.activation = 1;
     room.personalCode = personalCode;
 
     return manager.save(room);
   }
 
-  public async existPersonalChatRoom(personalCode: string) {
-    const result = await this.createQueryBuilder('chatRoom')
+  public async getPersonalRoom(personalCode: string) {
+    return this.createQueryBuilder('chatRoom')
       .where('chatRoom.type = :type', { type: RoomType.personal })
       .andWhere('chatRoom.personalCode = :personalCode', { personalCode })
       .getOne();
-
-    return result;
   }
 
   public updateRoomInfo(idx: number, {
-    title,
-    activation,
-  }: { title: string, activation: 0|1 }) {
+    title
+  }: { title: string }) {
     return this.update({
       idx,
     }, {
       title,
-      activation,
     });
   }
 
-  public getRoomsByIdx(chatRoomIdx: number, activation: 0|1) {
+  public getRoomsByIdx(chatRoomIdx: number) {
     return this.findOne({
       where: {
         idx: chatRoomIdx,
-        activation,
       },
     });
   }
@@ -52,16 +46,19 @@ export class ChatRoomRepository extends Repository<ChatRoom> {
   public getRoomsByIdxes(idxes: number[]) {
     return this.createQueryBuilder('chatRoom')
       .where('chatRoom.idx IN (:idxes)', { idxes })
-      .andWhere('chatRoom.activation = :active', { active: 1 })
       .getMany();
   }
 
-  public getActiveRoomsByMemberIdx(memberIdx: number) {
+  public getRoomsByMemberIdx(memberIdx: number) {
     return this.createQueryBuilder('chatRoom')
       .leftJoin('chatRoom.participants', 'chatParticipant')
       .where('chatParticipant.member = :memberIdx', { memberIdx })
-      .andWhere('chatRoom.activation = :active', { active: 1 })
-      .andWhere('chatParticipant.activation = :active', { active: 1 })
       .getMany();
+  }
+  
+  public deleteRoomByIdx(roomIdx: number) {
+    return this.delete({
+      idx: roomIdx,
+    });
   }
 }

@@ -3,6 +3,7 @@
   outline: none;
   display: flex;
   flex-direction: column;
+  z-index: 100;
 
   &__hidden {
     position: relative;
@@ -18,8 +19,4 @@
   right: 0;
   display: none;
   padding: 0.3rem 0;
-
-  // &:focus {
-  //   display: block;
-  // }
 }

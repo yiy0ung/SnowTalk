@@ -1,4 +1,5 @@
 import { Service } from "typedi";
+import { getConnection } from "typeorm";
 import { InjectRepository } from "typeorm-typedi-extensions";
 import { map } from 'lodash';
 
@@ -8,38 +9,28 @@ import { ChatParticipantRepository } from "../database/repositories/chatParticip
 import { Member } from "../database/models/Member";
 import { ChatRoom } from "../database/models/ChatRoom";
 import { RoomType } from "../database/enum/ChatType";
-import { ChatDataloader } from "./dataloader/chat.dataloader";
-import { getConnection } from "typeorm";
 import { hashPersonalChatCode } from "../lib/method.lib";
 
 @Service()
 export class ChatService {
   constructor(
-    private chatDataloader: ChatDataloader,
     @InjectRepository() private readonly chatRoomRepo: ChatRoomRepository,
     @InjectRepository() private readonly chatMsgRepo: ChatMessageRepository,
     @InjectRepository() private readonly chatParticipantRepo: ChatParticipantRepository,
   ) {}
 
-  public getChatRoomByIdx(roomIdx: number, activation: 0|1) {
-    return this.chatRoomRepo.getRoomsByIdx(roomIdx, activation);
-  }
-
   private async setChatRoomData(chatRooms: ChatRoom[]) {
-    const chatRoomIdxs = map(chatRooms, 'idx');
-    const participants = await this.chatDataloader.participantLoader.loadMany(chatRoomIdxs);
-
-    for (let i = 0; i < chatRooms.length; i++) {
-      const participantData = participants[i];
-
-      if (!(participantData instanceof Error)) {
-        chatRooms[i].participants = participantData;
-      }
-
-      chatRooms[i].messages = await this.chatMsgRepo.getMessageByChatRoomIdx(chatRooms[i].idx);
+    for (const room of chatRooms) {
+      room.participants = await this.chatParticipantRepo.getParticipantByRoomIdx(room.idx, 1);
+      room.messages = await this.chatMsgRepo.getMessageByChatRoomIdx(room.idx);
     }
 
     return chatRooms;
+  }
+
+  // 싱글 조회
+  public getRoomByIdx(roomIdx: number) {
+    return this.chatRoomRepo.getRoomsByIdx(roomIdx);
   }
 
   public async getRoomByIdxes(roomIdxes: number|number[]) {
@@ -52,46 +43,24 @@ export class ChatService {
   }
 
   public async getRoomByMemberIdx(memberIdx: number) {
-    const chatRooms = await this.chatRoomRepo.getActiveRoomsByMemberIdx(memberIdx);
+    const chatRooms = await this.chatRoomRepo.getRoomsByMemberIdx(memberIdx);
     
     await this.setChatRoomData(chatRooms);
 
     return chatRooms;
   }
 
-  public changeRoomActivation(chatRoomIdx: number, activation: 0|1) {
-    return this.chatRoomRepo.update({
-      idx: chatRoomIdx,
-    }, {
-      activation,
-    });
-  }
-
   public async createChatRoom(title: string, type: string, members: Member[]) {
     let personalCode = null;
-    const roomType = type === String(RoomType.personal) ? RoomType.personal : RoomType.group;
+    const roomType = (type === String(RoomType.personal) && members.length === 2) ? 
+      RoomType.personal : RoomType.group;
 
-    if (roomType === RoomType.personal && members.length === 2) { // 개인 채팅방은 1개만 활성화 가능
+    if (roomType === RoomType.personal) { // 개인 채팅방은 1개만 활성화 가능
       personalCode = hashPersonalChatCode(members.map(member => member.idx));
-      const existence = await this.chatRoomRepo.existPersonalChatRoom(personalCode);
+      const room = await this.chatRoomRepo.getPersonalRoom(personalCode);
       
-      if (existence && existence.activation === 1) {
-        return {
-          created: false,
-          roomIdx: existence.idx,
-        };
-      } else if (existence && existence.activation === 0)  {
-        // 활성화
-        await this.chatRoomRepo.updateRoomInfo(existence.idx, {
-          title: existence.title,
-          activation: 1,
-        });
-        await this.chatParticipantRepo.updateActivedMemberByRoomIdx(existence.idx, map(members, 'idx'), 1);
-
-        return {
-          created: true,
-          roomIdx: existence.idx,
-        };
+      if (room) {
+        return room.idx;
       }
     }
 
@@ -114,10 +83,7 @@ export class ChatService {
 
       await queryRunner.commitTransaction(); // commit
 
-      return {
-        created: true,
-        roomIdx: room.idx,
-      };
+      return room.idx;
     } catch (error) {
       console.error(error);
       await queryRunner.rollbackTransaction(); // rollback
@@ -160,34 +126,30 @@ export class ChatService {
 
       await queryRunner.commitTransaction(); // commit
   
-      const newMembers = await this.chatParticipantRepo.getParticipantsFull(idxes, room.idx);
+      const participants = await this.chatParticipantRepo.getParticipantsFull(idxes, room.idx);
   
-      return {
-        result: true,
-        newMembers,
-      };
+      return participants;
     } catch (error) {
       console.error(error);
       await queryRunner.rollbackTransaction(); // rollback
 
-      return {
-        result: false,
-      };
+      return null;
     } finally {
       await queryRunner.release();
     }
   }
 
   public async leaveChatRoomByIdx(member: Member, room: ChatRoom) {
-    const chatMember = await this.chatParticipantRepo.getParticipant(member.idx, room.idx);
+    let deletedRoom = false;
+    const leavePartici = await this.chatParticipantRepo.getParticipant(member.idx, room.idx);
 
-    if (!chatMember || chatMember.activation === 0) {
+    if (!leavePartici || leavePartici.activation === 0) {
       return null;
     }
 
-    // 참여 비활성화
+    // 자신 참여 비활성화
     await this.chatParticipantRepo.updateActivedMemberByRoomIdx(room.idx, [member.idx], 0);
-    console.log("object");
+
     const memberIdxs = await this.chatParticipantRepo.find({
       where: {
         chatRoom: room.idx,
@@ -195,14 +157,15 @@ export class ChatService {
       },
     }).then(participants => participants.map(partici => partici.memberIdx));
 
-    // 채팅방 비활성화
-    if (memberIdxs.length <= 1) {  // 개인 채팅방에 회원이 0명 이하 일때,
-      await this.changeRoomActivation(room.idx, 0);
-      console.log("aqe");
-      await this.chatParticipantRepo.updateActivedMemberByRoomIdx(room.idx, memberIdxs, 0);
-      console.log("aqe2");
+    // 채팅방 삭제
+    if (memberIdxs.length <= 0) {  // 개인 채팅방에 회원이 1명 이하 일때,
+      await this.chatRoomRepo.deleteRoomByIdx(room.idx);
+      deletedRoom = true;
     }
 
-    return chatMember;
+    return {
+      deletedRoom,
+      leavePartici,
+    };
   }
 }

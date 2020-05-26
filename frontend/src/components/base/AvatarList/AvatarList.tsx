@@ -11,7 +11,7 @@ function AvatarList({ imgIds }: Props) {
   let Avatars = (<></>);
   const imgUrlList = imgIds.slice(0, 4);
   
-  if (imgUrlList.length === 1) {
+  if (imgUrlList.length <= 0 || imgUrlList.length === 1) {
     Avatars = (
       <div className="avatar-list__single">
         <Avatar imageId={imgUrlList[0]} size="medium" />

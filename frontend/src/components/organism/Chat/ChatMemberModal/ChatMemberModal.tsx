@@ -33,7 +33,6 @@ function ChatMemberModal({ onClose, type, roomIdx, participants = [] }: Props) {
   const invitedMemberIdxs = map(invitedMembers, 'idx');
 
   const onAddInvite = useCallback((member: Member) => {
-    console.log("object");
     setInvitedMembers((prevMembers) => [...prevMembers, member]);
   }, []);
 
@@ -61,6 +60,7 @@ function ChatMemberModal({ onClose, type, roomIdx, participants = [] }: Props) {
       }));
     }
 
+    setInvitedMembers([]);
     onClose();
   }, [dispatch, invitedMemberIdxs, invitedMembers.length, onClose, roomIdx, type]);
 
@@ -102,7 +102,7 @@ function ChatMemberModal({ onClose, type, roomIdx, participants = [] }: Props) {
           itemNode={<div>(나)</div>} 
           highlight />
         {
-          participants.map(p => (
+          participants.map(p => ((user.idx !== p.memberIdx) && (p.activation === 1)) && (
             <NameTag key={p.idx} name={p.member?.name || '알수 없음'} highlight />
           ))
         }
@@ -112,7 +112,7 @@ function ChatMemberModal({ onClose, type, roomIdx, participants = [] }: Props) {
               key={m.idx}
               name={m.name} 
               onClose={() => onDeleteInvitedId(m.idx)} 
-              btnVisible  />
+              btnVisible />
           ))
         }
       </div>

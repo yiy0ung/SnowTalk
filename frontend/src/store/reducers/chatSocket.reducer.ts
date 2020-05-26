@@ -43,6 +43,7 @@ export const RECEIVE_LEAVE_ROOM = 'RECEIVE_LEAVE_ROOM';
 export const RECEIVE_LEAVE_ROOM_MEMBER = 'RECEIVE_LEAVE_ROOM_MEMBER';
 export const EMIT_INVITE_ROOM = 'EMIT_INVITE_ROOM';
 export const RECEIVE_INVITE_ROOM = 'RECEIVE_INVITE_ROOM';
+export const RECEIVE_INVITED_ROOM = 'RECEIVE_INVITED_ROOM';
 
 // Actions
 export const subscribeChatSocket = createAction(SUBSCRIBE_CHAT_SOCKET)();
@@ -59,6 +60,7 @@ export const receiveLeaveRoom = createAction(RECEIVE_LEAVE_ROOM)<LeaveRoomData>(
 export const receiveLeaveRoomMember = createAction(RECEIVE_LEAVE_ROOM_MEMBER)<LeaveRoomData>();
 export const emitInviteRoom = createAction(EMIT_INVITE_ROOM)<InviteRoomPayload>();
 export const receiveInviteRoom = createAction(RECEIVE_INVITE_ROOM)<InviteRoomData>();
+export const receiveInvitedRoom = createAction(RECEIVE_INVITED_ROOM)<InviteRoomData>();
 export const fetchMessageRecord = createAsyncAction(
   MESSAGE_RECORD_REQUEST,
   MESSAGE_RECORD_SUCCESS,
@@ -79,6 +81,7 @@ const actions = {
   receiveLeaveRoomMember,
   emitInviteRoom,
   receiveInviteRoom,
+  receiveInvitedRoom,
   fetchMessageRecord,
 };
 export type ChatSocketActions = ActionType<typeof actions>;
@@ -102,48 +105,56 @@ export default createReducer<ChatSocketState, ChatSocketActions>(initalState, {
       });
     });
   },
-  [RECEIVE_CREATE_ROOM]: (state, action) => 
-    produce(state, draft => {
-      draft.chatRooms.unshift(action.payload.room);
-    }),
-  [RECEIVE_LEAVE_ROOM]: (state, action) => {
-    console.log(action)
+  [RECEIVE_CREATE_ROOM]: (state, action) => {
+    const existRoom = findIndex(state.chatRooms, { 'idx': action.payload.room.idx });
+
+    if (existRoom >= 0) {
+      return state;
+    }
+
     return produce(state, draft => {
-      draft.chatRooms = draft.chatRooms.filter((chatRoom) => 
-        chatRoom.idx !== action.payload.roomIdx);
+      draft.chatRooms.push(action.payload.room);
     });
   },
-  [RECEIVE_LEAVE_ROOM_MEMBER]: (state, action) => 
+  [RECEIVE_LEAVE_ROOM]: (state, action) => 
     produce(state, draft => {
-      draft.chatRooms = draft.chatRooms.map(chatRoom => {
-        const idx = findIndex(chatRoom.participants, { 'idx': action.payload.participantIdx });
-        if (idx >= 0) {
-          chatRoom.participants.splice(idx, 1);
-        }
-
-        return chatRoom;
-      });
+      draft.chatRooms = draft.chatRooms.filter((chatRoom) => 
+        chatRoom.idx !== action.payload.roomIdx);
     }),
-  [RECEIVE_INVITE_ROOM]: (state, action) => {
-    const { room, newParticipants } = action.payload;
-    const existRoom = findIndex(state.chatRooms, { 'idx': room.idx });
-    console.log(action.payload)
-    console.log(existRoom);
+  [RECEIVE_LEAVE_ROOM_MEMBER]: (state, action) => {
+    const { roomIdx, leaveParticiIdx } = action.payload;
+    const idx = findIndex(state.chatRooms, { idx: roomIdx });
 
-    if (existRoom >= 0) { // 초대되어 있는 방
-      console.log("존재하는 방")
-      console.log(state.chatRooms[existRoom].participants);
-      console.log(newParticipants);
-      return produce(state, draft => {
-        draft.chatRooms[existRoom].participants.push(...newParticipants);
-      });
-    } else { // 처음 초대된 방
-      console.log("존재하지 않는 방")
-      return produce(state, draft => {
-        draft.chatRooms.push(action.payload.room);
-      });
+    if (idx < 0) {
+      return state;
     }
+
+    return produce(state, draft => {
+      draft.chatRooms[idx].participants.map(p => {
+        if (p.idx === leaveParticiIdx) {
+          p.activation = 0;
+        }
+        
+        return p;
+      });
+    });
   },
+  [RECEIVE_INVITE_ROOM]: (state, action) => {
+    const { room, invitedParticis } = action.payload;
+    const existRoom = findIndex(state.chatRooms, { 'idx': room.idx });
+   
+    if (existRoom < 0) {
+      return state;
+    }
+
+    return produce(state, draft => {
+      draft.chatRooms[existRoom].participants.push(...invitedParticis);
+    });
+  },
+  [RECEIVE_INVITED_ROOM]: (state, action) => 
+    produce(state, draft => {
+      draft.chatRooms.push(action.payload.room);
+    }),
   [MESSAGE_RECORD_SUCCESS]: (state, action) => {
     const { roomIdx, messages } = action.payload;
 

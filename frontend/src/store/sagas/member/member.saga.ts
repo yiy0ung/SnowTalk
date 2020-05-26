@@ -102,7 +102,14 @@ function* appendFriend(action: ReturnType<typeof fetchAppendFriendAsync.request>
       ]);
     }
   } catch (error) {
-    yield put(fetchAppendFriendAsync.failure(error));
+    yield all([
+      put(openPopUp({
+        title: '자신 혹은 없는 친구를 추가 할 수 없어요!',
+        message: '',
+        level: 'warning',
+      })),
+      put(fetchAppendFriendAsync.failure(error))
+    ]);
   }
 }
 

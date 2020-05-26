@@ -5,8 +5,10 @@ export enum ChatListener {
   receiveMsg = 'receive-message',
   addRoomMember = 'add-room-member',
   getRooms = 'get-rooms',
-  createRoom = 'create-room',
-  inviteRoom = 'invite-room',
+  createRoom = 'create-room', // host
+  createdRoom = 'created-room', // guest
+  inviteRoom = 'invite-room', // host
+  invitedRoom = 'invited-room', // guest
   leaveRoom = 'leave-room',
   leaveRoomMember = 'leave-room-member',
 };

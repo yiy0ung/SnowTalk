@@ -42,10 +42,10 @@ function ChatRoomMain({ roomIdx }: Props) {
   // }, [chatRoom.messages, dispatch, roomIdx]);
 
   useEffect(() => {
-    if (messageListRef.current && chatRoom.messages) {
+    if (messageListRef.current) {
       messageListRef.current.scrollTop = messageListRef.current.scrollHeight;
     }
-  }, [chatRoom.messages]);
+  }, [chatRoom, history]);
 
   return (
     <div className="chatroom-main">
@@ -60,7 +60,7 @@ function ChatRoomMain({ roomIdx }: Props) {
       </div>
 
       <div className="chatroom-main__input">
-        <ChatRoomInput roomIdx={chatRoom.idx} />
+        <ChatRoomInput roomInfo={chatRoom} />
       </div>
     </div>
   );

@@ -17,9 +17,9 @@ function ChatRoomMsg({ roomInfo }: Props) {
   const { user } = useSelector((state: RootState) => state.member);
   const { messages } = roomInfo;
 
-  const messageBubbles = messages.map((messageItem, index) => {
-    const { idx, message, createAt, type, member, deleted, msgfile } = messageItem;
-    const provMessage = messages[index - 1];
+  const messageBubbles = messages.map((m, i) => {
+    const { idx, message, createAt, type, member, deleted, msgfile } = m;
+    const provMessage = messages[i - 1];
     let dateSection = null;
     
     if (provMessage 

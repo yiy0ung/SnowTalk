@@ -20,6 +20,7 @@ export class MemberService {
     return [token, refreshToken];
   }
 
+  // 1명 조회
   public async getMemberByIdx(memberIdx: number) {
     const member = await this.memberRepo.findOne({
       where: {
@@ -36,6 +37,7 @@ export class MemberService {
     return member;
   }
 
+  // 다수 조회
   public async getMembersDataByIdx({
     userIdx, membersIdx,
   }: { userIdx?: number, membersIdx: number[] }) {

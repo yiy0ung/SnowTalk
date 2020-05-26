@@ -104,44 +104,53 @@ function* read(socket: SocketIOClient.Socket) {
 function subscribe(socket: SocketIOClient.Socket) {
   return eventChannel((emit) => {
     socket.on(ChatEvent.getRooms, (resp: ChatSocketResp<GetRoomData>) => {
-      console.log(resp);
+      console.log('방 조회', resp);
       if (resp.status === 200 && resp.data) {
         emit(receiveGetRooms(resp.data));
       }
     });
     socket.on(ChatEvent.receiveMsg, (resp: ChatSocketResp<ReceiveMsgData>) => {
-      console.log(resp);
+      console.log('메시지 받음', resp);
       if (resp.status === 200 && resp.data) {
         emit(receiveMessage(resp.data));
       }
     });
     socket.on(ChatEvent.createRoom, (resp: ChatSocketResp<CreateRoomData>) => {
-      console.log(resp);
+      console.log('방 생성 ', resp);
       if (resp.status === 200 && resp.data) {
         emit(receiveCreateRoom(resp.data));
-        emit(pushUrl(`${link.chatroom}/${resp.data.roomIdx}`));
-      } 
-      else if (resp.status === 404 && resp.data) {
-        emit(pushUrl(`${link.chatroom}/${resp.data.roomIdx}`));
+        emit(pushUrl(`${link.chatroom}/${resp.data.room.idx}`));
+      }
+    });
+    socket.on(ChatEvent.createdRoom, (resp: ChatSocketResp<CreateRoomData>) => {
+      console.log('방 생성 당함 ', resp);
+      if (resp.status === 200 && resp.data) {
+        emit(receiveCreateRoom(resp.data));
+      }
+    });
+    socket.on(ChatEvent.inviteRoom, (resp: ChatSocketResp<InviteRoomData>) => {
+      console.log('방에 회원 초대', resp);
+      if (resp.status === 200 && resp.data) {
+        emit(receiveInviteRoom(resp.data));
+      }
+    });
+    socket.on(ChatEvent.invitedRoom, (resp: ChatSocketResp<InviteRoomData>) => {
+      console.log('방에 초대 됨', resp);
+      if (resp.status === 200 && resp.data) {
+        emit(receiveInviteRoom(resp.data));
       }
     });
     socket.on(ChatEvent.leaveRoom, (resp: ChatSocketResp<LeaveRoomData>) => {
-      console.log(resp);
+      console.log('방을 떠남 ',resp);
       if (resp.status === 200 && resp.data) {
-        emit(pushUrl(`${link.home}`));
+        emit(pushUrl(link.home));
         emit(receiveLeaveRoom(resp.data));
       }
     });
     socket.on(ChatEvent.leaveRoomMember, (resp: ChatSocketResp<LeaveRoomData>) => {
-      console.log(resp);
+      console.log('방에서 누가 떠남', resp);
       if (resp.status === 200 && resp.data) {
         emit(receiveLeaveRoomMember(resp.data));
-      }
-    });
-    socket.on(ChatEvent.inviteRoom, (resp: ChatSocketResp<InviteRoomData>) => {
-      console.log(resp);
-      if (resp.status === 200 && resp.data) {
-        emit(receiveInviteRoom(resp.data));
       }
     });
 

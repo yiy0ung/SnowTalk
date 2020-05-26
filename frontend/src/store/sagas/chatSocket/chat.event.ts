@@ -6,9 +6,11 @@ export enum ChatEvent {
   receiveMsg = 'receive-message',
   addRoomMember = 'add-room-member',
   getRooms = 'get-rooms',
-  createRoom = 'create-room',
-  inviteRoom = 'invite-room',
-  leaveRoom = 'leave-room',
+  createRoom = 'create-room', // 방 생성 한 사람
+  createdRoom = 'created-room', // 방 생성시 초대된 회원
+  inviteRoom = 'invite-room', // 방 초대 한 사람 & 기존에 있던 회원
+  invitedRoom = 'invited-room', // 방에 초대된 회원
+  leaveRoom = 'leave-room', // 방 떠남
   leaveRoomMember = 'leave-room-member',
 }
 
@@ -56,15 +58,13 @@ export type CreateRoomPayload = {
 };
 
 export type CreateRoomData = {
-  roomIdx: number;
   room: ChatRoom;
-  newMembers: Participant[];
 };
 
 export type LeaveRoomData = {
   roomIdx: number,
-  memberIdx: number,
-  participantIdx: number,
+  leaveMemberIdx: number,
+  leaveParticiIdx: number,
 };
 
 export type InviteRoomPayload = {
@@ -74,6 +74,6 @@ export type InviteRoomPayload = {
 
 export type InviteRoomData = {
   room: ChatRoom;
-  newParticipants: Participant[];
+  invitedParticis: Participant[];
 };
 

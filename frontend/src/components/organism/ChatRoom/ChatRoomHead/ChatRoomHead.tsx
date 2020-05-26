@@ -1,6 +1,7 @@
 import React, { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
+import { findIndex } from 'lodash';
 import { AiOutlineMenu, AiOutlineInbox } from 'react-icons/ai';
 import { RiLogoutBoxLine } from 'react-icons/ri';
 import { FiSearch, FiArrowLeft } from 'react-icons/fi';
@@ -9,9 +10,10 @@ import { TiDocumentText } from 'react-icons/ti';
 import { IoMdAdd } from 'react-icons/io';
 
 import { confirmAlert } from 'utils/alert';
-import { ChatRoom } from 'utils/types/entity.type';
+import { ChatRoom, Participant, Member } from 'utils/types/entity.type';
 import { RootState } from 'store/reducers';
 import { emitLeaveRoom } from 'store/reducers/chatSocket.reducer';
+import { ChatRoomAlert } from '../ChatRoomAlert';
 import { AvatarList } from 'components/base/AvatarList';
 import { DropdownMenu } from 'components/base/DropdownMenu';
 import { DropdownMenuItem } from 'components/base/DropdownMenu/DropdownMenuItem';
@@ -25,16 +27,32 @@ type Props = {
   roomInfo: ChatRoom;
 };
 
+function checkUserFriends(userIdx: number, particis: Participant[]|undefined, friends: Member[]) {
+  const partici = particis?.filter((p) => p.memberIdx !== userIdx);
+
+  if (!partici || partici.length > 1) {
+    return true;
+  }
+
+  const idx = findIndex(friends, { idx: partici[0].memberIdx })
+
+  if (idx < 0) {
+    return true;
+  }
+
+  return false;
+}
+
 function ChatRoomHead({ roomInfo }: Props) {
   const history = useHistory();
   const dispatch = useDispatch();
   const { title, participants, type } = roomInfo;
-  const memberState = useSelector((state: RootState) => state.member);
+  const { user, friends } = useSelector((state: RootState) => state.member);
   let roomTitle = [];
   let profileImgs = [];
 
   for (const participant of participants) {
-    if (participant.member.idx !== memberState.user.idx) {
+    if (participant.member.idx !== user.idx) {
       roomTitle.push(participant.member.name);
       profileImgs.push(participant.member.profileImg?.name);
     }
@@ -44,84 +62,106 @@ function ChatRoomHead({ roomInfo }: Props) {
     roomTitle = ['그룹채팅'];
   }
 
-  const onLeaveRoom = useCallback((roomIdx: number) => {
+  const onLeaveRoom = useCallback(() => {
     confirmAlert({
       title: '채팅방을 나가시겠습니까?',
       text: '초대 받지 않으면 다시 들어올 수 없습니다',
       confirmText: '나가기',
     }).then(result => {
       if (result.value) {
-        dispatch(emitLeaveRoom({roomIdx}));
+        dispatch(emitLeaveRoom({
+          roomIdx: roomInfo.idx,
+        }));
       }
     });
-  }, [dispatch]);
+  }, [dispatch, roomInfo.idx]);
 
   const onGoToHome = useCallback(() => {
     history.push(link.home);
   }, [history]);
 
+  const options = [{
+    name: '친구 추가',
+    onClick: () => {}
+  }, {
+    name: '채팅방 나가기',
+    onClick: onLeaveRoom
+  }]
+
   return (
-    <div className="chatroom-head">
-      <div className="chatroom-head__info">
-        <AvatarList imgIds={profileImgs} />
+    <>
+      <div className="chatroom-head">
+        <div className="chatroom-head__info">
+          <AvatarList imgIds={profileImgs} />
 
-        <div className="chatroom-head__main">
-          <div className="chatroom-head__title">
-            <span className="chatroom-head__title-main">
-              {title || roomTitle.join(', ') || '알수없음'}
-            </span>
-            {type === 'group' 
-              && <span className="chatroom-head__title-sub">({participants.length})</span>}
-          </div>
-          <div className="chatroom-head__icons">
-            <span><FaRegHeart /></span>
-            <span><TiDocumentText /></span>
-            <span><AiOutlineInbox /></span>
-            <span><FiSearch /></span>
-          </div>
-        </div>
-
-        <div className="chatroom-head__options">
-          {
-            roomInfo.type === 'group' && (
-              <WithModal 
-                modal={ChatMemberModal} 
-                modalProps={{
-                  type: 'invite',
-                  roomIdx: roomInfo.idx,
-                  participants: roomInfo.participants,
-                }}>
-                <div className="chatroom-head__option" title="대화상대 초대">
-                  <IoMdAdd />
-                </div>
-              </WithModal>
-            )
-          }
-
-          <DropdownMenu component={(
-            <div className="chatroom-head__option">
-              <AiOutlineMenu />
+          <div className="chatroom-head__main">
+            <div className="chatroom-head__title">
+              <span className="chatroom-head__title-main">
+                {title || roomTitle.join(', ') || '알수없음'}
+              </span>
+              {type === 'group' 
+                && <span className="chatroom-head__title-sub">({participants.length})</span>}
             </div>
-          )}>
-            <DropdownMenuItem
-              icon={<FiArrowLeft />}
-              text="홈으로"
-              onClick={onGoToHome}
-            />
-            <DropdownMenuItem
-              icon={<FaCog />}
-              text="채팅방 설정"
-              onClick={() => {}}
-            />
-            <DropdownMenuItem
-              icon={<RiLogoutBoxLine />}
-              text="채팅방 나가기"
-              onClick={() => onLeaveRoom(roomInfo.idx)}
-            />
-          </DropdownMenu>
+            <div className="chatroom-head__icons">
+              <span><FaRegHeart /></span>
+              <span><TiDocumentText /></span>
+              <span><AiOutlineInbox /></span>
+              <span><FiSearch /></span>
+            </div>
+          </div>
+
+          <div className="chatroom-head__options">
+            {
+              roomInfo.type === 'group' && (
+                <WithModal 
+                  modal={ChatMemberModal} 
+                  modalProps={{
+                    type: 'invite',
+                    roomIdx: roomInfo.idx,
+                    participants: roomInfo.participants,
+                  }}>
+                  <div className="chatroom-head__option" title="대화상대 초대">
+                    <IoMdAdd />
+                  </div>
+                </WithModal>
+              )
+            }
+
+            <DropdownMenu component={(
+              <div className="chatroom-head__option">
+                <AiOutlineMenu />
+              </div>
+            )}>
+              <DropdownMenuItem
+                icon={<FiArrowLeft />}
+                text="홈으로"
+                onClick={onGoToHome}
+              />
+              <DropdownMenuItem
+                icon={<FaCog />}
+                text="채팅방 설정"
+                onClick={() => {}}
+              />
+              <DropdownMenuItem
+                icon={<RiLogoutBoxLine />}
+                text="채팅방 나가기"
+                onClick={onLeaveRoom}
+              />
+            </DropdownMenu>
+          </div>
         </div>
       </div>
-    </div>
+      <div className="chatroom-head-alert">
+      {
+        (roomInfo.type === 'personal' && checkUserFriends(user.idx, participants, friends)) && (
+          <ChatRoomAlert
+            text="친구 추가가 되어있지 않는 회원입니다."
+            options={options}
+          />
+        )
+      }
+      </div>
+    </>
   );
 }
 

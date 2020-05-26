@@ -15,7 +15,6 @@ export type ChatRoomType = 'personal'|'group';
 export type ChatRoom = {
   idx: number;
   title: string|null;
-  activation: number;
   type: ChatRoomType;
   messages: Message[];
   participants: Participant[];
@@ -36,7 +35,9 @@ export type Participant = {
   idx: number;
   nickname?: string;
   activation: number;
+  memberIdx: number;
   member: Member;
+  chatRoomIdx: number;
 };
 
 export type SavedImg = {

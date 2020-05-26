@@ -11,9 +11,6 @@ export class ChatRoom {
   @Column({ type: 'varchar', length: 50, nullable: true })
   title: string;
 
-  @Column({ type: 'int', default: 1 })
-  activation: number;
-
   @Column({ type: 'enum', enum: RoomType })
   type: RoomType;
 

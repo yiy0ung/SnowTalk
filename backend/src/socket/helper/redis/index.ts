@@ -2,6 +2,7 @@ import redis from 'async-redis';
 import { Namespace } from 'socket.io';
 import config from '../../../config';
 import { Member } from '../../../database/models/Member';
+import { ChatListener } from '../../namespace/chat/chat.listener';
 
 const { sesstionStorage } = config;
 
@@ -38,6 +39,16 @@ export async function joinChatRoom(nmsp: Namespace, roomidx: number, members: Me
 
     if (socketId && nmsp.connected[socketId]) {
       nmsp.connected[socketId].join(`chatroom-${roomidx}`);
+    }
+  }));
+}
+
+export async function sendData(nmsp: Namespace, members: Member[], event: ChatListener, payload: any) {
+  await Promise.all(members.map(async (member) => {
+    const socketId = await redisClient.hget(`${nmsp.name}-online`, member.id);
+
+    if (socketId && nmsp.connected[socketId]) {
+      nmsp.connected[socketId].emit(event, payload);
     }
   }));
 }

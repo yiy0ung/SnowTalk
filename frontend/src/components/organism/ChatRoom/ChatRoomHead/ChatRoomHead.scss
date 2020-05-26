@@ -1,4 +1,13 @@
 
+.chatroom-head-alert {
+  box-sizing: border-box;
+  position: relative;
+
+  & > * {
+    position: absolute;
+    top: 0;
+  }
+}
 
 .chatroom-head {
   padding: 0 1rem 0.5rem;

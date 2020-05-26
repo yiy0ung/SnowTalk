@@ -15,7 +15,7 @@ type Props = {
 }
 
 function ChatRoomItem({ roomInfo }: Props) {
-  const memberState = useSelector((state: RootState) => state.member);
+  const { user } = useSelector((state: RootState) => state.member);
   const { idx, title, messages, participants, type } = roomInfo;
 
   let roomTitle: string[] = [];
@@ -23,7 +23,7 @@ function ChatRoomItem({ roomInfo }: Props) {
   let previevMsg = messages[0]?.message || (messages[0]?.msgfile && '<이미지 메시지>');
 
   for (const participant of participants) {
-    if (participant.member.idx !== memberState.user.idx) {
+    if (participant.member.idx !== user.idx && (type === 'personal' || participant.activation !== 0)) {
       profileImgs.push(participant.member.profileImg?.name);
       roomTitle.push(participant.member.name);
     }
@@ -36,7 +36,7 @@ function ChatRoomItem({ roomInfo }: Props) {
   return (
     <Link to={`${link.chatroom}/${idx}`}>
       <UserCard
-        title={roomTitle.length > 0 ? roomTitle.join(', ') : '알수없음'}
+        title={roomTitle.length > 0 ? roomTitle.join(', ') : '대화상대없음'}
         subtitle={type === 'group' && participants.length}
         desc={previevMsg||' '}
         imgIds={profileImgs}

@@ -10,7 +10,7 @@ function ChatRoom() {
   const history = useHistory();
   const { params: { roomIdx } } = useRouteMatch();
   const chatRoomIdx = parseInt(roomIdx, 10);
-  
+
   if (!chatRoomIdx) {
     history.push(link.home);
   }

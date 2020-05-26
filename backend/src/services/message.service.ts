@@ -39,7 +39,7 @@ export class MessageService {
     sender,
     message,
   }: UserMessageForm) {
-    const room = await this.chatRoomRepo.getRoomsByIdx(roomIdx, 1);
+    const room = await this.chatRoomRepo.getRoomsByIdx(roomIdx);
 
     if (!room || !sender) {
       return {

@@ -8,12 +8,14 @@ import { sendMessage, sendFileMessage } from 'store/reducers/chatSocket.reducer'
 
 import './ChatRoomInput.scss';
 import { EmojiPicker } from 'components/base/EmojiPicker';
+import { ChatRoom } from 'utils/types/entity.type';
 
 type Props = {
-  roomIdx: number;
+  roomInfo: ChatRoom;
 }
 
-function ChatRoomInput({ roomIdx }: Props) {
+function ChatRoomInput({ roomInfo }: Props) {
+  const { idx: roomIdx } = roomInfo;
   const dispatch = useDispatch();
   const message = useInput('');
   const [visibleEmoji, setVisibleEmoji] = useState(false);

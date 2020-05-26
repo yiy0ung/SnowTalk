@@ -44,7 +44,7 @@ export class ChatParticipantRepository extends Repository<ChatParticipant> {
     });
   }
 
-  public getParticipantByRoomIdxs(roomIdxs: readonly number[], activation: 0|1) {
+  public getParticipantByRoomIdx(roomIdx: number, activation: 0|1) {
     return this.find({
       join: {
         alias: 'chatParticipant',
@@ -54,7 +54,7 @@ export class ChatParticipantRepository extends Repository<ChatParticipant> {
         },
       },
       where: {
-        chatRoom: In([...roomIdxs]),
+        chatRoom: roomIdx,
         activation: activation,
       },
     });

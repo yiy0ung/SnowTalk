@@ -9,16 +9,20 @@ type Props = {
 function DropdownMenu({ children, component }: Props) {
   const [open, setOpen] = useState(false);
 
-  const onToggleMenu = useCallback(() => {
-    setOpen(!open);
-  }, [open]);
+  const onOpenMenu = useCallback(() => {
+    setOpen(true);
+  }, []);
+
+  const onCloseMenu = useCallback(() => {
+    setOpen(false);
+  }, []);
 
   return (
     <div 
       className="dropdown-menu" 
       tabIndex={0}
-      onBlur={onToggleMenu} >
-      <div className="dropdown-menu__btn" onClick={onToggleMenu}>
+      onBlur={onCloseMenu} >
+      <div className="dropdown-menu__btn" onClick={onOpenMenu}>
         {component}
       </div>
       <div className="dropdown-menu__hidden">
