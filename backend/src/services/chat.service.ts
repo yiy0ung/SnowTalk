@@ -21,7 +21,7 @@ export class ChatService {
 
   private async setChatRoomData(chatRooms: ChatRoom[]) {
     for (const room of chatRooms) {
-      room.participants = await this.chatParticipantRepo.getParticipantByRoomIdx(room.idx, 1);
+      room.participants = await this.chatParticipantRepo.getParticipantByRoomIdx(room.idx);
       room.messages = await this.chatMsgRepo.getMessageByChatRoomIdx(room.idx);
     }
 

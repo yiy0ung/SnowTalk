@@ -38,5 +38,9 @@
   &__foot {
     display: flex;
     justify-content: flex-end;
+
+    & > * + * {
+      margin-left: 0.5rem;
+    }
   }
 }

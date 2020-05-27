@@ -5,6 +5,7 @@ type Props = {
   type: 'text'|'password';
   value: string,
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onKeyUp?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
   placeholder: string;
 };
 
@@ -13,6 +14,7 @@ function SignInput({
   value,
   onChange,
   placeholder,
+  onKeyUp,
 }: Props) {
   return (
     <input 
@@ -20,6 +22,7 @@ function SignInput({
       type={type}
       value={value}
       onChange={onChange}
+      onKeyUp={onKeyUp}
       placeholder={placeholder} />
   );
 }

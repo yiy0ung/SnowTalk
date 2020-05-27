@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-import logo from 'assets/image/snowman.png';
+import logo from 'assets/image/rudolph.png';
 import { SignLoginForm } from '../SignLoginForm';
 import { SignUpModal } from '../SignUpModal';
 

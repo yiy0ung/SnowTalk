@@ -36,6 +36,11 @@ function ChatMemberModal({ onClose, type, roomIdx, participants = [] }: Props) {
     setInvitedMembers((prevMembers) => [...prevMembers, member]);
   }, []);
 
+  const onCloseModal = useCallback(() => {
+    setInvitedMembers([]);
+    onClose();
+  }, [onClose]);
+
   const onDeleteInvitedId = useCallback((idx: number) => {
     setInvitedMembers(invitedMembers.filter(member => member.idx !== idx));
   }, [invitedMembers]);
@@ -60,9 +65,8 @@ function ChatMemberModal({ onClose, type, roomIdx, participants = [] }: Props) {
       }));
     }
 
-    setInvitedMembers([]);
-    onClose();
-  }, [dispatch, invitedMemberIdxs, invitedMembers.length, onClose, roomIdx, type]);
+    onCloseModal();
+  }, [dispatch, invitedMemberIdxs, invitedMembers.length, onCloseModal, roomIdx, type]);
 
   // 초대되지 않은 친구 목록
   const friendNodes = friends.map((friend) => {
@@ -134,7 +138,7 @@ function ChatMemberModal({ onClose, type, roomIdx, participants = [] }: Props) {
             onClick={onSubmit}
           >{type==='create'? '채팅방 생성':'초대'}</Button>
         </div>
-        <div><Button type="secondary" onClick={onClose}>취소</Button></div>
+        <div><Button type="secondary" onClick={onCloseModal}>취소</Button></div>
       </div>
     </div>
   );

@@ -30,6 +30,11 @@ function FriendAddModal({ onClose }: Props) {
     onClose();
   }, [dispatch, friendId, onClose]);
 
+  const onCloseModal = useCallback(() => {
+    friendId.setValue('');
+    onClose();
+  }, [friendId, onClose]);
+
   return (
     <div className="friend-add-modal">
       <div className="friend-add-modal__main">
@@ -53,6 +58,9 @@ function FriendAddModal({ onClose }: Props) {
       <div className="friend-add-modal__foot">
         <div>
           <Button onClick={onAppendFriend}>친구 추가</Button>
+        </div>
+        <div>
+          <Button onClick={onCloseModal} type="secondary">취소</Button>
         </div>
       </div>
     </div>

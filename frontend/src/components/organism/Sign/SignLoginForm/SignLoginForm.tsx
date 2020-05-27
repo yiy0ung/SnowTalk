@@ -20,6 +20,12 @@ function SignLoginForm() {
     }));
   }, [dispatch, id.value, pw.value]);
 
+  const onEnterLogin = useCallback((e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.keyCode === 13) {
+      onClickLogin();
+    }
+  }, [onClickLogin]);
+
   return (
     <div className="sign-login-form">
       <div className="sign-login-form__inputs">
@@ -27,7 +33,7 @@ function SignLoginForm() {
           type="text" value={id.value} 
           onChange={id.onChange} placeholder="스노우톡 아이디" />
         <SignInput
-          type="password" value={pw.value} 
+          type="password" value={pw.value} onKeyUp={onEnterLogin}
           onChange={pw.onChange} placeholder="비밀번호" />
       </div>
       <div className="sign-login-form__btn">

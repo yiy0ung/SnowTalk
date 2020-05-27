@@ -11,6 +11,7 @@ import * as Validate from '../../helper/validate';
 import * as redisHelper from "../../helper/redis";
 import * as messageHelper from "../../helper/message";
 import { Member } from "../../../database/models/Member";
+import { RoomType } from "../../../database/enum/ChatType";
 
 @Service()
 export class ChatEvent {
@@ -92,12 +93,14 @@ export class ChatEvent {
       socket.emit(ChatListener.createRoom, payload);
       socket.broadcast.to(`chatroom-${room.idx}`).emit(ChatListener.createdRoom, payload);
       
-      // 시스템 메시지 전송
-      const message = messageHelper.invitingMsg(user, invited);
-      await this.messageEvent.sendSystemMsg(socket, {
-        message,
-        room,
-      });
+      if (room.type === RoomType.group) {
+        // 시스템 메시지 전송
+        const message = messageHelper.invitingMsg(user, invited);
+        await this.messageEvent.sendSystemMsg(socket, {
+          message,
+          room,
+        });
+      }
     } catch (error) {
       console.error(error);
       socket.emit(ChatListener.createRoom, {
@@ -212,9 +215,9 @@ export class ChatEvent {
       }
 
       // 채팅방 나가기
-      const { leavePartici, deletedRoom } = await this.chatService.leaveChatRoomByIdx(user, room);
+      const result = await this.chatService.leaveChatRoomByIdx(user, room);
 
-      if (!leavePartici) {
+      if (!result) {
         socket.emit(ChatListener.leaveRoom, {
           status: 404,
           message: '나가기를 실패하였습니다',
@@ -228,7 +231,7 @@ export class ChatEvent {
         data: {
           roomIdx: room.idx,
           leaveMemberIdx: user.idx,
-          leaveParticiIdx: leavePartici.idx,
+          leaveParticiIdx: result.leavePartici.idx,
         },
       };
 
@@ -238,7 +241,7 @@ export class ChatEvent {
       socket.broadcast.to(`chatroom-${room.idx}`).emit(ChatListener.leaveRoomMember, payload);
 
       // 시스템 메시지 전송
-      if (deletedRoom === false) {
+      if (result.deletedRoom === false && room.type === RoomType.group) {
         const message = messageHelper.leavingMsg(user);
         await this.messageEvent.sendSystemMsg(socket, {
           message,

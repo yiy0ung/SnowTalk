@@ -1,5 +1,4 @@
 import React, { ReactNode, CSSProperties } from 'react';
-import { IoMdClose } from 'react-icons/io';
 
 import './Modal.scss';
 
@@ -9,7 +8,7 @@ type Props = {
   children: ReactNode;
 }
 
-function Modal({ isOpen, onClose, children }: Props) {
+function Modal({ isOpen, children }: Props) {
   const invisible: CSSProperties = {
     display: 'none',
   };
@@ -17,9 +16,6 @@ function Modal({ isOpen, onClose, children }: Props) {
   return (
     <div className="modal-bg" style={isOpen? {}:invisible}>
       <div className="modal">
-        <div className="modal__tap">
-          <IoMdClose onClick={() => onClose()} title="닫기" />
-        </div>
         <div className="modal__content">
           {children}
         </div>

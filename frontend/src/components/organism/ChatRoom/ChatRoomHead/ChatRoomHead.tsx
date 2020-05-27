@@ -10,7 +10,7 @@ import { TiDocumentText } from 'react-icons/ti';
 import { IoMdAdd } from 'react-icons/io';
 
 import { confirmAlert } from 'utils/alert';
-import { ChatRoom, Participant, Member } from 'utils/types/entity.type';
+import { ChatRoom, Participant, Member, ChatRoomType } from 'utils/types/entity.type';
 import { RootState } from 'store/reducers';
 import { emitLeaveRoom } from 'store/reducers/chatSocket.reducer';
 import { ChatRoomAlert } from '../ChatRoomAlert';
@@ -22,21 +22,26 @@ import { ChatMemberModal } from 'components/organism/Chat/ChatMemberModal';
 import link from 'config/link';
 
 import './ChatRoomHead.scss';
+import useTitle from 'components/common/hooks/useTitle';
+import { fetchAppendFriendAsync } from 'store/reducers/member.reducer';
 
 type Props = {
   roomInfo: ChatRoom;
 };
 
-function checkUserFriends(userIdx: number, particis: Participant[]|undefined, friends: Member[]) {
-  const partici = particis?.filter((p) => p.memberIdx !== userIdx);
-
-  if (!partici || partici.length > 1) {
+// 친구 관계일 때 true,
+function checkUserFriends(userIdx: number, particis: Participant[]|undefined, friends: Member[], roomType: ChatRoomType) {
+  if (roomType === 'group') {
     return true;
   }
 
-  const idx = findIndex(friends, { idx: partici[0].memberIdx })
+  const partici = particis?.filter((p) => p.memberIdx !== userIdx);
+  if (!partici || partici.length <= 0) { // 상대방이 없음
+    return true;
+  }
 
-  if (idx < 0) {
+  const idx = findIndex(friends, { idx: partici[0].memberIdx });
+  if (idx >= 0) { // 친구임
     return true;
   }
 
@@ -48,19 +53,19 @@ function ChatRoomHead({ roomInfo }: Props) {
   const dispatch = useDispatch();
   const { title, participants, type } = roomInfo;
   const { user, friends } = useSelector((state: RootState) => state.member);
-  let roomTitle = [];
-  let profileImgs = [];
-
-  for (const participant of participants) {
-    if (participant.member.idx !== user.idx) {
-      roomTitle.push(participant.member.name);
-      profileImgs.push(participant.member.profileImg?.name);
-    }
-  }
+  let { activeMembers, roomTitle, profileImgs } = useTitle(user.idx, participants, roomInfo.type);
 
   if (type === 'group') {
     roomTitle = ['그룹채팅'];
   }
+
+  const onAppendFriend = useCallback(() => {
+    if (roomInfo.type === 'personal' && activeMembers[0]) {
+      dispatch(fetchAppendFriendAsync.request(
+        parseInt(activeMembers[0].friendId, 10)
+      ));
+    }
+  }, [activeMembers, dispatch, roomInfo.type]);
 
   const onLeaveRoom = useCallback(() => {
     confirmAlert({
@@ -82,11 +87,11 @@ function ChatRoomHead({ roomInfo }: Props) {
 
   const options = [{
     name: '친구 추가',
-    onClick: () => {}
+    onClick: onAppendFriend,
   }, {
     name: '채팅방 나가기',
-    onClick: onLeaveRoom
-  }]
+    onClick: onLeaveRoom,
+  }];
 
   return (
     <>
@@ -100,7 +105,7 @@ function ChatRoomHead({ roomInfo }: Props) {
                 {title || roomTitle.join(', ') || '알수없음'}
               </span>
               {type === 'group' 
-                && <span className="chatroom-head__title-sub">({participants.length})</span>}
+                && <span className="chatroom-head__title-sub">({profileImgs.length + 1})</span>}
             </div>
             <div className="chatroom-head__icons">
               <span><FaRegHeart /></span>
@@ -153,9 +158,9 @@ function ChatRoomHead({ roomInfo }: Props) {
       </div>
       <div className="chatroom-head-alert">
       {
-        (roomInfo.type === 'personal' && checkUserFriends(user.idx, participants, friends)) && (
+        (!checkUserFriends(user.idx, participants, friends, roomInfo.type)) && (
           <ChatRoomAlert
-            text="친구 추가가 되어있지 않는 회원입니다."
+            text="⚠ 친구 추가가 되어있지 않는 회원입니다"
             options={options}
           />
         )
