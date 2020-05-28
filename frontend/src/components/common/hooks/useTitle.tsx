@@ -1,6 +1,7 @@
 import { Participant, ChatRoomType, Member } from "utils/types/entity.type";
 
 const useTitle = (userIdx: number, participants: Participant[], roomType: ChatRoomType) => {
+  console.log("useTitle");
   let activeMembers: Member[] = [];
   let roomTitle: string[] = []; // 방 제목
   let profileImgs = []; // 프로필 uuid's

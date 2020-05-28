@@ -1,22 +1,22 @@
 import React, { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useHistory } from 'react-router-dom';
 import { find } from 'lodash';
 import { FaRegTrashAlt } from 'react-icons/fa';
 import { BsThreeDots, BsChatQuote } from 'react-icons/bs';
 
-import { Member, ChatRoom } from 'utils/types/entity.type';
+import { Member } from 'utils/types/entity.type';
+import { confirmAlert } from 'utils/alert';
+import { hashPersonalChatCode } from 'utils/method';
+import { RootState } from 'store/reducers';
 import { emitCreateRoom } from 'store/reducers/chatSocket.reducer';
 import { fetchRemoveFriendAsync } from 'store/reducers/member.reducer';
 import { UserCard } from 'components/common/UserCard';
 import { DropdownMenu } from 'components/base/DropdownMenu';
 import { DropdownMenuItem } from 'components/base/DropdownMenu/DropdownMenuItem';
+import link from 'config/link';
 
 import './FriendList.scss';
-import { confirmAlert } from 'utils/alert';
-import { RootState } from 'store/reducers';
-import { useHistory } from 'react-router-dom';
-import link from 'config/link';
-import { hashPersonalChatCode } from 'utils/method';
 
 type Props = {
   friends: Member[];

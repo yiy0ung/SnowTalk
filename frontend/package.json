@@ -2,16 +2,27 @@
   "name": "snowtalk",
   "version": "0.1.0",
   "private": true,
-  "main": "public/electron.js",
+  "main": "src/electron.js",
+  "homepage": "./",
   "scripts": {
     "react-start": "react-scripts start",
     "react-build": "react-scripts build",
     "react-test": "react-scripts test",
     "react-eject": "react-scripts eject",
-    "electron-build": "yarn tsc ./public/electron.ts",
-    "start": "concurrently \"cross-env BROWSER=none yarn react-start\" \"wait-on http://localhost:3000 && electron .\"",
-    "build": "yarn react-build && electron-builder",
-    "release": "yarn react-build && electron-builder --publish=always"
+    "electron": "electron .",
+    "start": "nf start",
+    "dist": "yarn run react-build && electron-builder ."
+  },
+  "build": {
+    "appId": "com.snowtalk",
+    "extends": null,
+    "files": [
+      "**"
+    ],
+    "directories": {
+      "buildResources": "public"
+    },
+    "target" : "zip"
   },
   "dependencies": {
     "@testing-library/jest-dom": "^4.2.4",
@@ -24,7 +35,6 @@
     "@types/react-router-dom": "^5.1.3",
     "@types/react-virtualized": "^9.21.10",
     "axios": "^0.19.2",
-    "electron-is-dev": "^1.1.0",
     "emoji-picker-react": "^3.1.7",
     "immer": "^6.0.3",
     "lodash": "^4.17.15",
@@ -50,11 +60,10 @@
     "@types/lodash": "^4.14.149",
     "@types/react-redux": "^7.1.7",
     "@types/socket.io-client": "^1.4.32",
-    "concurrently": "^5.1.0",
-    "cross-env": "^7.0.2",
-    "electron": "^8.2.0",
-    "electron-builder": "^22.4.1",
-    "wait-on": "^4.0.1"
+    "electron": "^9.0.0",
+    "electron-builder": "^22.7.0",
+    "electron-is-dev": "^1.2.0",
+    "foreman": "^3.0.1"
   },
   "resolutions": {
     "moment": "2.24.0"

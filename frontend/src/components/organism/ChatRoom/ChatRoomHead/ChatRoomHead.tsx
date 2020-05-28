@@ -1,7 +1,6 @@
 import React, { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
-import { findIndex } from 'lodash';
 import { AiOutlineMenu, AiOutlineInbox } from 'react-icons/ai';
 import { RiLogoutBoxLine } from 'react-icons/ri';
 import { FiSearch, FiArrowLeft } from 'react-icons/fi';
@@ -10,9 +9,10 @@ import { TiDocumentText } from 'react-icons/ti';
 import { IoMdAdd } from 'react-icons/io';
 
 import { confirmAlert } from 'utils/alert';
-import { ChatRoom, Participant, Member, ChatRoomType } from 'utils/types/entity.type';
+import { ChatRoom } from 'utils/types/entity.type';
 import { RootState } from 'store/reducers';
 import { emitLeaveRoom } from 'store/reducers/chatSocket.reducer';
+import { checkUserFriends } from '../ChatRoomMethod';
 import { ChatRoomAlert } from '../ChatRoomAlert';
 import { AvatarList } from 'components/base/AvatarList';
 import { DropdownMenu } from 'components/base/DropdownMenu';
@@ -28,25 +28,6 @@ import { fetchAppendFriendAsync } from 'store/reducers/member.reducer';
 type Props = {
   roomInfo: ChatRoom;
 };
-
-// 친구 관계일 때 true,
-function checkUserFriends(userIdx: number, particis: Participant[]|undefined, friends: Member[], roomType: ChatRoomType) {
-  if (roomType === 'group') {
-    return true;
-  }
-
-  const partici = particis?.filter((p) => p.memberIdx !== userIdx);
-  if (!partici || partici.length <= 0) { // 상대방이 없음
-    return true;
-  }
-
-  const idx = findIndex(friends, { idx: partici[0].memberIdx });
-  if (idx >= 0) { // 친구임
-    return true;
-  }
-
-  return false;
-}
 
 function ChatRoomHead({ roomInfo }: Props) {
   const history = useHistory();

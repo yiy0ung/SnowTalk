@@ -9,6 +9,7 @@ import Friend from './Friend';
 import More from './More';
 import Sign from './Sign';
 import ChatRoom from './ChatRoom';
+import NotFound from './NotFound';
 
 function Pages() {
   useRedirect();
@@ -27,10 +28,10 @@ function Pages() {
       <Route exact
         path={link.sign}
         component={Sign} />
-        {/* render={() => <Sign />} /> */}
       <Route exact
         path={`${link.chatroom}/:roomIdx`}
         component={ChatRoom} />
+      <Route component={NotFound} />
     </Switch>
   );
 }
