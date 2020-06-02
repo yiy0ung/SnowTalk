@@ -53,6 +53,7 @@ export class ChatRoomRepository extends Repository<ChatRoom> {
     return this.createQueryBuilder('chatRoom')
       .leftJoin('chatRoom.participants', 'chatParticipant')
       .where('chatParticipant.member = :memberIdx', { memberIdx })
+      .andWhere('chatParticipant.activation = :activation', { activation: 1 })
       .getMany();
   }
   

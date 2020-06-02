@@ -23,6 +23,7 @@ import {
   receiveInviteRoom,
   fetchMessageRecord,
   sendFileMessage,
+  receiveInvitedRoom,
 } from 'store/reducers/chatSocket.reducer';
 import {
   ChatEvent,
@@ -137,7 +138,7 @@ function subscribe(socket: SocketIOClient.Socket) {
     socket.on(ChatEvent.invitedRoom, (resp: ChatSocketResp<InviteRoomData>) => {
       console.log('방에 초대 됨', resp);
       if (resp.status === 200 && resp.data) {
-        emit(receiveInviteRoom(resp.data));
+        emit(receiveInvitedRoom(resp.data));
       }
     });
     socket.on(ChatEvent.leaveRoom, (resp: ChatSocketResp<LeaveRoomData>) => {

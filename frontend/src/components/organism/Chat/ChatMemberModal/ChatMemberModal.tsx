@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { map } from 'lodash';
+import { map, find } from 'lodash';
 
 import { RootState } from 'store/reducers';
 import {
@@ -29,7 +29,6 @@ function ChatMemberModal({ onClose, type, roomIdx, participants = [] }: Props) {
   const [invitedMembers, setInvitedMembers] = useState<Member[]>([]);
   const searchName = useInput('');
 
-  const participantIdxs = map(participants, 'member.idx');
   const invitedMemberIdxs = map(invitedMembers, 'idx');
 
   const onAddInvite = useCallback((member: Member) => {
@@ -71,9 +70,9 @@ function ChatMemberModal({ onClose, type, roomIdx, participants = [] }: Props) {
   // 초대되지 않은 친구 목록
   const friendNodes = friends.map((friend) => {
     if (
-      invitedMemberIdxs.indexOf(friend.idx) >= 0 
-      || participantIdxs.indexOf(friend.idx) >= 0
-      || !friend.name.match(searchName.value)
+      find(participants, { activation: 1, member: { idx: friend.idx } }) // 이미 들어와 있는, 활성화된 회원 회원
+      || invitedMemberIdxs.indexOf(friend.idx) >= 0  // 추가된 회원
+      || !friend.name.match(searchName.value) // 검색어와 같은 회원
     ) {
       return null;
     }

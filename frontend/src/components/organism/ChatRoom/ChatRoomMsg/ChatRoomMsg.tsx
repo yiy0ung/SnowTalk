@@ -47,11 +47,9 @@ function ChatRoomMsg({ roomInfo }: Props) {
   });
 
   return (
-    // <div className="chatroom-msg">
-    <>
+    <div className="chatroom-msg">
       {messageBubbles}
-    </>
-    // </div>
+    </div>
   );
 }
 

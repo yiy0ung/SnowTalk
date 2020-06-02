@@ -16,7 +16,6 @@ type Props = {
 }
 
 function ChatRoomMain({ roomIdx }: Props) {
-  console.log("chatRoomMain : ", roomIdx);
   // const dispatch = useDispatch();
   const history = useHistory();
   const messageListRef = useRef<HTMLDivElement>(null);
@@ -43,9 +42,7 @@ function ChatRoomMain({ roomIdx }: Props) {
   // }, [chatRoom.messages, dispatch, roomIdx]);
 
   useEffect(() => {
-    console.log("chatRoomMain2")
     if (messageListRef.current) {
-      console.log("chatRoomMain3")
       messageListRef.current.scrollTop = messageListRef.current.scrollHeight;
     }
 
