@@ -22,7 +22,11 @@ function createWindow() {
     protocol: 'file:',
     slashes: true,
   });
-  win.webContents.openDevTools();
+  
+  if (process.env.NODE_ENV === 'development') {
+    win.webContents.openDevTools();
+  }
+
   win.loadURL(startUrl);
 }
 

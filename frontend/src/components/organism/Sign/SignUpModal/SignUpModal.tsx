@@ -13,6 +13,29 @@ import { Button } from 'components/base/Button';
 
 import './SignUpModal.scss';
 
+const validate = {
+  all: (id: string, pw: string, name: string) => {
+    if (!id || !pw || !name) {
+      return '아이디, 비밀번호, 이름을 무조건 입력해주세요!';
+    }
+  },
+  id: (text: string) => {
+    if (!(/^[a-zA-Z0-9]{6,20}$/.test(text))) {
+      return '아이디는 6~20자의 알파벳, 숫자로만 조합가능합니다';
+    }
+  },
+  pw: (text: string) => {
+    if (!(/^[a-zA-Z0-9]{5,20}$/.test(text))) {
+      return '비밀번호는 5~20자의 알파벳, 숫자로만 조합가능합니다';
+    }
+  },
+  name: (text: string) => {
+    if (text.length > 40) {
+      return '이름은 40자 미만으로만 가능합니다';
+    }
+  },
+};
+
 type Props = {
   visible: boolean;
   type: 'signup'|'update';
@@ -71,23 +94,30 @@ function SignUpModal({
   }, []);
 
   const handleSignUp = useCallback(() => {
-    if (!id.value || !pw.value || !name.value) {
+    const error = validate.all(id.value, pw.value, name.value)
+      || validate.id(id.value)
+      || validate.pw(pw.value)
+      || validate.name(name.value)
+      || null;
+      
+    if (error) {
       Swal.fire({
         icon: 'error',
-        title: '필수 요소가 빠져있습니다',
-        text: '아이디, 비밀번호, 이름을 무조건 입력해주세요!'
+        title: '양식을 맞춰주세요',
+        text: error,
       });
       return;
-    } else {
-      dispatch(fetchSignUpAsync.request({
-        id: id.value,
-        pw: pw.value,
-        name: name.value,
-        intro: intro.value,
-        file: uploadedFile,
-      }));
-      onCloseView();
     }
+
+    dispatch(fetchSignUpAsync.request({
+      id: id.value,
+      pw: pw.value,
+      name: name.value,
+      intro: intro.value,
+      file: uploadedFile,
+    }));
+
+    onCloseView();
   }, [dispatch, id.value, intro.value, name.value, uploadedFile, pw.value, onCloseView]);
 
   const handleUpdateProfile = useCallback(() => {

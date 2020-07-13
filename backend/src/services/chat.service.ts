@@ -56,10 +56,14 @@ export class ChatService {
       RoomType.personal : RoomType.group;
 
     if (roomType === RoomType.personal) { // 개인 채팅방은 1개만 활성화 가능
-      personalCode = hashPersonalChatCode(members.map(member => member.idx));
+      const memberIdxs = members.map(member => member.idx);
+      personalCode = hashPersonalChatCode(memberIdxs);
       const room = await this.chatRoomRepo.getPersonalRoom(personalCode);
       
       if (room) {
+        // 개인 채팅방의 모든 회원 활성화
+        await this.chatParticipantRepo.updateActivedMemberByRoomIdx(room.idx, memberIdxs, 1);
+
         return room.idx;
       }
     }
